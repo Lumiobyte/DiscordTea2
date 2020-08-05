@@ -25,7 +25,7 @@ async def on_ready():
 async def ping(ctx):
     await ctx.send(":ping_pong: | {}ms".format(round(client.latency * 1000)))
 
-@commands.command()
+@client.command()
 async def help(ctx):
 
     embedToSend = discord.Embed(colour = discord.Colour.blue())
