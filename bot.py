@@ -22,10 +22,6 @@ async def on_ready():
     await client.change_presence(activity = activity, status = discord.Status.online)
 
 @client.command()
-async def ping(ctx):
-    await ctx.send(":ping_pong: | {}ms".format(round(client.latency * 1000)))
-
-@client.command()
 async def help(ctx):
 
     embedToSend = discord.Embed(colour = discord.Colour.blue())
