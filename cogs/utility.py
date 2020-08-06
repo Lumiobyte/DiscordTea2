@@ -1,13 +1,15 @@
 import discord
 from discord.ext import commands
 
+from utils import blacklist_data, rating_data, sommelier_data
+
 class Utility(commands.Cog):
 
     def __init__(self, client):
 
         self.client = client
 
-        self.blacklistLog = 0
+        self.blacklistLog = 740422397869424672
         self.blacklistLogObj = None
 
     @commands.command()
@@ -34,7 +36,7 @@ class Utility(commands.Cog):
     async def invite(self, ctx):
 
         embedToSend = discord.Embed(colour = discord.Colour.blurple())
-        embedToSend.add_field(name = 'Useful Links', value = '[Invite me to your server!](https://youtube.com)\n[Join my support server](https://discord.gg/wapper)')
+        embedToSend.add_field(name = 'Useful Links', value = '[Invite me to your server!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\n[Join my support server](https://discord.gg/mP8U9ey)')
 
         await ctx.send(embed = embedToSend)
 
@@ -44,32 +46,49 @@ class Utility(commands.Cog):
 
     @commands.command()
     async def ping(self, ctx):
-        
         await ctx.send(":ping_pong: | {}ms".format(round(self.client.latency * 1000)))
 
     @commands.command()
     async def approval(self, ctx):
-        average = 0
-        await ctx.send('**Our average rating is {}:star:'.format(round(average, 2)))
+        average = rating_data.GetAverage()
+        await ctx.send('**Our average rating is {}:star:**'.format(round(average, 2)))
 
     @commands.command()
     async def blacklist(self, ctx, mode = None, user: discord.User = None):
 
         if self.blacklistLogObj is None:
-            self.blacklistLogObj = None # get the blacklist log channel
+            self.blacklistLogObj = ctx.guild.get_channel(self.blacklistLog)
 
-        # check if the user running the command is a sommelier here
+        if mode is None:
+            await ctx.send(':x: **| Incorrect usage.\nExamples:\n``tea!blacklist add @Lumiobyte``\n``tea!blacklist remove 368860954227900416``**')
+            return
+
+        if user is None:
+            await ctx.send(':x: **| Please provide a user to blacklist.\nExamples:\n``tea!blacklist add @Lumiobyte``\n``tea!blacklist remove 368860954227900416``**')
+            return
+
+        if not sommelier_data.Check(ctx.author.id):
+            await ctx.send(':lock: **| Only Tea Sommeliers can use this command!**')
+            return
 
         if mode.lower() == 'add':
-            # add to blacklist
+            blacklist_data.Add(user.id)
+
             await ctx.send(':white_check_mark: **| Blacklisted ``{}``.**'.format(user))
-            await self.blacklistLogObj.send(':triangular_flag_on_post: **| ``{}`` has been blacklisted by ``{}``.'.format(user, ctx.author))
+            await self.blacklistLogObj.send(':triangular_flag_on_post: **| ``{}`` has been blacklisted by ``{}``.**'.format(user, ctx.author))
+
         elif mode.lower() == 'remove':
-            # remove from blacklist
-            await ctx.send(':white_check_mark: **| Removed ``{}`` from the blacklist.'.format(user))
-            await self.blacklistLogObj.send(':radio_button: **| ``{}`` was removed from the blacklist by ``{}``.'.format(user, ctx.author))
+            result = blacklist_data.Remove(user.id)
+
+            if result == False:
+                await ctx.send(':x: **| That user is not currently blacklisted.**')
+                return
+
+            await ctx.send(':white_check_mark: **| Removed ``{}`` from the blacklist.**'.format(user))
+            await self.blacklistLogObj.send(':radio_button: **| ``{}`` was removed from the blacklist by ``{}``.**'.format(user, ctx.author))
+
         else:
-            await ctx.send(':x: **| Incorrect usage. ')
+            await ctx.send(':x: **| Incorrect usage.\nExamples:\n``tea!blacklist add @Lumiobyte``\n``tea!blacklist remove 368860954227900416``**')
 
 
 def setup(client):

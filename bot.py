@@ -6,7 +6,7 @@ client.remove_command('help')
 
 TOKEN = ''
 
-cogs = ['cogs.utility']
+cogs = ['cogs.utility', 'cogs.feedback']
 
 for cog in cogs:
     try:
@@ -24,7 +24,7 @@ async def on_ready():
 @client.command()
 async def help(ctx):
 
-    embedToSend = discord.Embed(colour = discord.Colour.blue())
+    embedToSend = discord.Embed(colour = discord.Colour.blurple())
     embedToSend.set_author(name="Discord Tea Help - Prefix: tea!")
 
     embedToSend.add_field(name="Commands you can use:", value="""
@@ -39,7 +39,7 @@ async def help(ctx):
 **tea!approval** - View the average rating for the service.
 **tea!invite** - Get a link to invite Discord Tea to your server, as well as an invite to the support server.
 **tea!ping** - See bot latency.
-    """)
+    """, inline = False)
 
     if True: # if sommelier
         embedToSend.add_field(name="Sommelier Commands", value="""
@@ -50,9 +50,9 @@ async def help(ctx):
 **tea!list** - See all unclaimed orders.
 **tea!random** - Get assigned a random waiting order.
 **tea!blacklist <add/remove> <user>** - Blacklist or unblacklist a user.
-        """)
+        """, inline = False)
 
-    embedToSend.add_field(name = 'Links', value = 'Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\nSupport server: [Join](https://discord.gg/mP8U9ey)')
+    embedToSend.add_field(name = 'Links', value = 'Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\nSupport server: [Join](https://discord.gg/mP8U9ey)', inline = False)
 
     await ctx.send(embed = embedToSend)
 
