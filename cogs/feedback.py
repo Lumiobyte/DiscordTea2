@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from utils import rating_data
+from utils import rating_data, stats_data
 
 class Feedback(commands.Cog):
 
@@ -28,6 +28,8 @@ class Feedback(commands.Cog):
 
         await ctx.send(":white_check_mark: **| Your feedback has been sent. Thanks, {}!**".format(ctx.author.name))
         await feedback_log.send(":star: **| Received feedback from `{}`: `{}`**".format(ctx.author, comment))
+
+        stats_data.WriteSingle('feedback')
 
     @commands.command()
     @commands.cooldown(1, 900, commands.BucketType.user)
@@ -62,6 +64,8 @@ class Feedback(commands.Cog):
         await ctx.send(":star: **| You rated this service {}! Thanks for your feedback!**".format(stars))
 
         await feedback_log.send(":star: **| Received rating from `{}`: {}**".format(ctx.author, stars))
+
+        stats_data.WriteSingle('ratings')
 
 
 def setup(client):

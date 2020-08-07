@@ -1,12 +1,14 @@
 import discord
 from discord.ext import commands
 
+from utils import blacklist_data, stats_data
+
 client = commands.Bot(command_prefix = ['tea!', 'Tea!', 'TEA!'])
 client.remove_command('help')
 
 TOKEN = ''
 
-cogs = ['cogs.utility', 'cogs.feedback']
+cogs = ['cogs.utility', 'cogs.feedback', 'cogs.fun']
 
 for cog in cogs:
     try:
@@ -20,6 +22,8 @@ async def on_ready():
 
     activity = discord.Game(name = 'with tea | tea!help | v2.0.0')
     await client.change_presence(activity = activity, status = discord.Status.online)
+
+    stats_data.WriteSingle('login')
 
 @client.command()
 async def help(ctx):
@@ -55,5 +59,7 @@ async def help(ctx):
     embedToSend.add_field(name = 'Links', value = 'Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\nSupport server: [Join](https://discord.gg/mP8U9ey)', inline = False)
 
     await ctx.send(embed = embedToSend)
+
+    stats_data.WriteSingle('help')
 
 client.run(TOKEN)

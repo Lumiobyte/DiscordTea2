@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from utils import blacklist_data, rating_data, sommelier_data
+from utils import blacklist_data, rating_data, sommelier_data, stats_data
 
 class Utility(commands.Cog):
 
@@ -43,6 +43,34 @@ class Utility(commands.Cog):
     @commands.command()
     async def stats(self, ctx):
         embedToSend = discord.Embed(colour = discord.Colour.blurple())
+
+        statsDB = stats_data.GetData()
+
+        embedToSend.add_field(name = 'Discord Tea Stats', value = """
+        - **Orders Placed:** ``{}``\n
+        - **Teas Delivered:** ``{}``\n
+        - **Orders Declined/Cancelled:** ``{}``\n
+        - **Quickorders Brewed:** ``{}``\n
+        - **Ratings Given:** ``{}``\n
+        - **Feedback Comments Given:** ``{}``\n
+        - **Facts Told:** ``{}``\n
+        - **Times it's been tea time:** ``{}``\n
+        - **Times help command has been used:** ``{}``\n
+        - **Times bot has logged on:** ``{}``\n
+        """.format(
+            statsDB['placed'],
+            statsDB['delivered'],
+            statsDB['declined'],
+            statsDB['quickorders'],
+            statsDB['ratings'],
+            statsDB['feedback'],
+            statsDB['facts'],
+            statsDB['teatime'],
+            statsDB['help'],
+            statsDB['login']
+        ))
+
+        await ctx.send(embed = embedToSend)
 
     @commands.command()
     async def ping(self, ctx):
