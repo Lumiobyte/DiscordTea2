@@ -39,5 +39,5 @@ tea!help
 How can I help out Discord Tea?
 
 1. Join our [Discord server](https://discord.gg/VtTW7xq)! Showing support of any kind is always a great way to contribute.
-2. If you know Python, you can make contributions my forking the project and creating a pull request to merge your changes.
+2. If you know Python, you can make contributions by forking the project and creating a pull request to merge your changes.
 3. As stated above, Discord Tea is fully crowdsourced so we are always on the look-out for new sommeliers (tea makers). Visit our Discord server to apply.
