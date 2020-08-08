@@ -49,7 +49,7 @@ class Fun(commands.Cog):
 
         await ctx.message.delete()
 
-        await ctx.send(':tea: **Random Tea Fact! {}'.format(random.choice(self.factList)))
+        await ctx.send(':tea: **Random Tea Fact!** {}'.format(random.choice(self.factsList)))
 
         stats_data.WriteSingle('facts')
 

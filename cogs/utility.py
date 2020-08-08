@@ -47,16 +47,16 @@ class Utility(commands.Cog):
         statsDB = stats_data.GetData()
 
         embedToSend.add_field(name = 'Discord Tea Stats', value = """
-        - **Orders Placed:** ``{}``\n
-        - **Teas Delivered:** ``{}``\n
-        - **Orders Declined/Cancelled:** ``{}``\n
-        - **Quickorders Brewed:** ``{}``\n
-        - **Ratings Given:** ``{}``\n
-        - **Feedback Comments Given:** ``{}``\n
-        - **Facts Told:** ``{}``\n
-        - **Times it's been tea time:** ``{}``\n
-        - **Times help command has been used:** ``{}``\n
-        - **Times bot has logged on:** ``{}``\n
+        - **Orders Placed:** ``{}``
+        - **Teas Delivered:** ``{}``
+        - **Orders Declined/Cancelled:** ``{}``
+        - **Quickorders Brewed:** ``{}``
+        - **Ratings Given:** ``{}``
+        - **Feedback Comments Given:** ``{}``
+        - **Facts Told:** ``{}``
+        - **Times it's been tea time:** ``{}``
+        - **Times help command has been used:** ``{}``
+        - **Times bot has logged on:** ``{}``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
