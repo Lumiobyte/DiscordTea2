@@ -12,6 +12,8 @@ class Utility(commands.Cog):
         self.blacklistLog = 740422397869424672
         self.blacklistLogObj = None
 
+        self.blacklistImmune = [368860954227900416, 416987805739122699]
+
     @commands.command()
     async def rules(self, ctx):
 
@@ -57,6 +59,11 @@ class Utility(commands.Cog):
         - **Times it's been tea time:** ``{}``
         - **Times help command has been used:** ``{}``
         - **Times bot has logged on:** ``{}``
+
+        - **Servers:** ``{}``
+        - **Users in support server:** ``{}``
+        - **Tea Sommeliers:** ``{}``
+        - **Blacklisted Users:** ``{}``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -67,7 +74,11 @@ class Utility(commands.Cog):
             statsDB['facts'],
             statsDB['teatime'],
             statsDB['help'],
-            statsDB['login']
+            statsDB['login'],
+            len(self.client.guilds),
+            self.client.get_guild(524024216463605770).member_count,
+            sommelier_data.Amount(),
+            blacklist_data.Amount()
         ))
 
         await ctx.send(embed = embedToSend)
@@ -97,6 +108,14 @@ class Utility(commands.Cog):
 
         if not sommelier_data.Check(ctx.author.id):
             await ctx.send(':lock: **| Only Tea Sommeliers can use this command!**')
+            return
+        
+        if sommelier_data.Check(user.id):
+            await ctx.send(':no_entry_sign: **| You can\'t blacklist a Tea Sommelier!**')
+            return
+
+        if user.id in self.blacklistImmune:
+            await ctx.send(':no_entry_sign: **| That user is immune to being blacklisted.**')
             return
 
         if mode.lower() == 'add':

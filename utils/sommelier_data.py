@@ -18,6 +18,9 @@ def Add(user):
     with open(filepath, encoding="utf-8", mode="r") as f:
         db = json.load(f)
 
+        if Check(user):
+            return
+
         db['sommeliers'].append(user)
 
     with open(filepath, encoding="utf-8", mode="w") as f:
@@ -31,3 +34,9 @@ def Check(user):
             return True
         else:
             return False
+
+def Amount():
+    with open(filepath, encoding="utf-8", mode="r") as f:
+        db = json.load(f)
+
+        return len(db['sommeliers'])

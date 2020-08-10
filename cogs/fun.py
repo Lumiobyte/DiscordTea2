@@ -16,7 +16,6 @@ class Fun(commands.Cog):
             'Tea bags were invented in 1908 in the United States by Thomas Sullivan.'
             'This bot is made in discord.py!',
             'It is believed that tea was invented by Chinese emperor Shen Nung in 2737 B.C. when a leaf fell in to his hot water.',
-            'Mauna Kea is a whole island dedicated for tea plantation!',
             'Gingko is a tea the Chinese believe that improves your memory.',
             'The thermal energy in the hot water of the tea causes the flavor to be spreaded easier from the tea bag, that is why people serve tea hot.',
             'Black tea has half the amount of caffeine compared to coffee.',
