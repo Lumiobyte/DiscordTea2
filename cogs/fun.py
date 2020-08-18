@@ -52,6 +52,11 @@ class Fun(commands.Cog):
 
         stats_data.WriteSingle('facts')
 
+    @commands.command()
+    async def tea(self, ctx):
+
+        await ctx.send(':tea:')
+
 
 
 def setup(client):

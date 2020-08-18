@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from utils import sommelier_data
+from utils import sommelier_data, rating_data, blacklist_data, stats_data
 
 class Owner(commands.Cog):
 
@@ -27,6 +27,40 @@ class Owner(commands.Cog):
             await ctx.send(":white_check_mark: **| Successfully reloaded module ``{}``.**".format(module))
 
     @commands.command()
+    @commands.is_owner()
+    async def forceinvite(self, ctx, mode = None, *, server = None):
+
+        if server is None:
+            return
+
+        if mode == 'name':
+            serverObj = discord.utils.get(self.client.guilds, name = server)
+
+        if mode == 'id':
+            serverObj = self.client.get_guild(id = int(server))
+
+        if serverObj is None:
+            await ctx.send('Server not found')
+
+        c = None
+
+        for c in serverObj.channels:
+            if serverObj.get_channel(c.id).type == 'text':
+                break
+
+        channel = serverObj.get_channel(c.id)
+                
+        if channel is None:
+            await ctx.send('No text channels in server')
+            return
+
+        invite = await channel.create_invite(reason = 'Bot owner requested an invite to this server.')
+
+        await ctx.author.send('https://discord.gg/' + str(invite.code))
+
+        
+
+    @commands.command()
     async def sommeliers(self, ctx, mode = None, user: discord.Member = None):
 
         if ctx.guild.id != 524024216463605770:
@@ -39,14 +73,33 @@ class Owner(commands.Cog):
             return
 
         if mode.lower() == 'add':
-            sommelier_data.Add(user.id)
-            await ctx.send(":white_check_mark: **| Registered {} as a Tea Sommelier.**".format(user.name))
-            await user.add_roles(self.sommeliersRoleObj)
+
+            if type(user) is int:
+                sommelier_data.Add(user)
+                await ctx.send(":white_check_mark: **| Registered ID {} as a Tea Sommelier.**".format(user))
+            else:
+                sommelier_data.Add(user.id)
+                await ctx.send(":white_check_mark: **| Registered {} as a Tea Sommelier.**".format(user.name))
+
+            try:
+                await user.add_roles(self.sommeliersRoleObj)
+            except:
+                pass
         elif mode.lower() == 'remove':
-            sommelier_data.Remove(user.id)
-            await ctx.send(":white_check_mark: **| Unregistered {} as a Tea Sommelier.**".format(user.name))
-            await user.remove_roles(self.sommeliersRoleObj)
+
+            if type(user) is int:
+                sommelier_data.Remove(user)
+                await ctx.send(":white_check_mark: **| Unregistered ID {} as a Tea Sommelier.**".format(user))
+            else:
+                sommelier_data.Remove(user.id)
+                await ctx.send(":white_check_mark: **| Unregistered {} as a Tea Sommelier.**".format(user.name))
+
+            try:
+                await user.remove_roles(self.sommeliersRoleObj)
+            except:
+                pass
         else:
+
             await ctx.send(':x: **| ``{}`` is not a valid mode.**'.format(mode or 'None'))
 
     @commands.command()

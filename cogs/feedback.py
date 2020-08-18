@@ -15,7 +15,7 @@ class Feedback(commands.Cog):
         self.feedbackChannelObj = None
 
     @commands.command()
-    @commands.cooldown(1, 1800, commands.BucketType.user)
+    @commands.cooldown(1, 900, commands.BucketType.user)
     async def feedback(self, ctx, *, comment = None):
         feedback_log = discord.utils.get(self.client.get_all_channels(), id = self.feedbackChannel)
 
@@ -27,12 +27,12 @@ class Feedback(commands.Cog):
             self.feedbackChannelObj = ctx.guild.get_channel(self.feedbackChannel)
 
         await ctx.send(":white_check_mark: **| Your feedback has been sent. Thanks, {}!**".format(ctx.author.name))
-        await feedback_log.send(":star: **| Received feedback from `{}`: `{}`**".format(ctx.author, comment))
+        await feedback_log.send(":speech_left: **| Received feedback from `{}`: `{}`**".format(ctx.author, comment))
 
         stats_data.WriteSingle('feedback')
 
     @commands.command()
-    @commands.cooldown(1, 900, commands.BucketType.user)
+    @commands.cooldown(1, 450, commands.BucketType.user)
     async def rate(self, ctx, rating = None):
         
         

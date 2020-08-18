@@ -35,10 +35,20 @@ class Utility(commands.Cog):
         await ctx.send(embed = embedToSend)
 
     @commands.command()
+    async def changelog(self, ctx):
+
+        embedToSend = discord.Embed(title = 'v2.0.1 Changelog - August 16 2020', colour = discord.Colour.dark_green())
+        embedToSend.add_field(name = 'New Features', value = '- Added ``tea!changelog``', inline = False)
+        embedToSend.add_field(name = 'Changes', value = '- You can no longer use commands in DMs\n- When a bot joins the server their join message will contain the :robot: emoji', inline = False)
+        embedToSend.add_field(name = 'Bug Fixes', value = '- Error messages are now actually sent to #error-logs\n- The blacklist check is now in place so blacklisted users actually can\'t use the bot', inline = False)
+
+        await ctx.send(embed = embedToSend)
+
+    @commands.command()
     async def invite(self, ctx):
 
         embedToSend = discord.Embed(colour = discord.Colour.blurple())
-        embedToSend.add_field(name = 'Useful Links', value = '[Invite me to your server!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\n[Join my support server](https://discord.gg/mP8U9ey)')
+        embedToSend.add_field(name = 'Useful Links', value = '[Invite me to your server!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\n[Join my support server](https://discord.gg/mP8U9ey)\n[Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)')
 
         await ctx.send(embed = embedToSend)
 

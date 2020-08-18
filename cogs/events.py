@@ -21,14 +21,74 @@ class Events(commands.Cog):
         self.appealsChannel = 740451781389189204
         self.appealsChannelObj = None
 
+        self.errorLog = 740422485094301747
+        self.errorLogObj = None
+
+        self.error_count = 0
+
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx, error):
+
+        if self.errorLogObj is None:
+            self.errorLogObj = self.client.get_channel(self.errorLog)
+
+        if isinstance(error, commands.errors.CommandNotFound):
+
+            pass
+
+        elif isinstance(error, commands.errors.CommandInvokeError):
+
+            self.error_count += 1
+
+            await ctx.send(":x: **| ``ID {}`` There was an error invoking the command: ```{}```**".format(self.error_count, str(error)))
+            await self.errorLogObj.send("``ID {}`` COMMAND INVOKE ERROR: ``{}`` threw ```{}```".format(self.error_count, ctx.message.content, str(error)))
+
+        elif isinstance(error, commands.errors.BadArgument):
+
+            self.error_count += 1
+
+            await ctx.send(":x: **| ``ID {}`` You entered a bad argument into the command: ```{}```**".format(self.error_count, str(error)))
+
+        elif isinstance(error, commands.errors.CommandOnCooldown):
+
+            self.error_count += 1
+
+            await ctx.send(":x: **| ``ID {}`` This command has a cooldown; please wait **{}s** before using it again.**".format(self.error_count, round(error.retry_after, 2)))
+
+        elif isinstance(error, commands.MissingRequiredArgument):
+
+            self.error_count += 1
+
+            await ctx.send(":x: **| ``ID {}`` A required command argument is missing.**".format(self.error_count))
+
+        elif isinstance(error, discord.Forbidden):
+
+            self.error_count += 1
+
+            await ctx.send(":x: **| ``ID {}`` The bot is missing the required permission.**".format(self.error_count))
+
+        elif isinstance(error, discord.ext.commands.CheckFailure):
+
+            pass
+
+        else:
+
+            await ctx.send(":x: **| ``ID {}`` An unknown error occurred. ```{}```**".format(self.error_count, str(error)))
+            await self.errorLogObj.send("``ID {}`` UNKNOWN ERROR: ``{}`` threw ```{}```".format(self.error_count, ctx.message.content, str(error)))
+
 
     @commands.Cog.listener()
     async def on_member_join(self, member):
 
+        joinMessage = ''
+
         if member.guild.id != 524024216463605770:
             return
 
-        joinMessage = ':arrow_up_small: **{} joined the server. We are now at {} members.**'.format(member.mention, member.guild.member_count)
+        if member.bot:
+            joinMessage = joinMessage + ':robot: '
+
+        joinMessage = joinMessage + ':arrow_up_small: **{} joined the server. We are now at {} members.**'.format(member.mention, member.guild.member_count)
 
         if self.joinsLeavesChannelObj is None:
             self.joinsLeavesChannelObj = member.guild.get_channel(self.joinsLeavesChannel)
@@ -51,7 +111,7 @@ class Events(commands.Cog):
             except:
                 pass
 
-            await self.appealsChannelObj.send('Hello {}.\n\n**You have been blacklisted from using Discord Tea by the bot staff. This means you cannot use any of the bot\'s commands or access the server.** However, you can access this channel to appeal to bot staff and tell us why you should be unbanned.\n\nThere are no guarantees appealing here will get you unbanned from the bot, and if we do not accept your appeal, you are free to leave the server.')
+            await self.appealsChannelObj.send('Hello {}.\n\n**You have been blacklisted from using Discord Tea by the bot staff. This means you cannot use any of the bot\'s commands or access the server.** However, you can access this channel to appeal to bot staff and tell us why you should be unbanned.\n\nThere are no guarantees appealing here will get you unbanned from the bot, and if we do not accept your appeal, you are free to leave the server.'.format(member.mention))
 
             joinMessage = joinMessage + ' :warning: **Member is blacklisted!**'
 
