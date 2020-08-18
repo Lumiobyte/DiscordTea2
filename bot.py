@@ -6,7 +6,7 @@ from utils import blacklist_data, stats_data, sommelier_data
 client = commands.Bot(command_prefix = ['tea!', 'Tea!', 'TEA!', 't!', 'T!'])
 client.remove_command('help')
 
-TOKEN = 'NTA3MDA0NDMzMjI2MjY4Njk5.W9kGrA.MYBPB7Gwi-UexRbIjtfZXkOmkeM'
+TOKEN = ''
 
 cogs = ['cogs.utility', 'cogs.feedback', 'cogs.fun', 'cogs.events', 'cogs.orders', 'cogs.owner']
 
@@ -83,5 +83,10 @@ async def is_blacklisted(ctx):
     else:
 
         return True
+
+@client.check
+async def is_in_dms(ctx):
+
+    if ctx.
 
 client.run(TOKEN)
