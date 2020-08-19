@@ -37,10 +37,10 @@ class Utility(commands.Cog):
     @commands.command()
     async def changelog(self, ctx):
 
-        embedToSend = discord.Embed(title = 'v2.0.1 Changelog - August 16 2020', colour = discord.Colour.dark_green())
-        embedToSend.add_field(name = 'New Features', value = '- Added ``tea!changelog``', inline = False)
-        embedToSend.add_field(name = 'Changes', value = '- You can no longer use commands in DMs\n- When a bot joins the server their join message will contain the :robot: emoji', inline = False)
-        embedToSend.add_field(name = 'Bug Fixes', value = '- Error messages are now actually sent to #error-logs\n- The blacklist check is now in place so blacklisted users actually can\'t use the bot', inline = False)
+        embedToSend = discord.Embed(title = 'v2.0.2 Changelog - August 19 2020', colour = discord.Colour.dark_green())
+        #embedToSend.add_field(name = 'New Features', value = '- Added ``tea!changelog``', inline = False)
+        embedToSend.add_field(name = 'Changes', value = '- Added ``tea!stats`` and ``tea!tea`` to help\n- Added bot version to ``tea!stats``', inline = False)
+        embedToSend.add_field(name = 'Bug Fixes', value = '- You can actually no longer use commands in DMs', inline = False)
 
         await ctx.send(embed = embedToSend)
 
@@ -74,6 +74,8 @@ class Utility(commands.Cog):
         - **Users in support server:** ``{}``
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
+
+        - **Bot Version:** ``2.0.2``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],

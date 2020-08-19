@@ -41,6 +41,7 @@ class Owner(commands.Cog):
 
         if serverObj is None:
             await ctx.send('Server not found')
+            return
 
         c = None
 
