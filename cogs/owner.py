@@ -28,6 +28,17 @@ class Owner(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
+    async def load(self, ctx, *, module = None):
+
+        try:
+            self.client.load_extension(module)
+        except Exception as e:
+            await ctx.send(":warning: | **ERROR:** Could not load cog ``{}``: ``{}``".format(module, str(e)))
+        else:
+            await ctx.send(":white_check_mark: **| Successfully loaded module ``{}``.**".format(module))
+
+    @commands.command()
+    @commands.is_owner()
     async def forceinvite(self, ctx, mode = None, *, server = None):
 
         if server is None:

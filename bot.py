@@ -8,7 +8,7 @@ client.remove_command('help')
 
 TOKEN = ''
 
-cogs = ['cogs.utility', 'cogs.feedback', 'cogs.fun', 'cogs.events', 'cogs.orders', 'cogs.owner']
+cogs = ['cogs.utility', 'cogs.feedback', 'cogs.fun', 'cogs.events', 'cogs.orders', 'cogs.owner', 'cogs.dbl']
 
 for cog in cogs:
     try:
