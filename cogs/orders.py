@@ -344,6 +344,52 @@ class Orders(commands.Cog):
         self.orderIDs[assigned_order][3] = "Brewing"
         self.orderIDs[assigned_order][4] = ctx.author.id
 
+    @commands.command()
+    async def claimedorders(self, ctx, user: discord.User = None):
+
+        if user is None:
+            user = ctx.author
+
+        if not ctx.guild.id == 524024216463605770:
+            await ctx.send(":lock: **| This command cannot be used in this server!**")
+            return
+
+        if not sommelier_data.Check(ctx.author.id):
+            await ctx.send(":lock: **| Only Tea Sommeliers can use this command!**")
+            return
+
+        if not sommelier_data.Check(user.id):
+            await ctx.send(":lock: **| That user is not a Tea Sommelier!**")
+            return
+
+        usersIDs = []
+        embedValue = ''
+        orderCount = 0
+
+        embedToSend = discord.Embed(color = discord.Color.teal())
+
+        for orderID in self.orderIDs:
+            if self.orderIDs[orderID][4] == user.id:
+                usersIDs.append(orderID)
+
+        if len(usersIDs) <= 0:
+            embedToSend.add_field(name = "{}\'s Claimed Orders (0)".format(user), value = "There are no orders to show.")
+        else:
+            for orderID in usersIDs:
+                orderCount += 1
+                embedValue += 'Order ID `{}`: order of `{}` - Orderer: `{}`\n'.format(
+                    orderID,
+                    self.orderIDs[orderID][2],
+                    self.orderIDs[orderID][1]
+                )
+
+            embedToSend.add_field(name = "{}\'s Claimed Orders ({})".format(user, orderCount), value = embedValue)
+
+            embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order.')
+
+        await ctx.send(embed = embedToSend)
+        
+
     @commands.command(aliases=["brew"])
     async def claim(self, ctx, orderid = None):
 
@@ -375,12 +421,21 @@ class Orders(commands.Cog):
             await ctx.send(":no_entry_sign: **| That order is already being processed by a sommelier!**")
             return
     
+        orderCountUser = 0
+
+        for oid in self.orderIDs:
+            if self.orderIDs[oid][4] == ctx.author.id:
+                orderCountUser += 1
+
+        if orderCountUser >= 5:
+            await ctx.send(':no_entry_sign: **| You can only have 5 orders claimed at once!**')
+            return
+
         if self.orderLogObj is None:
             self.orderLogObj = self.client.get_channel(self.orderLog)
 
         self.orderIDs[orderid][3] = "Brewing"
         self.orderIDs[orderid][4] = ctx.author.id
-
 
         await ctx.send(":white_check_mark: **| You claimed the order of ``{}``! Start brewing!**".format(self.orderIDs[orderid][2]))
         await self.orderLogObj.send(":man: **| Tea sommelier {} claimed the order with ID `{}` and is now brewing it!**".format(ctx.author.name, orderid))

@@ -24,7 +24,7 @@ class Utility(commands.Cog):
         • No NSFW Teas
         • No Offensive Teas (Hitler/Nazi, Sexism, and/or any other forms of Racism - Communism excluded)
         • No Drugs, Medications or Poisons
-        • No Human or Animal Body Parts
+        • No Human or Animal Body Parts, or Bodily Fluids
         • Orders cannot contain people's names
         • Orders cannot contain text formatting or non-Latin characters, except numbers and !#$%&<>?".
         • Orders cannot contain links.
@@ -37,10 +37,10 @@ class Utility(commands.Cog):
     @commands.command()
     async def changelog(self, ctx):
 
-        embedToSend = discord.Embed(title = 'v2.0.2 Changelog - August 19 2020', colour = discord.Colour.dark_green())
-        #embedToSend.add_field(name = 'New Features', value = '- Added ``tea!changelog``', inline = False)
-        embedToSend.add_field(name = 'Changes', value = '- Added ``tea!stats`` and ``tea!tea`` to help\n- Added bot version to ``tea!stats``', inline = False)
-        embedToSend.add_field(name = 'Bug Fixes', value = '- You can actually no longer use commands in DMs', inline = False)
+        embedToSend = discord.Embed(title = 'v2.1.0 Changelog - August 25 2020', colour = discord.Colour.dark_green())
+        embedToSend.add_field(name = 'New Features', value = '- Commands can no longer be used in NSFW channels.\n- Sommelier related changes\n- Updated rules', inline = False)
+        #embedToSend.add_field(name = 'Changes', value = '- Added ``tea!stats`` and ``tea!tea`` to help\n- Added bot version to ``tea!stats``', inline = False)
+        #embedToSend.add_field(name = 'Bug Fixes', value = '- You can actually no longer use commands in DMs', inline = False)
 
         await ctx.send(embed = embedToSend)
 
@@ -75,7 +75,7 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.0.2``
+        - **Bot Version:** ``2.1.0``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -94,6 +94,59 @@ class Utility(commands.Cog):
         ))
 
         await ctx.send(embed = embedToSend)
+
+    @commands.command()
+    async def privacy(self, ctx):
+
+        embed = discord.Embed(colour = discord.Colour.teal())
+
+        embed.add_field(name = 'Discord Tea Privacy Policy', value = """__**What data we store**__
+Discord Tea stores minimal data to ensure smooth operation of the bot and all its features. The data we store **permanently** is the following:
+- Statistics data: Counters of things like ratings given, orders placed, etc, all of which is displayed on the ``tea!stats`` command, all of which is completely anonymous and not associated with you at all
+- Ratings data (amount of 1-5 star ratings given and their type, anonymous and not associated with users)
+- Your Discord User ID: **ONLY** if you are blacklisted, or a Tea Sommelier
+
+The data we store **temporarily** is the following:
+- Orderer User ID
+- Orderer server ID
+- The ID of the channel the order was placed in
+- The contents of your order
+- The sommelier User ID
+
+__**How we use this data**__
+We use the data we store **permanently** to:
+- Provide basic usage statistics
+- Enable users to be Sommeliers
+- Ensure users who break the rules and are blacklisted cannot use the bot
+        """)
+
+        embed.add_field(name = 'Discord Tea Privacy Policy (continued)', value = """
+We use the data we store **temporarily** to:
+- Process orders
+        
+__**Data Security**__
+Data that is associated with you can only be accessed by **Bot Admins**.
+
+__**How to request deletion of your data**__
+- Please send a friend request to ``Lumiobyte#0867``.
+When your data is deleted you will immediately lose any Sommelier status you may have and any active orders you have will be cleared.
+**Be aware this will not remove blacklist data.**
+
+__**About Tea Delivery - IMPORTANT!!!**__ 
+When using Discord Tea, please be aware that **real humans** will be **given an invite to join your server**. Consider setting up a permissions system to ensure they cannot read any private chats if you wish.
+
+__**Note**__
+We reserve the right to change this at any time without notifying users.
+
+Last updated August 20th, 2020 
+        """, inline = False)
+
+        embed2 = discord.Embed(colour = discord.Colour.teal())
+        embed2.add_field(name = 'Tea Delivery', value = """
+        
+        """)
+
+        await ctx.send(embed = embed)
 
     @commands.command()
     async def ping(self, ctx):
