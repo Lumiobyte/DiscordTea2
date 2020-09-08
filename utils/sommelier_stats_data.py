@@ -1,6 +1,12 @@
 import json
+import datetime
 
 filepath = './database/sommelierStatsDB.json'
+
+sevenDays = datetime.timedelta(days = 7)
+
+def SetTime():
+    pass
 
 def CheckIfExists(userid):
     with open(filepath, encoding="utf-8", mode="r") as f:

@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from utils import blacklist_data, rating_data, sommelier_data, stats_data
+from utils import blacklist_data, rating_data, sommelier_data, stats_data, sommelier_stats_data
 
 class Utility(commands.Cog):
 
@@ -91,6 +91,50 @@ class Utility(commands.Cog):
             self.client.get_guild(524024216463605770).member_count,
             sommelier_data.Amount(),
             blacklist_data.Amount()
+        ))
+
+        await ctx.send(embed = embedToSend)
+
+    @commands.command(aliases = ['somstats'])
+    async def sommelierstats(self, ctx, user: discord.User = None):
+        embedToSend = discord.Embed(colour = discord.Colour.blurple())
+
+        if user is None:
+            user = ctx.author
+
+        if sommelier_data.Check(user.id) == False:
+            await ctx.send(f':no_entry_sign: **| {user} is not a Tea Sommelier!**')
+            return
+
+        statsDB = sommelier_stats_data.GetSommelier(user.id)
+
+        total = 0
+        counter = 0
+
+        for i in range(0, 5):
+            total += (i + 1) * statsDB['ratings'][i]
+            counter += 1 * statsDB['ratings'][i]
+
+        ratingAverage = total / counter
+
+        embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
+- **Orders Delivered:** ``{}``
+- **Teas Declined:** ``{}``
+- **Total Ratings Recieved:** ``{}``
+- **Rating:** :star:``{}``
+- **Recent Deliveries:**\n- ``{}``\n- ``{}``\n- ``{}``\n
+- **Recent Ratings:** ``{}``
+        """.format(
+            statsDB['totalDelivered'],
+            statsDB['totalDeclined'],
+            statsDB['totalRatings'],
+            ratingAverage,
+            statsDB['recentDelivered'][2],
+            statsDB['recentDelivered'][1],
+            statsDB['recentDelivered'][0],
+            statsDB['recentRatings'][2],
+            statsDB['recentRatings'][1],
+            statsDB['recentRatings'][0]
         ))
 
         await ctx.send(embed = embedToSend)

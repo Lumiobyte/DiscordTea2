@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from utils import sommelier_data, rating_data, blacklist_data, stats_data
+from utils import sommelier_data, rating_data, blacklist_data, stats_data, sommelier_stats_data
 
 class Owner(commands.Cog):
 
@@ -88,9 +88,11 @@ class Owner(commands.Cog):
 
             if type(user) is int:
                 sommelier_data.Add(user)
+                sommelier_stats_data.AddSommelier(user)
                 await ctx.send(":white_check_mark: **| Registered ID {} as a Tea Sommelier.**".format(user))
             else:
                 sommelier_data.Add(user.id)
+                sommelier_stats_data.AddSommelier(user.id)
                 await ctx.send(":white_check_mark: **| Registered {} as a Tea Sommelier.**".format(user.name))
 
             try:
@@ -101,9 +103,11 @@ class Owner(commands.Cog):
 
             if type(user) is int:
                 sommelier_data.Remove(user)
+                sommelier_stats_data.AddSommelier(user)
                 await ctx.send(":white_check_mark: **| Unregistered ID {} as a Tea Sommelier.**".format(user))
             else:
                 sommelier_data.Remove(user.id)
+                sommelier_stats_data.AddSommelier(user.id)
                 await ctx.send(":white_check_mark: **| Unregistered {} as a Tea Sommelier.**".format(user.name))
 
             try:
