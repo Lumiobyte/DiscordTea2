@@ -4,7 +4,7 @@ from discord.ext import commands
 import random
 import asyncio
 
-from utils import sommelier_data, stats_data
+from utils import sommelier_data, stats_data, sommelier_stats_data, rating_data
 
 # IMPORTANT INFORMATION!
 # self.orderIDs entries look like this:
@@ -14,6 +14,8 @@ from utils import sommelier_data, stats_data
 # [2] = order contents
 # [3] = order status
 # [4] = brewer userid (none if there is no brewer right now)
+#
+# Same with self.waitingForRating
 
 class Orders(commands.Cog):
 
@@ -22,12 +24,16 @@ class Orders(commands.Cog):
         self.client = client
 
         self.orderIDs = {}
+        self.waitingForRating = {}
         
         self.orderCount = 0
         self.totalOrderCount = 0
 
         self.orderLog = 740422451380617317
         self.orderLogObj = None
+
+        self.ratingsChannel = 740452811287822398
+        self.ratingsChannelObj = None
 
         self.bypassUsers = [416987805739122699, 368860954227900416]
 
@@ -541,6 +547,8 @@ class Orders(commands.Cog):
             except:
                 pass
 
+        sommelier_stats_data.AddOrderDeclined(ctx.author.id)
+
         self.orderIDs.pop(orderid, None)
         self.orderCount -= 1
 
@@ -601,6 +609,9 @@ class Orders(commands.Cog):
                 except:
                     pass
 
+            sommelier_stats_data.AddOrderDelivered(ctx.author.id)
+            sommelier_stats_data.AddRecentDeliver(ctx.author.id, self.orderIDs[orderid][2])
+
             self.orderIDs.pop(orderid, None)
             self.orderCount -= 1
 
@@ -622,11 +633,68 @@ class Orders(commands.Cog):
         except:
             await self.orderIDs[orderid][0].send(":truck: **| {}, Tea Sommelier {} is delivering your order! Thanks for using our service!**".format(self.orderIDs[orderid][1].mention, ctx.author))
 
-        
+        sommelier_stats_data.AddOrderDelivered(ctx.author.id)
+        sommelier_stats_data.AddRecentDeliver(ctx.author.id, self.orderIDs[orderid][2])
+
+        self.waitingForRating[orderid] = self.orderIDs[orderid]
+
         self.orderIDs.pop(orderid, None)
         self.orderCount -= 1
 
         stats_data.WriteSingle('delivered')
+
+    @commands.command()
+    async def rate(self, ctx, orderid = None, rating = None):
+
+        if orderid is None:
+            await ctx.send(':x: **| Please give an OrderID to provide a rating for!**\n\nRatings have changed recently. For more information, use ``tea!changelog``')
+            return
+
+        if rating is None:
+            await ctx.send(':x: **| Please give a rating between 1 and 5 stars, no decimals.**\n\nRatings have changed recently. For more information, use ``tea!changelog``')
+            return
+
+        try:
+            orderid = int(orderid)
+        except:
+            await ctx.send(":no_entry_sign: **| An OrderID is a number!**\n\nRatings have changed recently. For more information, use ``tea!changelog``")
+            return
+
+        try:
+            rating = int(rating)
+        except:
+            await ctx.send(":no_entry_sign: **| Your rating must be between 1 and 5 and cannot be a decimal!**")
+            return
+
+        if rating > 5 or rating < 1:
+            await ctx.send(":no_entry_sign: **| Your rating must be between 1 and 5 and cannot be a decimal!**")
+            return
+
+        try:
+            self.waitingForRating[orderid]
+        except:
+            await ctx.send(':no_entry_sign: **| That order does not exist!**')
+            return
+
+        if ctx.author.id != self.waitingForRating[orderid][1].id:
+            await ctx.send(':no_entry_sign: **| You can only provide ratings for orders that were delivedred to you!**')
+            return
+
+        if self.ratingsChannelObj is None:
+            self.ratingsChannelObj = ctx.guild.get_channel(self.ratingsChannel)
+
+        rating_data.Add(rating)
+        sommelier_stats_data.AddRating(self.waitingForRating[orderid][4], rating)
+
+        await ctx.send(":star: **| You rated your tea {}! Thanks for your feedback!**".format(':star:' * rating))
+
+        sommelier = self.client.get_user(self.waitingForRating[orderid][4])
+
+        await self.ratingsChannelObj.send(":star: **| Tea Sommelier {} was rated by `{}`: {}**".format(sommelier, ctx.author, ':star:' * rating))
+
+        self.waitingForRating.pop(orderid, None)
+
+        stats_data.WriteSingle('ratings')
 
 def setup(client):
     client.add_cog(Orders(client))
