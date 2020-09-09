@@ -37,14 +37,15 @@ class Utility(commands.Cog):
     @commands.command()
     async def changelog(self, ctx):
 
-        embedToSend = discord.Embed(title = 'v2.1.0 Changelog - August 25 2020', colour = discord.Colour.dark_green())
-        embedToSend.add_field(name = 'New Features', value = '- Commands can no longer be used in NSFW channels.\n- Sommelier related changes\n- Updated rules', inline = False)
-        #embedToSend.add_field(name = 'Changes', value = '- Added ``tea!stats`` and ``tea!tea`` to help\n- Added bot version to ``tea!stats``', inline = False)
+        embedToSend = discord.Embed(title = 'v2.2.0 Changelog - September 9 2020', colour = discord.Colour.dark_green())
+        embedToSend.add_field(name = 'New Features', value = '- ``tea!somstats`` to check the statistics of a Tea Sommelier\n- Weekly ratings reset', inline = False)
+        embedToSend.add_field(name = 'Changes', value = '- ``tea!rate`` no longer has cooldown\n- Ratings update! Now, instead of rating the bot service in general, you rate the specific tea that was delivered to you.\n- Added OrderID in more places to help users understand new ratings system\n- ``tea!invite`` now has alias ``tea!vote``', inline = False)
         #embedToSend.add_field(name = 'Bug Fixes', value = '- You can actually no longer use commands in DMs', inline = False)
+        embedToSend.add_field(name = 'Questions or Concerns?', value = 'Join the support server at [discord.gg/mP8U9ey](https://discord.gg/mP8U9ey)')
 
         await ctx.send(embed = embedToSend)
 
-    @commands.command()
+    @commands.command(alises = ['vote'])
     async def invite(self, ctx):
 
         embedToSend = discord.Embed(colour = discord.Colour.blurple())
@@ -75,7 +76,7 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.1.0``
+        - **Bot Version:** ``2.2.0``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],

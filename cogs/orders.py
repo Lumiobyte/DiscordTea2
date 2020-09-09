@@ -67,7 +67,6 @@ class Orders(commands.Cog):
             if self.orderIDs[orderid][1] == ctx.author:
                 orderCountUser += 1
 
-
         if orderCountUser >= 2 and ctx.author.id != 368860954227900416:
             await ctx.send(':no_entry_sign: **| You can\'t have more than 2 orders pending at once!**')
             return
@@ -647,17 +646,17 @@ class Orders(commands.Cog):
     async def rate(self, ctx, orderid = None, rating = None):
 
         if orderid is None:
-            await ctx.send(':x: **| Please give an OrderID to provide a rating for!**\n\nRatings have changed recently. For more information, use ``tea!changelog``')
+            await ctx.send(':x: **| Please give an OrderID to provide a rating for!**\n\nRatings have changed recently. For more information, join the support server with ``tea!invite``')
             return
 
         if rating is None:
-            await ctx.send(':x: **| Please give a rating between 1 and 5 stars, no decimals.**\n\nRatings have changed recently. For more information, use ``tea!changelog``')
+            await ctx.send(':x: **| Please give a rating between 1 and 5 stars, no decimals.**\n\nRatings have changed recently. For more information, join the support server with ``tea!invite``')
             return
 
         try:
             orderid = int(orderid)
         except:
-            await ctx.send(":no_entry_sign: **| An OrderID is a number!**\n\nRatings have changed recently. For more information, use ``tea!changelog``")
+            await ctx.send(":no_entry_sign: **| An OrderID is a number!**\n\nRatings have changed recently. For more information, join the support server with ``tea!invite``")
             return
 
         try:
@@ -677,7 +676,7 @@ class Orders(commands.Cog):
             return
 
         if ctx.author.id != self.waitingForRating[orderid][1].id:
-            await ctx.send(':no_entry_sign: **| You can only provide ratings for orders that were delivedred to you!**')
+            await ctx.send(':no_entry_sign: **| You can only provide ratings for orders that were delivered to you!**')
             return
 
         if self.ratingsChannelObj is None:
@@ -686,7 +685,7 @@ class Orders(commands.Cog):
         rating_data.Add(rating)
         sommelier_stats_data.AddRating(self.waitingForRating[orderid][4], rating)
 
-        await ctx.send(":star: **| You rated your tea {}! Thanks for your feedback!**".format(':star:' * rating))
+        await ctx.send(":star: **| You rated your ``{}`` {}! Thanks for your feedback!**".format(self.waitingForRating[orderid][2], ':star:' * rating))
 
         sommelier = self.client.get_user(self.waitingForRating[orderid][4])
 
