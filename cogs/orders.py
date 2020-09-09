@@ -166,8 +166,11 @@ class Orders(commands.Cog):
     @commands.command()
     async def myorders(self, ctx):
         usersIDs = []
+        usersWaiting = []
         embedValue = ''
+        embedValueWaiting = ''
         orderCount = 0
+        orderCountWaiting = 0
 
         embedToSend = discord.Embed(color = discord.Color.teal())
 
@@ -188,7 +191,24 @@ class Orders(commands.Cog):
 
             embedToSend.add_field(name = "Your active orders ({})".format(orderCount), value = embedValue)
 
-            embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order.')
+        for orderID in self.waitingForRating:
+            if self.waitingForRating[orderID][1] == ctx.author:
+                usersWaiting.append(orderID)
+
+        if len(usersWaiting) <= 0:
+            embedToSend.add_field(name = "Your unrated orders (0)", value = "You have no unrated orders! Get a tea delivered and it will show up here until rated.")
+        else:
+            for orderID in usersWaiting:
+                orderCountWaiting += 1
+                embedValueWaiting += 'Order ID `{}`: order of `{}` - Status: `{}`\n'.format(
+                    orderID,
+                    self.waitingForRating[orderID][2],
+                    'Unrated'
+                )
+
+            embedToSend.add_field(name = "Your unrated orders ({})".format(orderCount), value = embedValueWaiting)
+        
+        embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order.')
 
         await ctx.send(embed = embedToSend)
 
@@ -628,9 +648,9 @@ class Orders(commands.Cog):
         await self.orderLogObj.send(":truck: **| Tea Sommelier {} is delivering the order with ID `{}`!**".format(ctx.author.name, orderid))
 
         try:
-            await self.orderIDs[orderid][1].send(":truck: **| Tea Sommelier {} is delivering your order! Thanks for using our service!**".format(ctx.author))
+            await self.orderIDs[orderid][1].send(":truck: **| Tea Sommelier {} is delivering your order with ID ``{}``! Thanks for using our service!**".format(ctx.author, orderid))
         except:
-            await self.orderIDs[orderid][0].send(":truck: **| {}, Tea Sommelier {} is delivering your order! Thanks for using our service!**".format(self.orderIDs[orderid][1].mention, ctx.author))
+            await self.orderIDs[orderid][0].send(":truck: **| {}, Tea Sommelier {} is delivering your order with ID ``{}``! Thanks for using our service!**".format(self.orderIDs[orderid][1].mention, ctx.author, orderid))
 
         sommelier_stats_data.AddOrderDelivered(ctx.author.id)
         sommelier_stats_data.AddRecentDeliver(ctx.author.id, self.orderIDs[orderid][2])

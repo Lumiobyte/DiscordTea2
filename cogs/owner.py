@@ -82,6 +82,7 @@ class Owner(commands.Cog):
         if ctx.author.id not in self.allowedUsers:
             return
 
+        """
         messageSent = await ctx.send(':grey_question: **| Reset weekly statistics. Are you sure?**')
         await messageSent.add_reaction('✅')
 
@@ -92,6 +93,7 @@ class Owner(commands.Cog):
         except:
             await ctx.send(':no_entry_sign: **| Failed to authorize.**')
             return
+        """
 
         messageSent2 = await ctx.send(':arrows_counterclockwise: **| Please wait...**')
 

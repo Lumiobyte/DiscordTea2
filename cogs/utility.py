@@ -37,7 +37,7 @@ class Utility(commands.Cog):
     @commands.command()
     async def changelog(self, ctx):
 
-        embedToSend = discord.Embed(title = 'v2.2.0 Changelog - September 9 2020', colour = discord.Colour.dark_green())
+        embedToSend = discord.Embed(title = 'v2.2.1 Changelog - September 9 2020', colour = discord.Colour.dark_green())
         embedToSend.add_field(name = 'New Features', value = '- ``tea!somstats`` to check the statistics of a Tea Sommelier\n- Weekly ratings reset', inline = False)
         embedToSend.add_field(name = 'Changes', value = '- ``tea!rate`` no longer has cooldown\n- Ratings update! Now, instead of rating the bot service in general, you rate the specific tea that was delivered to you.\n- Added OrderID in more places to help users understand new ratings system\n- ``tea!invite`` now has alias ``tea!vote``', inline = False)
         #embedToSend.add_field(name = 'Bug Fixes', value = '- You can actually no longer use commands in DMs', inline = False)
@@ -76,7 +76,7 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.2.0``
+        - **Bot Version:** ``2.2.1``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],

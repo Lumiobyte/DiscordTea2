@@ -20,7 +20,7 @@ for cog in cogs:
 async def on_ready():
     print("Bot is online.")
 
-    activity = discord.Game(name = 'with tea | tea!help | v2.2.0')
+    activity = discord.Game(name = 'with tea | tea!help | v2.2.1')
     await client.change_presence(activity = activity, status = discord.Status.online)
 
     stats_data.WriteSingle('login')
@@ -36,11 +36,11 @@ async def help(ctx):
 ``tea!order <order>`` - Order some tea. 
 ``tea!cancel <orderID>`` - Cancel a tea you've ordered.
 ``tea!quickorder <option>`` - Select a tea you'd like from a menu.
-``tea!myorders`` - See your current active orders.
+``tea!myorders`` - See your current active orders, and orders waiting to be rated.
 ``tea!oinfo <orderID>`` - Get the info on an order.
     """, inline = False)
     embedToSend.add_field(name="Feedback Commands", value="""
-``tea!rate <orderid> <rating>`` - Rate this service! Give a rating between 1 and 5.
+``tea!rate <orderid> <rating>`` - Rate your tea! Provide an Order ID (find it in `tea!myorders`) and rate it from 1 to 5:star:.
 ``tea!feedback <comment>`` - Send feedback to the Sommeliers.
 ``tea!approval`` - View the overall average rating for the service.
     """, inline = False)
@@ -67,7 +67,7 @@ async def help(ctx):
 
     embedToSend.add_field(name = 'Links', value = 'Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\nSupport server: [Join](https://discord.gg/mP8U9ey)\n[Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)', inline = False)
 
-    embedToSend.set_footer(text = 'Discord Tea v2.2.0 by Lumiobyte#0867 - Check tea!changelog for update changelog')
+    embedToSend.set_footer(text = 'Discord Tea v2.2.1 by Lumiobyte#0867 - Check tea!changelog for update changelog')
 
     await ctx.send(embed = embedToSend)
 
