@@ -108,6 +108,10 @@ class Utility(commands.Cog):
 
         statsDB = sommelier_stats_data.GetSommelier(user.id)
 
+        if statsDB is False:
+            await ctx.send(f':no_entry_sign: **| {user} is not in the statistics database.**')
+            return
+
         total = 0
         counter = 0
 
@@ -119,22 +123,26 @@ class Utility(commands.Cog):
 
         embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
 - **Orders Delivered:** ``{}``
+- **Orders Delivered This Week:** ``{}``
 - **Teas Declined:** ``{}``
-- **Total Ratings Recieved:** ``{}``
+- **Teas Declined This Week:** ``{}``
+- **Total Ratings This Week:** ``{}``
 - **Rating:** :star:``{}``
 - **Recent Deliveries:**\n- ``{}``\n- ``{}``\n- ``{}``\n
-- **Recent Ratings:** ``{}``
+- **Recent Ratings:**\n{}\n{}\n{}
         """.format(
             statsDB['totalDelivered'],
+            statsDB['totalDeliveredWeek'],
             statsDB['totalDeclined'],
+            statsDB['totalDeclinedWeek'],
             statsDB['totalRatings'],
             ratingAverage,
             statsDB['recentDelivered'][2],
             statsDB['recentDelivered'][1],
             statsDB['recentDelivered'][0],
-            statsDB['recentRatings'][2],
-            statsDB['recentRatings'][1],
-            statsDB['recentRatings'][0]
+            ':star:' * statsDB['recentRatings'][2],
+            ':star:' * statsDB['recentRatings'][1],
+            ':star:' * statsDB['recentRatings'][0]
         ))
 
         await ctx.send(embed = embedToSend)

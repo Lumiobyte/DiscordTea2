@@ -25,3 +25,16 @@ def GetAverage():
 
         average = total / counter
         return average
+
+def ClearRatings():
+    with open(filepath, encoding="utf-8", mode="r") as f:
+        db = json.load(f)
+
+        db['1'] = 0
+        db['2'] = 0
+        db['3'] = 3
+        db['4'] = 0
+        db['5'] = 0
+
+    with open(filepath, encoding="utf-8", mode="w") as f:
+        json.dump(db, f)

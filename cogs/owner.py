@@ -70,7 +70,35 @@ class Owner(commands.Cog):
 
         await ctx.author.send('https://discord.gg/' + str(invite.code))
 
-        
+    @commands.command()
+    async def weeklyReset(self, ctx):
+
+        def check(reaction, user):
+            if reaction.emoji == '✅' and user.id == ctx.author.id:
+                return True
+            else:
+                return False
+
+        if ctx.author.id not in self.allowedUsers:
+            return
+
+        messageSent = await ctx.send(':grey_question: **| Reset weekly statistics. Are you sure?**')
+        await messageSent.add_reaction('✅')
+
+        try:
+            if reaction, user = await client.wait_for('reaction_add', timeout = 15.0, check = check) is False:
+                await ctx.send(':no_entry_sign: **| Failed to authorize.**')
+                return
+        except:
+            await ctx.send(':no_entry_sign: **| Failed to authorize.**')
+            return
+
+        messageSent2 = await ctx.send(':arrows_counterclockwise: **| Please wait...**')
+
+        sommelier_stats_data.ClearStats()
+        rating_data.ClearRatings()
+
+        await messageSent2.edit(content = ':white_check_mark: **| Reset weekly Sommelier statistics and ratings.**')
 
     @commands.command()
     async def sommeliers(self, ctx, mode = None, user: discord.Member = None):
