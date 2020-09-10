@@ -137,3 +137,9 @@ def GetSommelier(userid):
         userid = str(userid)
 
         return db[userid]
+
+def GetAll():
+    with open(filepath, encoding="utf-8", mode="r") as f:
+        db = json.load(f)
+
+        return db

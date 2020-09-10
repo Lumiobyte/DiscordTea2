@@ -37,10 +37,10 @@ class Utility(commands.Cog):
     @commands.command()
     async def changelog(self, ctx):
 
-        embedToSend = discord.Embed(title = 'v2.2.1 Changelog - September 9 2020', colour = discord.Colour.dark_green())
-        embedToSend.add_field(name = 'New Features', value = '- ``tea!somstats`` to check the statistics of a Tea Sommelier\n- Weekly ratings reset', inline = False)
-        embedToSend.add_field(name = 'Changes', value = '- ``tea!rate`` no longer has cooldown\n- Ratings update! Now, instead of rating the bot service in general, you rate the specific tea that was delivered to you.\n- Added OrderID in more places to help users understand new ratings system\n- ``tea!invite`` now has alias ``tea!vote``', inline = False)
-        #embedToSend.add_field(name = 'Bug Fixes', value = '- You can actually no longer use commands in DMs', inline = False)
+        embedToSend = discord.Embed(title = 'Tea Time Changelog', colour = discord.Colour.dark_green())
+        embedToSend.add_field(name = 'v2.2.2 - September 10 2020', value = '- Bug Fixes\n- Now you can\'t order if you have 4 unrated orders\n- Change all references to "Discord Tea" to "Tea Time"\n- Small changes and improvements', inline = False)
+        embedToSend.add_field(name = 'v2.2.1 - September 9 2020', value = '- Bug Fixes\n- Unrated orders are now shown in ``tea!myorders``\n- Add Order ID to deliver message sent to user\n- ``tea!rate`` has a better description in help', inline = False)
+        embedToSend.add_field(name = 'v2.2.0 - September 9 2020', value = '__New Features__\n- ``tea!somstats`` to check the statistics of a Tea Sommelier\n- Weekly ratings reset\n\n__Changes__\n- ``tea!rate`` no longer has cooldown\n- Ratings update! Now, instead of rating the bot service in general, you rate the specific tea that was delivered to you.\n- Added OrderID in more places to help users understand new ratings system\n- ``tea!invite`` now has alias ``tea!vote``', inline = False)
         embedToSend.add_field(name = 'Questions or Concerns?', value = 'Join the support server at [discord.gg/mP8U9ey](https://discord.gg/mP8U9ey)')
 
         await ctx.send(embed = embedToSend)
@@ -59,7 +59,7 @@ class Utility(commands.Cog):
 
         statsDB = stats_data.GetData()
 
-        embedToSend.add_field(name = 'Discord Tea Stats', value = """
+        embedToSend.add_field(name = 'Tea Time Stats', value = """
         - **Orders Placed:** ``{}``
         - **Teas Delivered:** ``{}``
         - **Orders Declined/Cancelled:** ``{}``
@@ -76,7 +76,7 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.2.1``
+        - **Bot Version:** ``2.2.2``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -124,11 +124,11 @@ class Utility(commands.Cog):
 
         embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
 - **Orders Delivered:** ``{}``
-- **Orders Delivered This Week:** ``{}``
+- **Orders Delivered This Week:** ``{}/3``
 - **Teas Declined:** ``{}``
 - **Teas Declined This Week:** ``{}``
 - **Total Ratings This Week:** ``{}``
-- **Rating:** :star:``{}``
+- **Rating:** :star:``{}``\n
 - **Recent Deliveries:**\n- ``{}``\n- ``{}``\n- ``{}``\n
 - **Recent Ratings:**\n{}\n{}\n{}
         """.format(
@@ -153,8 +153,8 @@ class Utility(commands.Cog):
 
         embed = discord.Embed(colour = discord.Colour.teal())
 
-        embed.add_field(name = 'Discord Tea Privacy Policy', value = """__**What data we store**__
-Discord Tea stores minimal data to ensure smooth operation of the bot and all its features. The data we store **permanently** is the following:
+        embed.add_field(name = 'Tea Time Privacy Policy', value = """__**What data we store**__
+Tea Time stores minimal data to ensure smooth operation of the bot and all its features. The data we store **permanently** is the following:
 - Statistics data: Counters of things like ratings given, orders placed, etc, all of which is displayed on the ``tea!stats`` command, all of which is completely anonymous and not associated with you at all
 - Ratings data (amount of 1-5 star ratings given and their type, anonymous and not associated with users)
 - Your Discord User ID: **ONLY** if you are blacklisted, or a Tea Sommelier
@@ -173,7 +173,7 @@ We use the data we store **permanently** to:
 - Ensure users who break the rules and are blacklisted cannot use the bot
         """)
 
-        embed.add_field(name = 'Discord Tea Privacy Policy (continued)', value = """
+        embed.add_field(name = 'Tea Time Privacy Policy (continued)', value = """
 We use the data we store **temporarily** to:
 - Process orders
         
@@ -186,7 +186,7 @@ When your data is deleted you will immediately lose any Sommelier status you may
 **Be aware this will not remove blacklist data.**
 
 __**About Tea Delivery - IMPORTANT!!!**__ 
-When using Discord Tea, please be aware that **real humans** will be **given an invite to join your server**. Consider setting up a permissions system to ensure they cannot read any private chats if you wish.
+When using Tea Time, please be aware that **real humans** will be **given an invite to join your server**. Consider setting up a permissions system to ensure they cannot read any private chats if you wish.
 
 __**Note**__
 We reserve the right to change this at any time without notifying users.

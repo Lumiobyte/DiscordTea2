@@ -71,6 +71,44 @@ class Owner(commands.Cog):
         await ctx.author.send('https://discord.gg/' + str(invite.code))
 
     @commands.command()
+    async def quota(self, ctx):
+
+        if ctx.author.id not in self.allowedUsers:
+            return
+
+        notCompletedList = ''
+
+        statsDB = sommelier_stats_data.GetAll()
+
+        for user in statsDB:
+            if statsDB[user]['totalDeliveredWeek'] < 3:
+                notCompletedList += '- ``{}`` {}/3 teas brewed this week. {} declined this week.\n'.format(user, statsDB[user]['totalDeliveredWeek'], statsDB[user]['totalDeclinedWeek'])
+
+        if notCompletedList == '':
+            notCompletedList = 'No sommeliers did not meet the quota this week.'
+        
+        await ctx.send(notCompletedList)
+
+    @commands.command()
+    async def somlist(self, ctx):
+
+        if ctx.author.id not in self.allowedUsers:
+            return
+
+        db = sommelier_stats_data.GetAll()
+
+        sommelierList = ''
+
+        for user in db:
+            sommelierList += '- ``{}`` {} {}/3\n'.format(user, db[user]['totalDelivered'], db[user]['totalDeliveredWeek'])
+
+        embed = discord.Embed(colour = discord.Colour.dark_grey)
+        embed.add_field(name = 'All Sommeliers', value = sommelierList)
+
+        await ctx.send(embed = embed)
+
+
+    @commands.command()
     async def weeklyReset(self, ctx):
 
         def check(reaction, user):
