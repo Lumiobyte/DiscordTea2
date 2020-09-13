@@ -62,13 +62,22 @@ class Orders(commands.Cog):
                 return
 
         orderCountUser = 0
+        ratingWaitingUser = 0
 
         for orderid in self.orderIDs:
             if self.orderIDs[orderid][1] == ctx.author:
                 orderCountUser += 1
 
+        for orderid in self.waitingForRating:
+            if self.waitingForRating[orderid][1] == ctx.author:
+                ratingWaitingUser += 1
+
         if orderCountUser >= 2 and ctx.author.id != 368860954227900416:
             await ctx.send(':no_entry_sign: **| You can\'t have more than 2 orders pending at once!**')
+            return
+
+        if ratingWaitingUser >= 5 and ctx.author.id != 368860954227900416:
+            await ctx.send(':no_entry_sign: **| You haven\'t rated 5 of your orders! Please rate them before you order more. Check ``tea!myorders`` to see which orders to rate.**')
             return
 
         if self.orderCount >= 30 and ctx.author.id != 368860954227900416:
@@ -88,7 +97,7 @@ class Orders(commands.Cog):
         message = ':white_check_mark: **| Your order of ``{}`` has been placed! One of our Tea Sommeliers will claim it and deliver it right here to your server!**'.format(order)
 
         if self.orderCount >= 18:
-            message = message + '\n :warning: Discord Tea is dealing with a large number of orders right now. Service may be delayed.'
+            message = message + '\n :warning: Tea Time is dealing with a large number of orders right now. Service may be delayed.'
 
 
         try:
@@ -206,7 +215,11 @@ class Orders(commands.Cog):
                     'Unrated'
                 )
 
+<<<<<<< HEAD
             embedToSend.add_field(name = "Your unrated orders ({})".format(orderCountWaiting), value = embedValueWaiting)
+=======
+            embedToSend.add_field(name = "Your unrated orders ({})".format(orderCount), value = embedValueWaiting + '\nTo rate an order, use ``tea!rate <order ID> <rating from 1 to 5>``.')
+>>>>>>> 626ea258b2cb804febcc28a85f956f0d05058a9b
         
         embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order.')
 

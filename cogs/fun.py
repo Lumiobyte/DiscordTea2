@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-import random
+import random, datetime
 
 from utils import stats_data
 
@@ -10,6 +10,8 @@ class Fun(commands.Cog):
     def __init__(self, client):
         
         self.client = client
+
+        self.previousTime = datetime.datetime.now()
 
         self.factsList = [
             'Iced tea was invented at the 1904 St. Louis World’s Fair by an Englishman named Richard Blechynden.',
@@ -34,13 +36,11 @@ class Fun(commands.Cog):
 
         await ctx.message.delete()
 
-        number = random.randint(1, 13)
-
-        if number == 4:
-            await ctx.send(":alarm_clock: **It's tea time!**")
-            stats_data.WriteSingle('teatime')
+        if (self.previousTime - datetime.datetime.now()).minutes >= 135:
+            await ctx.send(':alarm_clock: **| It\'s tea time!**')
+            self.previousTime = datetime.datetime.now()
         else:
-            await ctx.send(":clock1: **It isn't tea time.**")
+            await ctx.send(':clock1: **| It\'s not tea time.**')
 
          
     @commands.command()

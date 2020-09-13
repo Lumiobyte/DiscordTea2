@@ -111,7 +111,7 @@ class Events(commands.Cog):
             except:
                 pass
 
-            await self.appealsChannelObj.send('Hello {}.\n\n**You have been blacklisted from using Discord Tea by the bot staff. This means you cannot use any of the bot\'s commands or access the server.** However, you can access this channel to appeal to bot staff and tell us why you should be unbanned.\n\nThere are no guarantees appealing here will get you unbanned from the bot, and if we do not accept your appeal, you are free to leave the server.'.format(member.mention))
+            await self.appealsChannelObj.send('Hello {}.\n\n**You have been blacklisted from using Tea Time by the bot staff. This means you cannot use any of the bot\'s commands or access the server.** However, you can access this channel to appeal to bot staff and tell us why you should be unbanned.\n\nThere are no guarantees appealing here will get you unbanned from the bot, and if we do not accept your appeal, you are free to leave the server.'.format(member.mention))
 
             joinMessage = joinMessage + ' :warning: **Member is blacklisted!**'
 
@@ -141,7 +141,7 @@ class Events(commands.Cog):
             self.guildJoinsLeavesChannelObj = self.client.get_channel(self.guildJoinsLeavesChannel)
 
         embedToSend = discord.Embed(colour = discord.Colour.green())
-        embedToSend.add_field(name = 'Joined Guild', value = ':arrow_up_small: **Discord Tea joined ``{}``\nWe now have {} servers.**'.format(guild.name, len(self.client.guilds)))
+        embedToSend.add_field(name = 'Joined Guild', value = ':arrow_up_small: **Tea Time joined ``{}``\nWe now have {} servers.**'.format(guild.name, len(self.client.guilds)))
 
         await self.guildJoinsLeavesChannelObj.send(embed = embedToSend)
 
@@ -152,7 +152,7 @@ class Events(commands.Cog):
             self.guildJoinsLeavesChannelObj = self.client.get_channel(self.guildJoinsLeavesChannel)
 
         embedToSend = discord.Embed(colour = discord.Colour.red())
-        embedToSend.add_field(name = 'Left Guild', value = ':arrow_down_small: **Discord Tea left ``{}``\nWe now have {} servers.**'.format(guild.name, len(self.client.guilds)))
+        embedToSend.add_field(name = 'Left Guild', value = ':arrow_down_small: **Tea Time left ``{}``\nWe now have {} servers.**'.format(guild.name, len(self.client.guilds)))
 
         await self.guildJoinsLeavesChannelObj.send(embed = embedToSend)
 
