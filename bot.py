@@ -6,7 +6,7 @@ from utils import blacklist_data, stats_data, sommelier_data
 client = commands.Bot(command_prefix = ['tea!', 'Tea!', 'TEA!', 't!', 'T!'])
 client.remove_command('help')
 
-TOKEN = ''
+TOKEN = 'NTA3MDA0NDMzMjI2MjY4Njk5.W9kGrA.IZuajdxykh7sSFxfxTFlBEQ6Vjo'
 
 cogs = ['cogs.utility', 'cogs.feedback', 'cogs.fun', 'cogs.events', 'cogs.orders', 'cogs.owner', 'cogs.dbl']
 

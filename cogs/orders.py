@@ -179,7 +179,7 @@ class Orders(commands.Cog):
                 usersIDs.append(orderID)
 
         if len(usersIDs) <= 0:
-            embedToSend.add_field(name = "Your Active Orders (0)", value = "You have no active orders! Use tea!order to order something.")
+            embedToSend.add_field(name = "Your Active Orders (0)", value = "You have no active orders! Use tea!order to order something.", inline = False)
         else:
             for orderID in usersIDs:
                 orderCount += 1
@@ -189,7 +189,7 @@ class Orders(commands.Cog):
                     self.orderIDs[orderID][3]
                 )
 
-            embedToSend.add_field(name = "Your active orders ({})".format(orderCount), value = embedValue)
+            embedToSend.add_field(name = "Your active orders ({})".format(orderCount), value = embedValue, inline = False)
 
         for orderID in self.waitingForRating:
             if self.waitingForRating[orderID][1] == ctx.author:
@@ -206,7 +206,7 @@ class Orders(commands.Cog):
                     'Unrated'
                 )
 
-            embedToSend.add_field(name = "Your unrated orders ({})".format(orderCount), value = embedValueWaiting)
+            embedToSend.add_field(name = "Your unrated orders ({})".format(orderCountWaiting), value = embedValueWaiting)
         
         embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order.')
 
@@ -329,7 +329,7 @@ class Orders(commands.Cog):
 
         if order_count <= 0:
             embed = discord.Embed(color = discord.Color.red())
-            embed.add_field(name = "All active orders ({})".format(order_count), value="No active orders!")
+            embed.add_field(name = "All active orders ({})".format(order_count), value="No active orders!", inline = False)
             await ctx.send(embed = embed)
             return
 
@@ -700,7 +700,7 @@ class Orders(commands.Cog):
             return
 
         if self.ratingsChannelObj is None:
-            self.ratingsChannelObj = ctx.guild.get_channel(self.ratingsChannel)
+            self.ratingsChannelObj = self.client.get_channel(self.ratingsChannel)
 
         rating_data.Add(rating)
         sommelier_stats_data.AddRating(self.waitingForRating[orderid][4], rating)

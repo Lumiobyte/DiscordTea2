@@ -7,7 +7,7 @@ class TopGG(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.token = ''
+        self.token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjUwNzAwNDQzMzIyNjI2ODY5OSIsImJvdCI6dHJ1ZSwiaWF0IjoxNTk3NjIxMDg2fQ.0LGQLcRMu75WXbEw1-p0SrvQwI4DsYxwdQueLYdFj2c'
 
         self.dblpy = dbl.DBLClient(self.client, self.token, autopost=True) # Autopost will post your guild count every 30 minutes
 
