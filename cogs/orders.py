@@ -43,6 +43,7 @@ class Orders(commands.Cog):
         self.icedteas = ["https://i.imgur.com/RwNO3CB.png", "https://i.imgur.com/mxzO4s2.png", "https://i.imgur.com/wQbBZMX.png", "https://i.imgur.com/5VlHPB1.png", "https://i.imgur.com/FI38WNu.png", "https://i.imgur.com/s6GGEMR.png"]
         self.bobateas = ["https://i.imgur.com/ywCyPDt.png", "https://i.imgur.com/9nhz0E5.png", "http://www.businessnewsasia.com/wp-content/uploads/2015/04/milk-tea.jpg"]
         self.milkteas = ["https://s23991.pcdn.co/wp-content/uploads/2015/12/spiced-sweet-milk-tea-recipe.jpg", "https://i2.wp.com/subbucooks.com/wp-content/uploads/2017/12/IMG_1212.jpg?fit=2585%2C1700&ssl=1", "https://cdn.cpnscdn.com/static.coupons.com/ext/kitchme/images/recipes/600x400/honey-milk-tea-hong-kong-style_55311.jpg"]
+        self.waterGlasses = ['https://images.all-free-download.com/images/graphiclarge/glass_cup_and_water_vector_587233.jpg', 'https://gooloc.com/wp-content/uploads/vector/59/dvryfl0d0hw.jpg', 'https://ak.picdn.net/shutterstock/videos/1497607/thumb/1.jpg']
 
 
     @commands.command()
@@ -215,11 +216,7 @@ class Orders(commands.Cog):
                     'Unrated'
                 )
 
-<<<<<<< HEAD
-            embedToSend.add_field(name = "Your unrated orders ({})".format(orderCountWaiting), value = embedValueWaiting)
-=======
             embedToSend.add_field(name = "Your unrated orders ({})".format(orderCount), value = embedValueWaiting + '\nTo rate an order, use ``tea!rate <order ID> <rating from 1 to 5>``.')
->>>>>>> 626ea258b2cb804febcc28a85f956f0d05058a9b
         
         embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order.')
 
