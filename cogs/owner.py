@@ -14,6 +14,9 @@ class Owner(commands.Cog):
         self.sommeliersRole = 740408576778043412
         self.sommeliersRoleObj = None
 
+        self.newSommeliersRole = 749058359759601665
+        self.newSommeliersRoleObj = None
+
     @commands.command()
     @commands.is_owner()
     async def reload(self, ctx, *, module = None):
@@ -149,6 +152,9 @@ class Owner(commands.Cog):
         if self.sommeliersRoleObj is None:
             self.sommeliersRoleObj = ctx.guild.get_role(self.sommeliersRole)
 
+        if self.newSommeliersRoleObj is None:
+            self.newSommeliersRoleObj = ctx.guild.get_role(self.newSommeliersRole)
+
         if ctx.author.id not in self.allowedUsers:
             return
 
@@ -164,14 +170,14 @@ class Owner(commands.Cog):
                 await ctx.send(":white_check_mark: **| Registered {} as a Tea Sommelier.**".format(user.name))
 
             try:
-                await user.add_roles(self.sommeliersRoleObj)
+                await user.add_roles(self.sommeliersRoleObj, self.newSommeliersRoleObj)
             except:
                 pass
         elif mode.lower() == 'remove':
 
             if type(user) is int:
                 sommelier_data.Remove(user)
-                sommelier_stats_data.AddSommelier(user)
+                sommelier_stats_data.RemoveSommelier(user)
                 await ctx.send(":white_check_mark: **| Unregistered ID {} as a Tea Sommelier.**".format(user))
             else:
                 sommelier_data.Remove(user.id)
@@ -179,7 +185,7 @@ class Owner(commands.Cog):
                 await ctx.send(":white_check_mark: **| Unregistered {} as a Tea Sommelier.**".format(user.name))
 
             try:
-                await user.remove_roles(self.sommeliersRoleObj)
+                await user.remove_roles(self.sommeliersRoleObj, self.newSommeliersRoleObj)
             except:
                 pass
         else:

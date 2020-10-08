@@ -36,7 +36,7 @@ class Fun(commands.Cog):
 
         await ctx.message.delete()
 
-        if (self.previousTime - datetime.datetime.now()).minutes >= 135:
+        if (self.previousTime - datetime.datetime.now()).hours >= 2.1:
             await ctx.send(':alarm_clock: **| It\'s tea time!**')
             self.previousTime = datetime.datetime.now()
         else:

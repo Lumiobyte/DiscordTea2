@@ -305,6 +305,7 @@ class Orders(commands.Cog):
         await ctx.send(":white_check_mark: **| You canceled your order of ``{}`` with ID ``{}``.**".format(self.orderIDs[orderid][2], orderid))
         await self.orderLogObj.send(":x: **| {} canceled their order of ``{}`` with ID ``{}``.**".format(ctx.author, self.orderIDs[orderid][2], orderid))
 
+        stats_data.WriteSingle('declined')
         self.orderIDs.pop(orderid, None)
         self.orderCount -= 1
 
