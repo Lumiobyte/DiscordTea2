@@ -160,6 +160,9 @@ class Orders(commands.Cog):
         elif option == 7:
             image = random.choice(self.bobateas)
             order = "Boba Tea"
+        elif option == 8:
+            image = random.choice(self.waterGlasses)
+            order = "Water Glass"
 
         await ctx.send(":tea: **| Ordered a {} for you! It will be delivered soon!**".format(order))
         

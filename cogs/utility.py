@@ -38,8 +38,9 @@ class Utility(commands.Cog):
     async def changelog(self, ctx):
 
         embedToSend = discord.Embed(title = 'Tea Time Changelog', colour = discord.Colour.dark_green())
-        embedToSend.add_field(name = 'v2.2.2 - September 10 2020', value = '- Bug Fixes\n- Now you can\'t order if you have 4 unrated orders\n- Change all references to "Discord Tea" to "Tea Time"\n- Small changes and improvements', inline = False)
-        embedToSend.add_field(name = 'v2.2.1 - September 9 2020', value = '- Bug Fixes\n- Unrated orders are now shown in ``tea!myorders``\n- Add Order ID to deliver message sent to user\n- ``tea!rate`` has a better description in help', inline = False)
+        embedToSend.add_field(name = 'v2.2.3 - October 11 2020', value = '-Cancelled orders are now tallied in stats\n- Average ratings hidden from tea!somstats\n- Added water glasses to tea!quickorder\n- Fixed a secret command', inline = False)
+        embedToSend.add_field(name = 'v2.2.2 - September 10 2020', value = '- Now you can\'t order if you have 4 unrated orders\n- Change all references to "Discord Tea" to "Tea Time"\n- Small changes and improvements', inline = False)
+        embedToSend.add_field(name = 'v2.2.1 - September 9 2020', value = '- Unrated orders are now shown in ``tea!myorders``\n- Add Order ID to deliver message sent to user\n- ``tea!rate`` has a better description in help', inline = False)
         embedToSend.add_field(name = 'v2.2.0 - September 9 2020', value = '__New Features__\n- ``tea!somstats`` to check the statistics of a Tea Sommelier\n- Weekly ratings reset\n\n__Changes__\n- ``tea!rate`` no longer has cooldown\n- Ratings update! Now, instead of rating the bot service in general, you rate the specific tea that was delivered to you.\n- Added OrderID in more places to help users understand new ratings system\n- ``tea!invite`` now has alias ``tea!vote``', inline = False)
         embedToSend.add_field(name = 'Questions or Concerns?', value = 'Join the support server at [discord.gg/mP8U9ey](https://discord.gg/mP8U9ey)')
 
