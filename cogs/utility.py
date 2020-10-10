@@ -12,6 +12,8 @@ class Utility(commands.Cog):
         self.blacklistLog = 740422397869424672
         self.blacklistLogObj = None
 
+        self.staffChannel = 740411953603805285
+
         self.blacklistImmune = [368860954227900416, 416987805739122699]
 
     @commands.command()
@@ -35,22 +37,18 @@ class Utility(commands.Cog):
         await ctx.send(embed = embedToSend)
 
     @commands.command()
-    async def changelog(self, ctx):
-
-        embedToSend = discord.Embed(title = 'Tea Time Changelog', colour = discord.Colour.dark_green())
-        embedToSend.add_field(name = 'v2.2.3 - October 11 2020', value = '-Cancelled orders are now tallied in stats\n- Average ratings hidden from tea!somstats\n- Added water glasses to tea!quickorder\n- Fixed a secret command', inline = False)
-        embedToSend.add_field(name = 'v2.2.2 - September 10 2020', value = '- Now you can\'t order if you have 4 unrated orders\n- Change all references to "Discord Tea" to "Tea Time"\n- Small changes and improvements', inline = False)
-        embedToSend.add_field(name = 'v2.2.1 - September 9 2020', value = '- Unrated orders are now shown in ``tea!myorders``\n- Add Order ID to deliver message sent to user\n- ``tea!rate`` has a better description in help', inline = False)
-        embedToSend.add_field(name = 'v2.2.0 - September 9 2020', value = '__New Features__\n- ``tea!somstats`` to check the statistics of a Tea Sommelier\n- Weekly ratings reset\n\n__Changes__\n- ``tea!rate`` no longer has cooldown\n- Ratings update! Now, instead of rating the bot service in general, you rate the specific tea that was delivered to you.\n- Added OrderID in more places to help users understand new ratings system\n- ``tea!invite`` now has alias ``tea!vote``', inline = False)
-        embedToSend.add_field(name = 'Questions or Concerns?', value = 'Join the support server at [discord.gg/mP8U9ey](https://discord.gg/mP8U9ey)')
-
-        await ctx.send(embed = embedToSend)
-
-    @commands.command(alises = ['vote'])
     async def invite(self, ctx):
 
         embedToSend = discord.Embed(colour = discord.Colour.blurple())
         embedToSend.add_field(name = 'Useful Links', value = '[Invite me to your server!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\n[Join my support server](https://discord.gg/mP8U9ey)\n[Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)')
+
+        await ctx.send(embed = embedToSend)
+
+    @commands.command()
+    async def vote(self, ctx):
+
+        embedToSend = discord.Embed(colour = discord.Colour.blurple())
+        embedToSend.add_field(name = 'Vote for Tea Time to help it grow!', value = '[Click here to vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote) It will help me grow and only takes 30 seconds!')
 
         await ctx.send(embed = embedToSend)
 
@@ -66,6 +64,7 @@ class Utility(commands.Cog):
         - **Orders Declined/Cancelled:** ``{}``
         - **Quickorders Brewed:** ``{}``
         - **Ratings Given:** ``{}``
+        - **Average Rating:** ``{}``:star:
         - **Feedback Comments Given:** ``{}``
         - **Facts Told:** ``{}``
         - **Times it's been tea time:** ``{}``
@@ -77,13 +76,14 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.2.2``
+        - **Bot Version:** ``2.2.3``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
             statsDB['declined'],
             statsDB['quickorders'],
             statsDB['ratings'],
+            rating_data.GetAverage(),
             statsDB['feedback'],
             statsDB['facts'],
             statsDB['teatime'],
@@ -123,13 +123,18 @@ class Utility(commands.Cog):
 
         ratingAverage = total / counter
 
+        if not ctx.channel.id == self.staffChannel:
+            ratingAverage = 'Hidden.'
+        else:
+            ratingAverage = '``' + str(ratingAverage) + '``:star:'
+
         embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
 - **Orders Delivered:** ``{}``
 - **Orders Delivered This Week:** ``{}/3``
 - **Teas Declined:** ``{}``
 - **Teas Declined This Week:** ``{}``
 - **Total Ratings This Week:** ``{}``
-- **Rating:** :star:``{}``\n
+- **Rating:** {}\n
 - **Recent Deliveries:**\n- ``{}``\n- ``{}``\n- ``{}``\n
 - **Recent Ratings:**\n{}\n{}\n{}
         """.format(

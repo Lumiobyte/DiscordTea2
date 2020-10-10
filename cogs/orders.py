@@ -62,6 +62,11 @@ class Orders(commands.Cog):
                 await ctx.send(":rage: **| Your order contained COFFEE! You TRAITOR!!**")
                 return
 
+        for item in ['hitler', 'nazi', 'heroin', 'sex', 'sexy', 'piss', 'pee', 'wee', 'ass', 'penis', 'dick', 'cock', 'cum', 'semen', 'cocaine']:
+            if item in order.lower():
+                await ctx.send(":warning: **| This order is against the rules (see them with ``tea!rules``). If you try to bypass this filter you will be blacklisted immediately.**")
+                return
+
         orderCountUser = 0
         ratingWaitingUser = 0
 
@@ -719,7 +724,7 @@ class Orders(commands.Cog):
         rating_data.Add(rating)
         sommelier_stats_data.AddRating(self.waitingForRating[orderid][4], rating)
 
-        await ctx.send(":star: **| You rated your ``{}`` {}! Thanks for your feedback!**".format(self.waitingForRating[orderid][2], ':star:' * rating))
+        await ctx.send(":star: **| You rated your ``{}`` {}! Thanks for your feedback! Remember you can always support us by ``tea!vote`` for us to help us grow!**".format(self.waitingForRating[orderid][2], ':star:' * rating))
 
         sommelier = self.client.get_user(self.waitingForRating[orderid][4])
 

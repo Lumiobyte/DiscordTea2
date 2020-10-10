@@ -20,7 +20,7 @@ for cog in cogs:
 async def on_ready():
     print("Bot is online.")
 
-    activity = discord.Game(name = 'with tea | tea!help | v2.2.2')
+    activity = discord.Game(name = 'with tea | tea!help | v2.2.3')
     await client.change_presence(activity = activity, status = discord.Status.online)
 
     stats_data.WriteSingle('login')
@@ -67,7 +67,7 @@ async def help(ctx):
 
     embedToSend.add_field(name = 'Links', value = 'Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\nSupport server: [Join](https://discord.gg/mP8U9ey)\n[Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)', inline = False)
 
-    embedToSend.set_footer(text = 'Tea Time v2.2.2 by Lumiobyte#0867 - Check tea!changelog for update changelog')
+    embedToSend.set_footer(text = 'Tea Time v2.2.3 by Lumiobyte#0867')
 
     await ctx.send(embed = embedToSend)
 
@@ -98,7 +98,7 @@ async def is_in_dms(ctx):
         return False
     
     if ctx.channel.is_nsfw() is True:
-        await ctx.send(':lock: **| For the safety of sommeliers, you cannot use commands in NSFW channels.**')
+        await ctx.send(':lock: **| For the safety of Sommeliers, you cannot use commands in NSFW channels.**')
 
         return False
     

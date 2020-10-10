@@ -22,7 +22,7 @@ class Feedback(commands.Cog):
         if self.feedbackChannelObj is None:
             self.feedbackChannelObj = self.client.get_channel(self.feedbackChannel)
 
-        await ctx.send(":white_check_mark: **| Your feedback has been sent. Thanks, {}!**".format(ctx.author.name))
+        await ctx.send(":white_check_mark: **| Your feedback has been sent. Thanks, {}! Remember you can always support us by ``tea!vote`` for us to help us grow!**".format(ctx.author.name))
         await self.feedbackChannelObj.send(":speech_left: **| Received feedback from `{}`: `{}`**".format(ctx.author, comment))
 
         stats_data.WriteSingle('feedback')
