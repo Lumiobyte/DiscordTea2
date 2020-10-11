@@ -176,6 +176,7 @@ class Orders(commands.Cog):
 
     @commands.command()
     async def quickorder(self, ctx, option=None):
+        
 
         image = ''
         order = ''
@@ -241,6 +242,12 @@ class Orders(commands.Cog):
 
     @commands.command()
     async def myorders(self, ctx):
+
+        try:
+            self.votes[str(ctx.author.id)]
+        except:
+            self.votes[str(ctx.author.id)] = 0
+
         usersIDs = []
         usersWaiting = []
         embedValue = ''
