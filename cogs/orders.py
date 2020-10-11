@@ -54,7 +54,7 @@ class Orders(commands.Cog):
         self.milkteas = ["https://s23991.pcdn.co/wp-content/uploads/2015/12/spiced-sweet-milk-tea-recipe.jpg", "https://i2.wp.com/subbucooks.com/wp-content/uploads/2017/12/IMG_1212.jpg?fit=2585%2C1700&ssl=1", "https://cdn.cpnscdn.com/static.coupons.com/ext/kitchme/images/recipes/600x400/honey-milk-tea-hong-kong-style_55311.jpg"]
         self.waterGlasses = ['https://images.all-free-download.com/images/graphiclarge/glass_cup_and_water_vector_587233.jpg', 'https://gooloc.com/wp-content/uploads/vector/59/dvryfl0d0hw.jpg', 'https://ak.picdn.net/shutterstock/videos/1497607/thumb/1.jpg']
 
-        self.dblClient = dbl.DBLClient(bot = self.client, token = '', autopost = False, webhook_port = 5000, webhook_auth = '', webhook_path = '/dblwebhook')
+        self.dblClient = dbl.DBLClient(bot = self.client, token = '', autopost = False, webhook_port = 5001, webhook_auth = '', webhook_path = '/dblwebhook')
 
         self.votes = {}
 
@@ -167,12 +167,12 @@ class Orders(commands.Cog):
         try:
             await ctx.send(message)
         except:
-            await ctx.send(message + '\n\n:pray: Please consider letting me send messages in the channel #{} your server, {}. Right now I do not have permissions to send messages there...'.format(ctx.channel.name, ctx.guild.name))
+            await ctx.author.send(message + '\n\n:pray: Please consider letting me send messages in the channel #{} your server, {}. Right now I do not have permissions to send messages there...'.format(ctx.channel.name, ctx.guild.name))
 
         if self.orderLogObj is None:
             self.orderLogObj = self.client.get_channel(self.orderLog)
 
-        await self.orderLogObj.send(":inbox_tray: **| Received order of ``{}`` with ID ``{}``. Ordered by {} in server {}.**".format(order, self.totalOrderCount - 1, ctx.author, ctx.guild.name))
+        await self.orderLogObj.send(":inbox_tray: **| Received order of ``{}`` with ID ``{}``. Ordered by {} ({}) in server {} ({}).**".format(order, self.totalOrderCount - 1, ctx.author, ctx.author.id, ctx.guild.name, ctx.guild.id))
 
     @commands.command()
     async def quickorder(self, ctx, option=None):
