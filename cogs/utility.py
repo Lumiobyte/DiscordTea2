@@ -124,7 +124,7 @@ class Utility(commands.Cog):
         ratingAverage = total / counter
 
         if not ctx.channel.id == self.staffChannel:
-            ratingAverage = 'Hidden.'
+            ratingAverage = 'Hidden'
         else:
             ratingAverage = '``' + str(ratingAverage) + '``:star:'
 
