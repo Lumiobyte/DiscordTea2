@@ -62,7 +62,7 @@ class Orders(commands.Cog):
                 await ctx.send(":rage: **| Your order contained COFFEE! You TRAITOR!!**")
                 return
 
-        for item in ['hitler', 'nazi', 'heroin', 'sex', 'sexy', 'piss', 'pee', 'wee', 'ass', 'penis', 'dick', 'cock', 'cum', 'semen', 'cocaine']:
+        for item in ['hitler', 'nazi', 'heroin', 'sex', 'sexy', 'piss', 'pee', 'ass', 'penis', 'dick', 'cock', 'cum', 'semen', 'cocaine']:
             if item in order.lower():
                 await ctx.send(":warning: **| This order is against the rules (see them with ``tea!rules``). If you try to bypass this filter you will be blacklisted immediately.**")
                 return
