@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+import dbl
 
 import random
 import asyncio
@@ -17,6 +18,8 @@ from utils import sommelier_data, stats_data, sommelier_stats_data, rating_data
 #
 # Same with self.waitingForRating
 
+# votes: simply check if an ID has a number bigger than 0
+
 class Orders(commands.Cog):
 
     def __init__(self, client):
@@ -29,6 +32,9 @@ class Orders(commands.Cog):
         self.orderCount = 0
         self.totalOrderCount = 0
 
+        self.ttBotID = 507004433226268699
+        self.bonusOrderCap = 2
+
         self.orderLog = 740422451380617317
         self.orderLogObj = None
 
@@ -36,6 +42,9 @@ class Orders(commands.Cog):
         self.ratingsChannelObj = None
 
         self.bypassUsers = [416987805739122699, 368860954227900416]
+
+        self.orderLock = False
+        self.orderLockMessage = 'Tea Time is currently undergoing maintenance. You may order again soon.'
 
         self.greenteas = ["https://i.imgur.com/FhNORTN.jpg", "https://i.imgur.com/6fSgciV.jpg", "https://i.imgur.com/CBpDMuz.jpg", "https://i.imgur.com/hAFTCTg.jpg", "https://i.imgur.com/tCcHH0V.jpg"]
         self.blackteas = ["https://i.imgur.com/5sh7TfX.jpg", "https://i.imgur.com/ucaa8gx.jpg", "https://i.imgur.com/E60w7jA.jpg", "https://i.imgur.com/Ba15j7i.jpg", "https://i.imgur.com/r8VpEJR.jpg", "https://i.imgur.com/0C3vxVY.jpg", "https://i.imgur.com/9Aejbyb.jpg"]
@@ -45,9 +54,54 @@ class Orders(commands.Cog):
         self.milkteas = ["https://s23991.pcdn.co/wp-content/uploads/2015/12/spiced-sweet-milk-tea-recipe.jpg", "https://i2.wp.com/subbucooks.com/wp-content/uploads/2017/12/IMG_1212.jpg?fit=2585%2C1700&ssl=1", "https://cdn.cpnscdn.com/static.coupons.com/ext/kitchme/images/recipes/600x400/honey-milk-tea-hong-kong-style_55311.jpg"]
         self.waterGlasses = ['https://images.all-free-download.com/images/graphiclarge/glass_cup_and_water_vector_587233.jpg', 'https://gooloc.com/wp-content/uploads/vector/59/dvryfl0d0hw.jpg', 'https://ak.picdn.net/shutterstock/videos/1497607/thumb/1.jpg']
 
+        self.dblClient = dbl.DBLClient(bot = self.client, token = '', autopost = False, webhook_port = 5001, webhook_auth = '', webhook_path = '/dblwebhook')
+
+        self.votes = {}
+
+    @commands.Cog.listener()
+    async def on_dbl_vote(self, data):
+        
+        if data['bot'] != str(self.ttBotID):
+            return
+
+        try:
+            self.votes[data['user']]
+        except:
+            self.votes[data['user']] = 0
+        
+        self.votes[data['user']] += 1
+
+        if self.votes[data['user']] > 2:
+            self.votes[data['user']] == 2
+
+    @commands.command()
+    async def lockorders(self, ctx, *, message = None):
+
+        if ctx.author.id != 368860954227900416:
+            return
+        
+        if self.orderLock == True:
+            self.orderLock = False
+        else:
+            self.orderLock = True
+
+        if message != None:
+            self.orderLockMessage = message
+
+        await ctx.send('Set order lock to ``{}`` and message to ``{}``'.format(self.orderLock, self.orderLockMessage))
+
 
     @commands.command()
     async def order(self, ctx, *, order = None):
+
+        if self.orderLock == True:
+            await ctx.send(':warning: **| {}**'.format(self.orderLockMessage))
+            return
+
+        try:
+            self.votes[str(ctx.author.id)]
+        except:
+            self.votes[str(ctx.author.id)] = 0
 
         if order is None:
             await ctx.send(':grey_question: **| What type of tea would you like, {}? To order, use ``tea!order <tea>`` and replace ``<tea>`` with your order.**'.format(ctx.author.mention))
@@ -78,21 +132,25 @@ class Orders(commands.Cog):
             if self.waitingForRating[orderid][1] == ctx.author:
                 ratingWaitingUser += 1
 
-        if orderCountUser >= 2 and ctx.author.id != 368860954227900416:
-            await ctx.send(':no_entry_sign: **| You can\'t have more than 2 orders pending at once!**')
-            return
-
         if ratingWaitingUser >= 5 and ctx.author.id != 368860954227900416:
             await ctx.send(':no_entry_sign: **| You haven\'t rated 5 of your orders! Please rate them before you order more. Check ``tea!myorders`` to see which orders to rate.**')
             return
 
-        if self.orderCount >= 30 and ctx.author.id != 368860954227900416:
+        if self.orderCount >= 40 and ctx.author.id != 368860954227900416:
             await ctx.send(':no_entry_sign: **| The order limit of 30 active orders has been hit. Please wait while our staff complete some orders.**')
             return
 
         if len(order) > 300:
             await ctx.send(':no_entry_sign: **| Your order is over 300 characters long! Please keep it shorter.**')
             return
+
+        if orderCountUser >= 2:
+            if self.votes[str(ctx.author.id)] <= 0:
+                await ctx.send(':no_entry_sign: **| You can\'t have more than 2 orders pending at once! Vote for Tea Time using ``tea!vote`` to get another order slot.**')
+                return
+            else:
+                self.votes[str(ctx.author.id)] -= 1
+                await ctx.send(':white_check_mark: **| Extra order slot used! You have {} extra orders remaining.**'.format(self.votes[str(ctx.author.id)]))
 
         self.orderIDs[self.totalOrderCount] = [ctx.channel, ctx.author, order, 'Waiting', None]
         self.totalOrderCount += 1
@@ -109,15 +167,16 @@ class Orders(commands.Cog):
         try:
             await ctx.send(message)
         except:
-            await ctx.send(message + '\n\n:pray: Please consider letting me send messages in the channel #{} your server, {}. Right now I do not have permissions to send messages there...'.format(ctx.channel.name, ctx.guild.name))
+            await ctx.author.send(message + '\n\n:pray: Please consider letting me send messages in the channel #{} your server, {}. Right now I do not have permissions to send messages there...'.format(ctx.channel.name, ctx.guild.name))
 
         if self.orderLogObj is None:
             self.orderLogObj = self.client.get_channel(self.orderLog)
 
-        await self.orderLogObj.send(":inbox_tray: **| Received order of ``{}`` with ID ``{}``. Ordered by {} in server {}.**".format(order, self.totalOrderCount - 1, ctx.author, ctx.guild.name))
+        await self.orderLogObj.send(":inbox_tray: **| Received order of ``{}`` with ID ``{}``. Ordered by {} ({}) in server {} ({}).**".format(order, self.totalOrderCount - 1, ctx.author, ctx.author.id, ctx.guild.name, ctx.guild.id))
 
     @commands.command()
     async def quickorder(self, ctx, option=None):
+        
 
         image = ''
         order = ''
@@ -183,6 +242,12 @@ class Orders(commands.Cog):
 
     @commands.command()
     async def myorders(self, ctx):
+
+        try:
+            self.votes[str(ctx.author.id)]
+        except:
+            self.votes[str(ctx.author.id)] = 0
+
         usersIDs = []
         usersWaiting = []
         embedValue = ''
@@ -197,7 +262,7 @@ class Orders(commands.Cog):
                 usersIDs.append(orderID)
 
         if len(usersIDs) <= 0:
-            embedToSend.add_field(name = "Your Active Orders (0)", value = "You have no active orders! Use tea!order to order something.", inline = False)
+            embedToSend.add_field(name = "Your Active Orders (0/{})".format(2 + self.votes[str(ctx.author.id)]), value = "You have no active orders! Use tea!order to order something. Use tea!vote to vote for Tea Time and get an extra order slot!", inline = False)
         else:
             for orderID in usersIDs:
                 orderCount += 1
@@ -207,7 +272,7 @@ class Orders(commands.Cog):
                     self.orderIDs[orderID][3]
                 )
 
-            embedToSend.add_field(name = "Your active orders ({})".format(orderCount), value = embedValue, inline = False)
+            embedToSend.add_field(name = "Your active orders ({}/{})".format(orderCount, 2 + self.votes[str(ctx.author.id)]), value = embedValue, inline = False)
 
         for orderID in self.waitingForRating:
             if self.waitingForRating[orderID][1] == ctx.author:
@@ -224,9 +289,9 @@ class Orders(commands.Cog):
                     'Unrated'
                 )
 
-            embedToSend.add_field(name = "Your unrated orders ({})".format(orderCount), value = embedValueWaiting + '\nTo rate an order, use ``tea!rate <order ID> <rating from 1 to 5>``.')
+            embedToSend.add_field(name = "Your unrated orders ({}/5)".format(orderCount), value = embedValueWaiting + '\nTo rate an order, use ``tea!rate <order ID> <rating from 1 to 5>``.')
         
-        embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order.')
+        embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order. Use tea!vote to vote for Tea Time and get an extra order slot!')
 
         await ctx.send(embed = embedToSend)
 

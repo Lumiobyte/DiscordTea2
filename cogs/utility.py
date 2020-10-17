@@ -76,7 +76,7 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.2.3``
+        - **Bot Version:** ``2.3.0``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -124,13 +124,13 @@ class Utility(commands.Cog):
         ratingAverage = total / counter
 
         if not ctx.channel.id == self.staffChannel:
-            ratingAverage = 'Hidden.'
+            ratingAverage = 'Hidden'
         else:
             ratingAverage = '``' + str(ratingAverage) + '``:star:'
 
         embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
 - **Orders Delivered:** ``{}``
-- **Orders Delivered This Week:** ``{}/3``
+- **Orders Delivered This Week:** ``{}/5``
 - **Teas Declined:** ``{}``
 - **Teas Declined This Week:** ``{}``
 - **Total Ratings This Week:** ``{}``

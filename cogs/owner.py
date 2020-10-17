@@ -84,8 +84,8 @@ class Owner(commands.Cog):
         statsDB = sommelier_stats_data.GetAll()
 
         for user in statsDB:
-            if statsDB[user]['totalDeliveredWeek'] < 3:
-                notCompletedList += '- ``{}`` {}/3 teas brewed this week. {} declined this week.\n'.format(user, statsDB[user]['totalDeliveredWeek'], statsDB[user]['totalDeclinedWeek'])
+            if statsDB[user]['totalDeliveredWeek'] < 5:
+                notCompletedList += '- ``{}`` {}/5 teas brewed this week. {} declined this week.\n'.format(user, statsDB[user]['totalDeliveredWeek'], statsDB[user]['totalDeclinedWeek'])
 
         if notCompletedList == '':
             notCompletedList = 'No sommeliers did not meet the quota this week.'
@@ -103,7 +103,7 @@ class Owner(commands.Cog):
         sommelierList = ''
 
         for user in db:
-            sommelierList += '- ``{}`` {} {}/3\n'.format(user, db[user]['totalDelivered'], db[user]['totalDeliveredWeek'])
+            sommelierList += '- ``{}`` {} {}/5\n'.format(user, db[user]['totalDelivered'], db[user]['totalDeliveredWeek'])
 
         embed = discord.Embed(colour = discord.Colour.dark_grey)
         embed.add_field(name = 'All Sommeliers', value = sommelierList)

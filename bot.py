@@ -20,7 +20,7 @@ for cog in cogs:
 async def on_ready():
     print("Bot is online.")
 
-    activity = discord.Game(name = 'with tea | tea!help | v2.2.3')
+    activity = discord.Game(name = 'with tea | tea!help | v2.3.0')
     await client.change_presence(activity = activity, status = discord.Status.online)
 
     stats_data.WriteSingle('login')
@@ -49,6 +49,7 @@ async def help(ctx):
 ``tea!privacy`` - See Tea Time\'s privacy policy
 ``tea!stats`` - See Tea Time\'s statistics.
 ``tea!invite`` - Get a link to invite Tea Time to your server, as well as an invite to the support server.
+``tea!vote`` - Vote for Tea Time to get an extra order slot!
 ``tea!ping`` - See bot latency.
 ``tea!tea`` :tea:
     """, inline = False)
@@ -67,7 +68,7 @@ async def help(ctx):
 
     embedToSend.add_field(name = 'Links', value = 'Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\nSupport server: [Join](https://discord.gg/mP8U9ey)\n[Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)', inline = False)
 
-    embedToSend.set_footer(text = 'Tea Time v2.2.3 by Lumiobyte#0867')
+    embedToSend.set_footer(text = 'Tea Time v2.3.0 by Lumiobyte#0867')
 
     await ctx.send(embed = embedToSend)
 
