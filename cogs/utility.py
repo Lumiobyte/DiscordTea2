@@ -76,14 +76,14 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.3.0``
+        - **Bot Version:** ``2.3.1``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
             statsDB['declined'],
             statsDB['quickorders'],
             statsDB['ratings'],
-            rating_data.GetAverage(),
+            round(rating_data.GetAverage(), 2),
             statsDB['feedback'],
             statsDB['facts'],
             statsDB['teatime'],
