@@ -53,6 +53,7 @@ class Orders(commands.Cog):
         self.bobateas = ["https://i.imgur.com/ywCyPDt.png", "https://i.imgur.com/9nhz0E5.png", "http://www.businessnewsasia.com/wp-content/uploads/2015/04/milk-tea.jpg"]
         self.milkteas = ["https://s23991.pcdn.co/wp-content/uploads/2015/12/spiced-sweet-milk-tea-recipe.jpg", "https://i2.wp.com/subbucooks.com/wp-content/uploads/2017/12/IMG_1212.jpg?fit=2585%2C1700&ssl=1", "https://cdn.cpnscdn.com/static.coupons.com/ext/kitchme/images/recipes/600x400/honey-milk-tea-hong-kong-style_55311.jpg"]
         self.waterGlasses = ['https://images.all-free-download.com/images/graphiclarge/glass_cup_and_water_vector_587233.jpg', 'https://gooloc.com/wp-content/uploads/vector/59/dvryfl0d0hw.jpg', 'https://ak.picdn.net/shutterstock/videos/1497607/thumb/1.jpg']
+        self.halloweenTea = 'https://cdn.discordapp.com/attachments/764001485759315999/766922383985999872/image1.png'
 
         self.dblClient = dbl.DBLClient(bot = self.client, token = '', autopost = False, webhook_port = 5001, webhook_auth = '', webhook_path = '/dblwebhook')
 
@@ -186,7 +187,7 @@ class Orders(commands.Cog):
 
         if not option:
             embed = discord.Embed(color=discord.Colour.green())
-            embed.add_field(name="Quick Order Menu", value="1 - Tea\n2 - Green Tea\n3 - Black Tea\n4 - Earl Grey Tea\n5 - Iced Tea\n6 - Milk Tea\n7 - Boba Tea", inline = False)
+            embed.add_field(name="Quick Order Menu", value="1 - Tea\n2 - Green Tea\n3 - Black Tea\n4 - Earl Grey Tea\n5 - Iced Tea\n6 - Milk Tea\n7 - Boba Tea\n8 - Water Glass\n9 - Halloween Tea :jack_o_lantern: **Halloween Exclusive!**", inline = False)
             embed.add_field(name = 'How to order:', value = 'To order, use ``tea!quickorder <number>`` with the number of the tea you want to order.', inline = False)
 
             await ctx.send(embed=embed)
@@ -199,8 +200,8 @@ class Orders(commands.Cog):
             await ctx.send(":no_entry_sign: **| <option> must be a number!**")
             return
 
-        if option > 7 or option < 1:
-            await ctx.send(":warning: **| That's not a valid option! Use `tea!quickorder` to see options.")
+        if option > 9 or option < 1:
+            await ctx.send(":warning: **| That's not a valid option! Use `tea!quickorder` to see options.**")
             return
 
         if option == 1:
@@ -227,14 +228,22 @@ class Orders(commands.Cog):
         elif option == 8:
             image = random.choice(self.waterGlasses)
             order = "Water Glass"
+        elif option == 9:
+            image = self.halloweenTea
+            order = 'Halloween Tea'
 
         await ctx.send(":tea: **| Ordered a {} for you! It will be delivered soon!**".format(order))
         
         await asyncio.sleep(80)
 
-        embedToSend = discord.Embed(colour = discord.Colour.green())
-        embedToSend.add_field(name = 'Your tea has arrived!', value = 'Your {} has been brewed!'.format(order))
-        embedToSend.set_image(url = image)
+        if option == 9:
+            embedToSend = discord.Embed(colour = discord.Colour.orange())
+            embedToSend.add_field(name = 'Your tea arrived... spooky!', value = 'Your {} has been brewed...'.format(order))
+            embedToSend.set_image(url = image)
+        else:
+            embedToSend = discord.Embed(colour = discord.Colour.green())
+            embedToSend.add_field(name = 'Your tea has arrived!', value = 'Your {} has been brewed!'.format(order))
+            embedToSend.set_image(url = image)        
 
         await ctx.send(ctx.author.mention, embed = embedToSend)
 
