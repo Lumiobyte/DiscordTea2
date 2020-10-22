@@ -271,7 +271,7 @@ class Orders(commands.Cog):
                 usersIDs.append(orderID)
 
         if len(usersIDs) <= 0:
-            embedToSend.add_field(name = "Your Active Orders (0/{})".format(2 + self.votes[str(ctx.author.id)]), value = "You have no active orders! Use tea!order to order something. Use tea!vote to vote for Tea Time and get an extra order slot!", inline = False)
+            embedToSend.add_field(name = "Your Active Orders (0)", value = "You have no active orders! Use tea!order to order something. Use tea!vote to vote for Tea Time and get an extra order slot!", inline = False)
         else:
             for orderID in usersIDs:
                 orderCount += 1
@@ -281,7 +281,7 @@ class Orders(commands.Cog):
                     self.orderIDs[orderID][3]
                 )
 
-            embedToSend.add_field(name = "Your active orders ({}/{})".format(orderCount, 2 + self.votes[str(ctx.author.id)]), value = embedValue, inline = False)
+            embedToSend.add_field(name = "Your active orders ({})".format(orderCount), value = embedValue, inline = False)
 
         for orderID in self.waitingForRating:
             if self.waitingForRating[orderID][1] == ctx.author:
@@ -298,7 +298,7 @@ class Orders(commands.Cog):
                     'Unrated'
                 )
 
-            embedToSend.add_field(name = "Your unrated orders ({}/5)".format(orderCount), value = embedValueWaiting + '\nTo rate an order, use ``tea!rate <order ID> <rating from 1 to 5>``.')
+            embedToSend.add_field(name = "Your unrated orders ({}/5)".format(usersWaiting), value = embedValueWaiting + '\nTo rate an order, use ``tea!rate <order ID> <rating from 1 to 5>``.')
         
         embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order. Use tea!vote to vote for Tea Time and get an extra order slot!')
 
