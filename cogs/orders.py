@@ -41,6 +41,8 @@ class Orders(commands.Cog):
         self.ratingsChannel = 740452811287822398
         self.ratingsChannelObj = None
 
+        self.messagesLogChannel = 795895939256156160
+
         self.bypassUsers = [416987805739122699, 368860954227900416]
 
         self.orderLock = False
@@ -138,7 +140,7 @@ class Orders(commands.Cog):
             return
 
         if self.orderCount >= 40 and ctx.author.id != 368860954227900416:
-            await ctx.send(':no_entry_sign: **| The order limit of 30 active orders has been hit. Please wait while our staff complete some orders.**')
+            await ctx.send(':no_entry_sign: **| The order limit of 40 active orders has been hit. Please wait while our staff complete some orders.**')
             return
 
         if len(order) > 300:
@@ -200,7 +202,7 @@ class Orders(commands.Cog):
             await ctx.send(":no_entry_sign: **| <option> must be a number!**")
             return
 
-        if option > 9 or option < 1:
+        if option > 8 or option < 1:
             await ctx.send(":warning: **| That's not a valid option! Use `tea!quickorder` to see options.**")
             return
 
@@ -228,9 +230,6 @@ class Orders(commands.Cog):
         elif option == 8:
             image = random.choice(self.waterGlasses)
             order = "Water Glass"
-        elif option == 9:
-            image = self.halloweenTea
-            order = 'Halloween Tea'
 
         await ctx.send(":tea: **| Ordered a {} for you! It will be delivered soon!**".format(order))
         
@@ -298,7 +297,7 @@ class Orders(commands.Cog):
                     'Unrated'
                 )
 
-            embedToSend.add_field(name = "Your unrated orders ({}/5)".format(usersWaiting), value = embedValueWaiting + '\nTo rate an order, use ``tea!rate <order ID> <rating from 1 to 5>``.')
+            embedToSend.add_field(name = "Your unrated orders ({}/5)".format(orderCountWaiting), value = embedValueWaiting + '\nTo rate an order, use ``tea!rate <order ID> <rating from 1 to 5>``.')
         
         embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order. Use tea!vote to vote for Tea Time and get an extra order slot!')
 
@@ -390,6 +389,68 @@ class Orders(commands.Cog):
         stats_data.WriteSingle('declined')
         self.orderIDs.pop(orderid, None)
         self.orderCount -= 1
+
+    @commands.command()
+    @commands.is_owner()
+    async def oeval(self, ctx, *, expr):
+
+        try:
+            result = eval(expr)
+            embedToSend = discord.Embed(colour = discord.Colour.green())
+        except Exception as e:
+            embedToSend = discord.Embed(colour = discord.Colour.red())
+            result = str(e)
+
+        embedToSend.add_field(name="Input:", value=":inbox_tray: ```{}```".format(expr), inline = False)
+        embedToSend.add_field(name="Output:", value=":outbox_tray: ```{}```".format(result), inline = False)
+
+        await ctx.send(embed = embedToSend)
+
+    @commands.command()
+    @commands.cooldown(10, 2, commands.BucketType.user)
+    async def message(self, ctx, orderid, *, message):
+
+        if orderid is None:
+            await ctx.send(':no_entry_sign: **| Please provide the Order ID of the order you want to cancel!**')
+            return
+
+        try:
+            orderid = int(orderid)
+        except:
+            await ctx.send(':no_entry_sign: **| An Order ID is a number!**')
+            return
+
+        try:
+            self.orderIDs[orderid]
+        except KeyError:
+            await ctx.send(":no_entry_sign: **| No order with that ID!**")
+            return
+
+        if self.orderIDs[orderid][1].id != ctx.author.id:
+            await ctx.send(":lock: **| You can message on behalf of orders you placed!**")
+            return
+
+        if self.orderIDs[orderid][3] != 'Brewing':
+            await ctx.send(':no_entry_sign: **| That order is not currently being brewed!**')
+            return
+
+        if len(message) >= 500:
+            await ctx.send(':no_entry_sign: **| That\'s a bit too long! Keep it under 500 characters.**')
+            return
+
+        brewer = discord.utils.get(self.client.get_all_members(), id = self.orderIDs[orderid][4])
+
+        if ctx.author.id == brewer.id:
+            await ctx.send(':no_entry_sign: **| You are brewing this order!**')
+            return
+
+        await self.client.get_channel(self.messagesLogChannel).send(':speech_balloon: **| Message from {} ``({})`` to ``{}``: ```{}```**'.format(ctx.author, ctx.author.id, brewer, message))
+
+        await brewer.send(':speech_balloon: **| Customer sent a message!**\n\n{}'.format(message))
+
+        await ctx.send(':white_check_mark: **| Your message has been sent.**')
+
+        stats_data.WriteSingle('messages')
 
     @commands.command(name="active-orders", aliases=["list", "list-o"])
     async def list_orders(self, ctx):

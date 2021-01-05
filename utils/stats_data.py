@@ -24,7 +24,7 @@ def WriteSingle(stat):
     with open(filepath, encoding="utf-8", mode="r") as f:
         db = json.load(f)
 
-        if stat not in ['placed', 'delivered', 'declined', 'quickorders', 'ratings', 'feedback', 'facts', 'teatime', 'help', 'login']:
+        if stat not in ['placed', 'delivered', 'declined', 'quickorders', 'ratings', 'feedback', 'facts', 'teatime', 'help', 'login', 'messages']:
             return
 
         db[stat] += 1

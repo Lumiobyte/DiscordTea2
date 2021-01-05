@@ -79,18 +79,56 @@ class Owner(commands.Cog):
         if ctx.author.id not in self.allowedUsers:
             return
 
-        notCompletedList = ''
+        userCount = 0
+        helperCounter = 0
+        helperValue = ''
+        embedValueList = []
+        embedList = []
 
         statsDB = sommelier_stats_data.GetAll()
 
         for user in statsDB:
             if statsDB[user]['totalDeliveredWeek'] < 5:
-                notCompletedList += '- ``{}`` {}/5 teas brewed this week. {} declined this week.\n'.format(user, statsDB[user]['totalDeliveredWeek'], statsDB[user]['totalDeclinedWeek'])
+                userCount += 1
+                helperCounter += 1
+                helperValue += '<@{}>: {} completed  / {} declined\n'.format(user, statsDB[user]['totalDeliveredWeek'], statsDB[user]['totalDeclinedWeek'])
+                if helperCounter >= 10:
+                    embedValueList.append(helperValue)
+                    helperCounter = 0
+                    helperValue = ''
 
-        if notCompletedList == '':
-            notCompletedList = 'No sommeliers did not meet the quota this week.'
-        
-        await ctx.send(notCompletedList)
+        if helperValue != '':
+            embedValueList.append(helperValue)
+
+        if userCount <= 0:
+            embed = discord.Embed(color = discord.Color.green())
+            embed.add_field(name = 'Sommelier Quota', value = 'No Sommeliers failed to meet quota this week.')
+            await ctx.send(embed = embed)
+            return
+
+        for embedValue in embedValueList:
+            embed = discord.Embed(color = discord.Color.red())
+            embed.add_field(name = 'Sommelier Quota', value = embedValue)
+            embedList.append(embed)
+
+        for embed in embedList:
+            await ctx.send(embed = embed)
+
+    @commands.command()
+    @commands.is_owner()
+    async def eval(self, ctx, *, expr):
+
+        try:
+            result = eval(expr)
+            embedToSend = discord.Embed(colour = discord.Colour.green())
+        except Exception as e:
+            embedToSend = discord.Embed(colour = discord.Colour.red())
+            result = str(e)
+
+        embedToSend.add_field(name="Input:", value=":inbox_tray: ```{}```".format(expr), inline = False)
+        embedToSend.add_field(name="Output:", value=":outbox_tray: ```{}```".format(result), inline = False)
+
+        await ctx.send(embed = embedToSend)
 
     @commands.command()
     async def somlist(self, ctx):
@@ -98,17 +136,39 @@ class Owner(commands.Cog):
         if ctx.author.id not in self.allowedUsers:
             return
 
-        db = sommelier_stats_data.GetAll()
+        userCount = 0
+        helperCounter = 0
+        helperValue = ''
+        embedValueList = []
+        embedList = []
 
-        sommelierList = ''
+        statsDB = sommelier_stats_data.GetAll()
 
-        for user in db:
-            sommelierList += '- ``{}`` {} {}/5\n'.format(user, db[user]['totalDelivered'], db[user]['totalDeliveredWeek'])
+        for user in statsDB:
+            userCount += 1
+            helperCounter += 1
+            helperValue += '<@{}>: {} completed week  / {} completed total\n'.format(user, statsDB[user]['totalDeliveredWeek'], statsDB[user]['totalDelivered'])
+            if helperCounter >= 10:
+                embedValueList.append(helperValue)
+                helperCounter = 0
+                helperValue = ''
 
-        embed = discord.Embed(colour = discord.Colour.dark_grey)
-        embed.add_field(name = 'All Sommeliers', value = sommelierList)
+        if helperValue != '':
+            embedValueList.append(helperValue)
 
-        await ctx.send(embed = embed)
+        if userCount <= 0:
+            embed = discord.Embed(color = discord.Color.red())
+            embed.add_field(name = 'Sommelier List (0)', value = 'No Tea Sommeliers to display.')
+            await ctx.send(embed = embed)
+            return
+
+        for embedValue in embedValueList:
+            embed = discord.Embed(color = discord.Color.green())
+            embed.add_field(name = 'Sommelier List ({})'.format(userCount), value = embedValue)
+            embedList.append(embed)
+
+        for embed in embedList:
+            await ctx.send(embed = embed)
 
 
     @commands.command()
@@ -191,22 +251,6 @@ class Owner(commands.Cog):
         else:
 
             await ctx.send(':x: **| ``{}`` is not a valid mode.**'.format(mode or 'None'))
-
-    @commands.command()
-    @commands.is_owner()
-    async def eval(self, ctx, *, expr):
-
-        try:
-            result = eval(expr)
-            embedToSend = discord.Embed(colour = discord.Colour.green())
-        except Exception as e:
-            embedToSend = discord.Embed(colour = discord.Colour.red())
-            result = str(e)
-
-        embedToSend.add_field(name="Input:", value=":inbox_tray: ```{}```".format(expr), inline = False)
-        embedToSend.add_field(name="Output:", value=":outbox_tray: ```{}```".format(result), inline = False)
-
-        await ctx.send(embed = embedToSend)
 
 
 def setup(client):

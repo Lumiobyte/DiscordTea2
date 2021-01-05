@@ -38,6 +38,7 @@ async def help(ctx):
 ``tea!quickorder <option>`` - Select a tea you'd like from a menu.
 ``tea!myorders`` - See your current active orders, and orders waiting to be rated.
 ``tea!oinfo <orderID>`` - Get the info on an order.
+``tea!message <orderID> <message>`` - Send a message to the Tea Sommelier currently brewing your order.
     """, inline = False)
     embedToSend.add_field(name="Feedback Commands", value="""
 ``tea!rate <orderid> <rating>`` - Rate your tea! Provide an Order ID (find it in `tea!myorders`) and rate it from 1 to 5:star:.
@@ -68,7 +69,7 @@ async def help(ctx):
 
     embedToSend.add_field(name = 'Links', value = 'Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\nSupport server: [Join](https://discord.gg/mP8U9ey)\n[Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)', inline = False)
 
-    embedToSend.set_footer(text = 'Tea Time v2.3.1 by Lumiobyte#0867')
+    embedToSend.set_footer(text = 'Tea Time v2.3.2 by Lumiobyte#0867')
 
     await ctx.send(embed = embedToSend)
 

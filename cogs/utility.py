@@ -27,7 +27,7 @@ class Utility(commands.Cog):
         • No Offensive Teas (Hitler/Nazi, Sexism, and/or any other forms of Racism - Communism excluded)
         • No Drugs, Medications or Poisons
         • No Human or Animal Body Parts, or Bodily Fluids
-        • Orders cannot contain people's names
+        • Orders cannot contain usernames
         • Orders cannot contain text formatting or non-Latin characters, except numbers and !#$%&<>?".
         • Orders cannot contain links.
         • Must Include Tea
@@ -66,6 +66,7 @@ class Utility(commands.Cog):
         - **Ratings Given:** ``{}``
         - **Average Rating:** ``{}``:star:
         - **Feedback Comments Given:** ``{}``
+        - **Messages Sent:** ``{}``
         - **Facts Told:** ``{}``
         - **Times it's been tea time:** ``{}``
         - **Times help command has been used:** ``{}``
@@ -76,7 +77,7 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.3.1``
+        - **Bot Version:** ``2.3.2``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -85,6 +86,7 @@ class Utility(commands.Cog):
             statsDB['ratings'],
             round(rating_data.GetAverage(), 2),
             statsDB['feedback'],
+            statsDB['messages'],
             statsDB['facts'],
             statsDB['teatime'],
             statsDB['help'],
@@ -123,10 +125,7 @@ class Utility(commands.Cog):
 
         ratingAverage = total / counter
 
-        if not ctx.channel.id == self.staffChannel:
-            ratingAverage = 'Hidden'
-        else:
-            ratingAverage = '``' + str(ratingAverage) + '``:star:'
+        ratingAverage = '``' + str(ratingAverage) + '``:star:'
 
         embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
 - **Orders Delivered:** ``{}``
