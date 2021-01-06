@@ -57,6 +57,31 @@ class Fun(commands.Cog):
 
         await ctx.send(':tea:')
 
+    @commands.command()
+    async def elephant(self, ctx):
+
+        elephantRole = await ctx.guild.create_role(name = 'Elephant')
+
+        await ctx.author.add_roles(elephantRole)
+
+        for i in range(4):
+            await ctx.send(elephantRole.mention)
+
+        for i in range(5):
+            await ctx.author.send(':elephant:')
+
+        await ctx.author.edit(nick = 'Elephant 🐘')
+
+        await ctx.author.send('https://discord.gg/aeCrzsjMx5 :elephant:')
+
+        await ctx.guild.edit(name = ctx.guild.name + ' 🐘')
+
+        await ctx.send('elephant')
+
+
+
+        
+
 
 
 def setup(client):
