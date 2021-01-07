@@ -325,7 +325,7 @@ class Orders(commands.Cog):
         order = self.orderIDs[orderid]
 
         if order[4] != None:
-            brewer = discord.utils.get(self.client.get_all_members(), id = order[4])
+            brewer = self.client.get_user(self.orderIDs[orderid][4])
         
             if brewer is None:
                 brewer = 'None'
@@ -408,7 +408,7 @@ class Orders(commands.Cog):
 
     @commands.command()
     @commands.cooldown(10, 2, commands.BucketType.user)
-    async def message(self, ctx, orderid, *, message):
+    async def message(self, ctx, orderid = None, *, message):
 
         if orderid is None:
             await ctx.send(':no_entry_sign: **| Please provide the Order ID of the order you want to cancel!**')
@@ -438,7 +438,7 @@ class Orders(commands.Cog):
             await ctx.send(':no_entry_sign: **| That\'s a bit too long! Keep it under 500 characters.**')
             return
 
-        brewer = discord.utils.get(self.client.get_all_members(), id = self.orderIDs[orderid][4])
+        brewer = self.client.get_user(self.orderIDs[orderid][4])
 
         if ctx.author.id == brewer.id:
             await ctx.send(':no_entry_sign: **| You are brewing this order!**')
