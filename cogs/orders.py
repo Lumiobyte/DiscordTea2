@@ -261,7 +261,7 @@ class Orders(commands.Cog):
             await ctx.send(":no_entry_sign: **| <option> must be a number!**")
             return
 
-        if option > 8 or option < 1:
+        if option > 10 or option < 1:
             await ctx.send(":warning: **| That's not a valid option! Use `tea!quickorder` to see options.**")
             return
 
