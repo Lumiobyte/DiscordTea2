@@ -78,7 +78,7 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.3.2``
+        - **Bot Version:** ``2.4.0``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
