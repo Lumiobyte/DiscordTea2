@@ -1,11 +1,12 @@
 import discord
-from discord.ext import commands
+from discord.ext import commands, tasks
 import dbl
 
+import datetime
 import random
 import asyncio
 
-from utils import sommelier_data, stats_data, sommelier_stats_data, rating_data
+from utils import sommelier_data, stats_data, sommelier_stats_data, rating_data, config_loader
 
 # IMPORTANT INFORMATION!
 # self.orderIDs entries look like this:
@@ -15,8 +16,10 @@ from utils import sommelier_data, stats_data, sommelier_stats_data, rating_data
 # [2] = order contents
 # [3] = order status
 # [4] = brewer userid (none if there is no brewer right now)
+# [5] = ordered timestamp
+# [6] = claimed timestamp (could be none if unclaimed)
 #
-# Same with self.waitingForRating
+# Same with self.waitingForRating 
 
 # votes: simply check if an ID has a number bigger than 0
 
@@ -43,7 +46,12 @@ class Orders(commands.Cog):
 
         self.messagesLogChannel = 795895939256156160
 
+        self.sommelierRolesDict = {'new': 749058359759601665, 'som': 740408576778043412, 'vet': 761596659288375327}
+        self.sommelierRolesList = [749058359759601665, 740408576778043412, 761596659288375327]
+
         self.bypassUsers = [416987805739122699, 368860954227900416]
+
+        self.newSommelierRole = 749058359759601665
 
         self.orderLock = False
         self.orderLockMessage = 'Tea Time is currently undergoing maintenance. You may order again soon.'
@@ -56,10 +64,49 @@ class Orders(commands.Cog):
         self.milkteas = ["https://s23991.pcdn.co/wp-content/uploads/2015/12/spiced-sweet-milk-tea-recipe.jpg", "https://i2.wp.com/subbucooks.com/wp-content/uploads/2017/12/IMG_1212.jpg?fit=2585%2C1700&ssl=1", "https://cdn.cpnscdn.com/static.coupons.com/ext/kitchme/images/recipes/600x400/honey-milk-tea-hong-kong-style_55311.jpg"]
         self.waterGlasses = ['https://images.all-free-download.com/images/graphiclarge/glass_cup_and_water_vector_587233.jpg', 'https://gooloc.com/wp-content/uploads/vector/59/dvryfl0d0hw.jpg', 'https://ak.picdn.net/shutterstock/videos/1497607/thumb/1.jpg']
         self.halloweenTea = 'https://cdn.discordapp.com/attachments/764001485759315999/766922383985999872/image1.png'
+        self.chaiTeas = ['https://www.thespruceeats.com/thmb/6B5wl61a5we2WetKu_8QmrgHkrs=/3000x1687/smart/filters:no_upscale()/how-to-make-masala-chai-tea-4134710-37c05169f2e3431f877ba5ecec6fd404.jpg', 'https://www.savoryspiceshop.com/content/mercury_modules/recipes/2/7/7/277/chai-tea-1330.jpg', 'https://i.pinimg.com/originals/39/04/58/390458633560d0fe70b0cf033fd2b6fc.jpg']
 
-        self.dblClient = dbl.DBLClient(bot = self.client, token = '', autopost = False, webhook_port = 5001, webhook_auth = '', webhook_path = '/dblwebhook')
+        self.dblClient = dbl.DBLClient(bot = self.client, token = config_loader.GrabToken('dbltoken'), autopost = False, webhook_port = 5001, webhook_auth = config_loader.GrabToken('dblvoteauth'), webhook_path = '/dblwebhook')
 
         self.votes = {}
+
+        self.everyTenMin.start()
+
+
+    @tasks.loop(minutes = 10)
+    async def everyTenMin(self):
+        pass
+
+
+        for orderid in self.orderIDs:
+            differenceOrdered = self.orderIDs[orderid][5] - datetime.datetime.now()
+            differenceClaimed = self.orderIDs[orderid][6] - datetime.datetime.now()
+
+            # checking for autodelete
+            if differenceOrdered >= datetime.timedelta(hours = 36) and self.orderIDs[orderid][3] == 'Waiting':
+                
+                try:
+                    await self.orderIDs[orderid][1].send(":wastebucket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 36 hours.**".format(self.orderIDs[orderid][2], orderid))
+                except:
+                    await self.orderIDs[orderid][0].send(":wastebucket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 36 hours.**".format(self.orderIDs[orderid][2], orderid))
+
+                await self.orderLogObj.send(":wastebucket: **| Order ID ``{}`` was deleted from the order list after waiting for 36 hours.**".format(orderid))
+
+                stats_data.WriteSingle('declined')
+                self.orderIDs.pop(orderid, None)
+                self.orderCount -= 1
+
+            if differenceClaimed >= datetime.timedelta(minutes = 30) and self.orderIDs[orderid][3] == 'Brewing':
+
+                try:
+                    await self.orderIDs[orderid][1].send(":hourglass: **| Your order of ``{}`` with ID ``{}`` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
+                except:
+                    await self.orderIDs[orderid][0].send(":hourglass: **| Your order of ``{}`` with ID ``{}`` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
+
+                await self.orderLogObj.send(":hourglass: **| Order ID ``{}`` auto-unclaimed after 30 minutes of inactivity.**".format(orderid))
+
+                self.orderIDs[orderid][3] = 'Waiting'
+                self.orderIDs[orderid][4] = None
 
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):
@@ -94,6 +141,7 @@ class Orders(commands.Cog):
         await ctx.send('Set order lock to ``{}`` and message to ``{}``'.format(self.orderLock, self.orderLockMessage))
 
 
+
     @commands.command()
     async def order(self, ctx, *, order = None):
 
@@ -119,7 +167,7 @@ class Orders(commands.Cog):
                 await ctx.send(":rage: **| Your order contained COFFEE! You TRAITOR!!**")
                 return
 
-        for item in ['hitler', 'nazi', 'heroin', 'sex', 'sexy', 'piss', 'pee', 'ass', 'penis', 'dick', 'cock', 'cum', 'semen', 'cocaine']:
+        for item in ['hitler', 'nazi', 'heroin', 'sex', 'piss', 'ass', 'penis', 'dick', 'cock', 'cum', 'semen', 'cocaine']:
             if item in order.lower():
                 await ctx.send(":warning: **| This order is against the rules (see them with ``tea!rules``). If you try to bypass this filter you will be blacklisted immediately.**")
                 return
@@ -155,7 +203,7 @@ class Orders(commands.Cog):
                 self.votes[str(ctx.author.id)] -= 1
                 await ctx.send(':white_check_mark: **| Extra order slot used! You have {} extra orders remaining.**'.format(self.votes[str(ctx.author.id)]))
 
-        self.orderIDs[self.totalOrderCount] = [ctx.channel, ctx.author, order, 'Waiting', None]
+        self.orderIDs[self.totalOrderCount] = [ctx.channel, ctx.author, order, 'Waiting', None, datetime.datetime.now(), None]
         self.totalOrderCount += 1
         self.orderCount += 1
 
@@ -189,7 +237,7 @@ class Orders(commands.Cog):
 
         if not option:
             embed = discord.Embed(color=discord.Colour.green())
-            embed.add_field(name="Quick Order Menu", value="1 - Tea\n2 - Green Tea\n3 - Black Tea\n4 - Earl Grey Tea\n5 - Iced Tea\n6 - Milk Tea\n7 - Boba Tea\n8 - Water Glass\n9 - Halloween Tea :jack_o_lantern: **Halloween Exclusive!**", inline = False)
+            embed.add_field(name="Quick Order Menu", value="1 - Tea\n2 - Green Tea\n3 - Black Tea\n4 - Earl Grey Tea\n5 - Iced Tea\n6 - Milk Tea\n7 - Boba Tea\n8 - Water Glass\n**NEW** 9 - Chai Tea\n**NEW** 10 - Zoo Tea", inline = False)
             embed.add_field(name = 'How to order:', value = 'To order, use ``tea!quickorder <number>`` with the number of the tea you want to order.', inline = False)
 
             await ctx.send(embed=embed)
@@ -226,23 +274,23 @@ class Orders(commands.Cog):
             order = "Milk Tea"
         elif option == 7:
             image = random.choice(self.bobateas)
-            order = "Boba Tea"
+            order = "Boba Tea (Bubble Tea)"
         elif option == 8:
             image = random.choice(self.waterGlasses)
             order = "Water Glass"
+        elif option == 9:
+            image = random.choice(self.chaiTeas)
+            order = "Chai Tea"
+        elif option == 10:
+            pass
 
         await ctx.send(":tea: **| Ordered a {} for you! It will be delivered soon!**".format(order))
         
         await asyncio.sleep(80)
 
-        if option == 9:
-            embedToSend = discord.Embed(colour = discord.Colour.orange())
-            embedToSend.add_field(name = 'Your tea arrived... spooky!', value = 'Your {} has been brewed...'.format(order))
-            embedToSend.set_image(url = image)
-        else:
-            embedToSend = discord.Embed(colour = discord.Colour.green())
-            embedToSend.add_field(name = 'Your tea has arrived!', value = 'Your {} has been brewed!'.format(order))
-            embedToSend.set_image(url = image)        
+        embedToSend = discord.Embed(colour = discord.Colour.green())
+        embedToSend.add_field(name = 'Your tea has arrived!', value = 'Your {} has been brewed!'.format(order))
+        embedToSend.set_image(url = image)        
 
         await ctx.send(ctx.author.mention, embed = embedToSend)
 
@@ -410,46 +458,74 @@ class Orders(commands.Cog):
     @commands.cooldown(10, 2, commands.BucketType.user)
     async def message(self, ctx, orderid = None, *, message):
 
+        # no orderid check
         if orderid is None:
-            await ctx.send(':no_entry_sign: **| Please provide the Order ID of the order you want to cancel!**')
+            await ctx.send(':no_entry_sign: **| Please provide the Order ID of the order you want to send a message about!**')
             return
 
+        # int check
         try:
             orderid = int(orderid)
         except:
             await ctx.send(':no_entry_sign: **| An Order ID is a number!**')
             return
 
+        # exists check
         try:
             self.orderIDs[orderid]
         except KeyError:
             await ctx.send(":no_entry_sign: **| No order with that ID!**")
             return
 
+
+        # length check
+        if len(message) >= 500:
+            await ctx.send(':no_entry_sign: **| That\'s a bit too long! Keep it under 500 characters.**')
+            return
+
+
+        # if user is som and they're brewing this order, send a message to order customer
+        if sommelier_data.Check(ctx.author.id):
+            if self.orderIDs[orderid][4] == ctx.author.id:
+
+                brewer = self.client.get_user(self.orderIDs[orderid][4])
+
+                # log
+                await self.client.get_channel(self.messagesLogChannel).send(':speech_balloon: **| Message to {} ``({})`` from ``{}``: ```{}```**'.format(ctx.author, ctx.author.id, brewer, message))
+
+                # msg customer
+                await self.orderIDs[1].send(':speech_balloon: **| The brewer of your order {} sent you a message!\n\n{}'.format(self.orderIDs[2], message))
+
+                # confirmation
+                await ctx.send(':white_check_mark: **| Your message has been sent.**')
+
+                # stats
+                stats_data.WriteSingle('messages')
+
+                return
+
+        # otherwise, user is customer, and can only send if its their order and its brewing
+
         if self.orderIDs[orderid][1].id != ctx.author.id:
-            await ctx.send(":lock: **| You can message on behalf of orders you placed!**")
+            await ctx.send(":lock: **| You can only message on behalf of orders you placed!**")
             return
 
         if self.orderIDs[orderid][3] != 'Brewing':
             await ctx.send(':no_entry_sign: **| That order is not currently being brewed!**')
             return
 
-        if len(message) >= 500:
-            await ctx.send(':no_entry_sign: **| That\'s a bit too long! Keep it under 500 characters.**')
-            return
-
         brewer = self.client.get_user(self.orderIDs[orderid][4])
 
-        if ctx.author.id == brewer.id:
-            await ctx.send(':no_entry_sign: **| You are brewing this order!**')
-            return
-
+        # log
         await self.client.get_channel(self.messagesLogChannel).send(':speech_balloon: **| Message from {} ``({})`` to ``{}``: ```{}```**'.format(ctx.author, ctx.author.id, brewer, message))
 
+        # msg brewer
         await brewer.send(':speech_balloon: **| Customer sent a message!**\n\n{}'.format(message))
 
+        # confirmation
         await ctx.send(':white_check_mark: **| Your message has been sent.**')
 
+        # stats
         stats_data.WriteSingle('messages')
 
     @commands.command(name="active-orders", aliases=["list", "list-o"])
@@ -615,6 +691,7 @@ class Orders(commands.Cog):
 
         self.orderIDs[orderid][3] = "Brewing"
         self.orderIDs[orderid][4] = ctx.author.id
+        self.orderIDs[orderid][6] = datetime.datetime.now()
 
         await ctx.send(":white_check_mark: **| You claimed the order of ``{}``! Start brewing!**".format(self.orderIDs[orderid][2]))
         await self.orderLogObj.send(":man: **| Tea sommelier {} claimed the order with ID `{}` and is now brewing it!**".format(ctx.author.name, orderid))
@@ -664,6 +741,7 @@ class Orders(commands.Cog):
 
         self.orderIDs[orderid][3] = "Waiting"
         self.orderIDs[orderid][4] = None
+        self.orderIDs[orderid][6] = None
 
         await ctx.send(":white_check_mark: **| You unclaimed the order with ID `{}`.**".format(orderid))
         await self.orderLogObj.send(":x: **| Tea Sommelier {} unclaimed the order with ID `{}`.**".format(ctx.author.name, orderid))
@@ -700,6 +778,10 @@ class Orders(commands.Cog):
             self.orderIDs[orderid]
         except KeyError:
             await ctx.send(":no_entry_sign: **| No order with that ID!**")
+            return
+
+        if stats_data.GetRank() == 'new':
+            await ctx.send('New Sommeliers cannot decline orders.')
             return
 
         if self.orderLogObj is None:
@@ -782,11 +864,15 @@ class Orders(commands.Cog):
                 except:
                     pass
 
-            sommelier_stats_data.AddOrderDelivered(ctx.author.id)
-            sommelier_stats_data.AddRecentDeliver(ctx.author.id, self.orderIDs[orderid][2])
-
             self.orderIDs.pop(orderid, None)
             self.orderCount -= 1
+
+            sommelier_stats_data.AddRecentDeliver(ctx.author.id, self.orderIDs[orderid][2])
+
+            result = sommelier_stats_data.AddOrderDelivered(ctx.author.id)
+
+            if result[0] == True:
+                await ctx.author.add_roles(ctx.guild.get_role(self.sommelierRolesDict[result[1]]))
 
             return
 

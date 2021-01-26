@@ -34,6 +34,7 @@ def AddSommelier(userid):
         userid = str(userid)
 
         db[userid] = {}
+        db[userid]['rank'] = 'new'
         db[userid]['totalDelivered'] = 0
         db[userid]['totalDeliveredWeek'] = 0
         db[userid]['totalDeclined'] = 0
@@ -70,11 +71,16 @@ def AddOrderDelivered(userid):
 
         userid = str(userid)
 
+        totalDeliveredPrev = db[userid]['totalDelivered']
         db[userid]['totalDelivered'] += 1
         db[userid]['totalDeliveredWeek'] += 1
 
     with open(filepath, encoding="utf-8", mode="w") as f:
         json.dump(db, f)
+
+    if (totalDeliveredPrev == 9 and db[userid]['totalDelivered'] == 10) or (totalDeliveredPrev == 99 and db[userid]['totalDelivered'] == 100):
+        result = UpgradeRank(userid)
+        return result
 
 def AddOrderDeclined(userid):
     with open(filepath, encoding="utf-8", mode="r") as f:
@@ -116,7 +122,7 @@ def AddRecentDeliver(userid, order):
 
         if CheckIfExists(userid) == False:
             AddSommelier(userid)
-            return False
+            return [False]
 
         userid = str(userid)
 
@@ -137,6 +143,43 @@ def GetSommelier(userid):
         userid = str(userid)
 
         return db[userid]
+
+def UpgradeRank(userid):
+
+    with open(filepath, encoding="utf-8", mode="r") as f:
+        db = json.load(f)
+
+        if CheckIfExists(userid) == False:
+            AddSommelier(userid)
+            return False
+
+        userid = str(userid)
+
+        if db[userid]['rank'] == 'new':
+            db[userid]['rank'] = 'som'
+        elif db[userid]['rank'] == 'som':
+            db[userid]['rank'] = 'vet'
+
+        newRank = db[userid]['rank']
+
+    with open(filepath, encoding="utf-8", mode="w") as f:
+        json.dump(db, f)
+
+    return [True, newRank]
+
+def GetRank(userid):
+
+    with open(filepath, encoding="utf-8", mode="r") as f:
+        db = json.load(f)
+
+        if CheckIfExists(userid) == False:
+            AddSommelier(userid)
+            return False
+
+        userid = str(userid)
+
+        return db[userid]['rank']
+
 
 def GetAll():
     with open(filepath, encoding="utf-8", mode="r") as f:

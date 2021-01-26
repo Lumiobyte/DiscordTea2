@@ -119,6 +119,15 @@ class Utility(commands.Cog):
         total = 0
         counter = 0
 
+        rank = ''
+
+        if statsDB['rank'] == 'new'
+            rank = 'New Sommelier'
+        elif statsDB['rank'] == 'som':
+            rank = 'Tea Sommelier'
+        elif statsDB['rank'] == 'vet':
+            rank = '**Veteran Sommelier**'
+
         for i in range(0, 5):
             total += (i + 1) * statsDB['ratings'][i]
             counter += 1 * statsDB['ratings'][i]
@@ -128,6 +137,8 @@ class Utility(commands.Cog):
         ratingAverage = '``' + str(ratingAverage) + '``:star:'
 
         embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
+__{}__
+
 - **Orders Delivered:** ``{}``
 - **Orders Delivered This Week:** ``{}/5``
 - **Teas Declined:** ``{}``
@@ -137,6 +148,7 @@ class Utility(commands.Cog):
 - **Recent Deliveries:**\n- ``{}``\n- ``{}``\n- ``{}``\n
 - **Recent Ratings:**\n{}\n{}\n{}
         """.format(
+            rank,
             statsDB['totalDelivered'],
             statsDB['totalDeliveredWeek'],
             statsDB['totalDeclined'],

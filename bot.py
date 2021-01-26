@@ -1,14 +1,17 @@
 import discord
 from discord.ext import commands
 
-from utils import blacklist_data, stats_data, sommelier_data
+from utils import blacklist_data, stats_data, sommelier_data, config_loader
 
-client = commands.Bot(command_prefix = ['tea!', 'Tea!', 'TEA!', 't!', 'T!'])
+client = commands.AutoShardedBot(command_prefix = ['tea!', 'Tea!', 'TEA!', 't!', 'T!'])
 client.remove_command('help')
 
-TOKEN = ''
+intents = discord.Intents.all()
+intents.presences = False
 
-cogs = ['cogs.utility', 'cogs.feedback', 'cogs.fun', 'cogs.events', 'cogs.orders', 'cogs.owner', 'cogs.dbl']
+TOKEN = config_loader.GrabToken('token')
+
+cogs = ['cogs.utility', 'cogs.feedback', 'cogs.fun', 'cogs.events', 'cogs.orders', 'cogs.owner', 'cogs.dbl', 'cogs.statcord']
 
 for cog in cogs:
     try:

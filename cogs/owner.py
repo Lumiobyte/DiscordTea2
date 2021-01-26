@@ -42,6 +42,47 @@ class Owner(commands.Cog):
 
     @commands.command()
     @commands.is_owner()
+    async def picksotw(self, ctx):
+
+        message = await ctx.send('<a:loader:803401760210944071> **| Calculating...**')
+
+        somstats = sommelier_stats_data.GetAll()
+
+        toSort = {}
+        sortedOrdersCompleted = None
+        sortedRatings = None
+        j = 0
+
+        for user in somstats:
+            toSort[user] = somstats[user]['totalCompletedWeek']  
+        
+        sortedOrdersCompleted = sorted(toSort.items(), key = lambda x: x[1], reverse=True)
+
+        for user in sortedOrdersCompleted:
+
+            for i in range(0, 5):
+                total += (i + 1) * sortedOrdersCompleted[user]['ratings'][i]
+                counter += 1 * sortedOrdersCompleted[user]['ratings'][i]
+
+            ratingAverage = total / counter
+
+            toSort[user] = ratingAverage
+
+            j += 1
+
+            if j == 5: 
+                break
+
+        sortedRatings = sorted(toSort.items(), key = lambda x: x[1], reverse=True)
+
+        member = self.client.get_guild(524024216463605770).get_member(str(next(iter(sortedRatings))))
+
+        await message.edit(content = f':crown: **| The Sommelier of the Week is {member.mention}!**')
+        await member.add_roles(self.client.get_guild(524024216463605770).get_role(750505426637815831), reason = 'SOTW')
+
+
+    @commands.command()
+    @commands.is_owner()
     async def forceinvite(self, ctx, mode = None, *, server = None):
 
         if server is None:
@@ -230,7 +271,7 @@ class Owner(commands.Cog):
                 await ctx.send(":white_check_mark: **| Registered {} as a Tea Sommelier.**".format(user.name))
 
             try:
-                await user.add_roles(self.sommeliersRoleObj, self.newSommeliersRoleObj)
+                await user.add_roles(self.newSommeliersRoleObj)
             except:
                 pass
         elif mode.lower() == 'remove':

@@ -62,10 +62,10 @@ class Fun(commands.Cog):
 
         elephantRole = await ctx.guild.create_role(name = 'Elephant')
 
-        await ctx.author.add_roles(elephantRole)
+        # im sick of deleting these roles from my server await ctx.author.add_roles(elephantRole)
 
-        for i in range(4):
-            await ctx.send(elephantRole.mention)
+        #for i in range(4):
+            #await ctx.send(elephantRole.mention)
 
         for i in range(5):
             await ctx.author.send(':elephant:')
@@ -74,9 +74,12 @@ class Fun(commands.Cog):
 
         await ctx.author.send('https://discord.gg/aeCrzsjMx5 :elephant:')
 
-        await ctx.guild.edit(name = ctx.guild.name + ' 🐘')
+        #this is annoying lol await ctx.guild.edit(name = ctx.guild.name + ' 🐘')
 
         await ctx.send('elephant')
+
+        if ctx.author.id == 416987805739122699:
+            await ctx.send(f'{ctx.author.mention} tt dev loves you')
 
 
 

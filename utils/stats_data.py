@@ -13,6 +13,7 @@ filepath = './database/statsDB.json'
 # Times it's been tea time
 # Times help command has been used
 # Times bot has logged on
+# Messages sent
 
 def GetData():
     with open(filepath, encoding="utf-8", mode="r") as f:

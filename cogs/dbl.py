@@ -1,13 +1,15 @@
 import discord
 from discord.ext import commands
 
+from utils import config_loader
+
 import dbl
 
 class TopGG(commands.Cog):
 
     def __init__(self, client):
         self.client = client
-        self.token = ''
+        self.token = config_loader.GrabToken('dbltoken')
 
         self.dblpy = dbl.DBLClient(self.client, self.token, autopost=True) # Autopost will post your guild count every 30 minutes
 
