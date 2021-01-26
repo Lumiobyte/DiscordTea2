@@ -86,6 +86,13 @@ class Owner(commands.Cog):
         await message.edit(content = f':crown: **| The Sommelier of the Week is {member.mention}!**')
         await member.add_roles(self.client.get_guild(524024216463605770).get_role(750505426637815831), reason = 'SOTW')
 
+    @commands.command()
+    @commands.is_owner()
+    async def fixer(self, ctx):
+
+        sommelier_stats_data.FixDatabase()
+
+        await ctx.send(':white_check_mark: **| Done**')
 
     @commands.command()
     @commands.is_owner()

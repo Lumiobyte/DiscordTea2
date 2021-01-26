@@ -199,3 +199,17 @@ def GetAll():
         db = json.load(f)
 
         return db
+
+def FixDatabase():
+
+    with open(filepath, encoding="utf-8", mode="r") as f:
+        db = json.load(f)
+
+        for userid in db:
+            
+            if db[userid]['totalDelivered'] < 10:
+                db[userid]['rank'] = 'new'
+            elif db[userid]['totalDelivered'] >= 10 and db[userid]['totalDelivered'] <= 99:
+                db[userid]['rank'] = 'som'
+            else:
+                db[userid]['rank'] = 'vet'
