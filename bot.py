@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from utils import blacklist_data, stats_data, sommelier_data, config_loader
 
-client = commands.AutoShardedBot(command_prefix = ['tea!', 'Tea!', 'TEA!', 't!', 'T!'])
+client = commands.AutoShardedBot(command_prefix = [';', 'tea!', 'Tea!', 'TEA!', 't!', 'T!'])
 client.remove_command('help')
 
 intents = discord.Intents.all()

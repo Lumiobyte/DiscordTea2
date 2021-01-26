@@ -73,6 +73,7 @@ class Utility(commands.Cog):
         - **Times bot has logged on:** ``{}``
 
         - **Servers:** ``{}``
+        - **Shards:** ``{}``
         - **Users in support server:** ``{}``
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
@@ -92,6 +93,7 @@ class Utility(commands.Cog):
             statsDB['help'],
             statsDB['login'],
             len(self.client.guilds),
+            len(self.client.shards),
             self.client.get_guild(524024216463605770).member_count,
             sommelier_data.Amount(),
             blacklist_data.Amount()
@@ -121,7 +123,7 @@ class Utility(commands.Cog):
 
         rank = ''
 
-        if statsDB['rank'] == 'new'
+        if statsDB['rank'] == 'new':
             rank = 'New Sommelier'
         elif statsDB['rank'] == 'som':
             rank = 'Tea Sommelier'

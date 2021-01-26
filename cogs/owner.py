@@ -44,6 +44,9 @@ class Owner(commands.Cog):
     @commands.is_owner()
     async def picksotw(self, ctx):
 
+        if ctx.author.id not in self.allowedUsers:
+            return
+
         message = await ctx.send('<a:loader:803401760210944071> **| Calculating...**')
 
         somstats = sommelier_stats_data.GetAll()
@@ -53,20 +56,23 @@ class Owner(commands.Cog):
         sortedRatings = None
         j = 0
 
+        total = 0
+        counter = 0
+
         for user in somstats:
-            toSort[user] = somstats[user]['totalCompletedWeek']  
+            toSort[user] = somstats[user]['totalDeliveredWeek']  
         
         sortedOrdersCompleted = sorted(toSort.items(), key = lambda x: x[1], reverse=True)
 
         for user in sortedOrdersCompleted:
 
             for i in range(0, 5):
-                total += (i + 1) * sortedOrdersCompleted[user]['ratings'][i]
-                counter += 1 * sortedOrdersCompleted[user]['ratings'][i]
+                total += (i + 1) * somstats[user[0]]['ratings'][i]
+                counter += 1 * somstats[user[0]]['ratings'][i]
 
             ratingAverage = total / counter
 
-            toSort[user] = ratingAverage
+            toSort[user[0]] = ratingAverage
 
             j += 1
 
@@ -75,7 +81,7 @@ class Owner(commands.Cog):
 
         sortedRatings = sorted(toSort.items(), key = lambda x: x[1], reverse=True)
 
-        member = self.client.get_guild(524024216463605770).get_member(str(next(iter(sortedRatings))))
+        member = await self.client.get_guild(524024216463605770).fetch_member(int(next(iter(sortedRatings))[0]))
 
         await message.edit(content = f':crown: **| The Sommelier of the Week is {member.mention}!**')
         await member.add_roles(self.client.get_guild(524024216463605770).get_role(750505426637815831), reason = 'SOTW')

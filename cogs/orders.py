@@ -494,7 +494,7 @@ class Orders(commands.Cog):
                 await self.client.get_channel(self.messagesLogChannel).send(':speech_balloon: **| Message to {} ``({})`` from ``{}``: ```{}```**'.format(ctx.author, ctx.author.id, brewer, message))
 
                 # msg customer
-                await self.orderIDs[1].send(':speech_balloon: **| The brewer of your order {} sent you a message!\n\n{}'.format(self.orderIDs[2], message))
+                await self.orderIDs[orderid][1].send(':speech_balloon: **| The brewer of your order {} sent you a message!**\n\n```{}```'.format(self.orderIDs[orderid][2], message))
 
                 # confirmation
                 await ctx.send(':white_check_mark: **| Your message has been sent.**')
@@ -864,9 +864,6 @@ class Orders(commands.Cog):
                 except:
                     pass
 
-            self.orderIDs.pop(orderid, None)
-            self.orderCount -= 1
-
             sommelier_stats_data.AddRecentDeliver(ctx.author.id, self.orderIDs[orderid][2])
 
             result = sommelier_stats_data.AddOrderDelivered(ctx.author.id)
@@ -874,8 +871,12 @@ class Orders(commands.Cog):
             if result[0] == True:
                 await ctx.author.add_roles(ctx.guild.get_role(self.sommelierRolesDict[result[1]]))
 
-            return
+            self.orderIDs.pop(orderid, None)
+            self.orderCount -= 1
 
+            stats_data.WriteSingle('delivered')
+
+            return
 
 
         try:
@@ -892,8 +893,13 @@ class Orders(commands.Cog):
         except:
             await self.orderIDs[orderid][0].send(":truck: **| {}, Tea Sommelier {} is delivering your order with ID ``{}``! Thanks for using our service!**".format(self.orderIDs[orderid][1].mention, ctx.author, orderid))
 
-        sommelier_stats_data.AddOrderDelivered(ctx.author.id)
         sommelier_stats_data.AddRecentDeliver(ctx.author.id, self.orderIDs[orderid][2])
+
+        result = sommelier_stats_data.AddOrderDelivered(ctx.author.id)
+
+        if type(result) == list:
+            if result[0] == True:
+                await ctx.author.add_roles(ctx.guild.get_role(self.sommelierRolesDict[result[1]]))
 
         self.waitingForRating[orderid] = self.orderIDs[orderid]
 
