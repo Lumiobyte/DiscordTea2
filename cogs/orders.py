@@ -764,6 +764,10 @@ class Orders(commands.Cog):
             await ctx.send(":lock: **| Only Tea Sommeliers can use this command!**")
             return
 
+        if sommelier_stats_data.GetRank(ctx.author.id) == 'new':
+            await ctx.send(':no_entry_sign: **| New Sommeliers cannot decline orders.**')
+            return
+
         if orderid is None:
             await ctx.send(':no_entry_sign: **| Please provide an Order ID!**')
             return

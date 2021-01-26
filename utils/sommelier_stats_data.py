@@ -144,6 +144,19 @@ def GetSommelier(userid):
 
         return db[userid]
 
+def GetRank(userid):
+    with open(filepath, encoding="utf-8", mode="r") as f:
+        db = json.load(f)
+
+        if CheckIfExists(userid) == False:
+            AddSommelier(userid)
+            return False
+
+        userid = str(userid)
+
+        return db[userid]['rank']
+
+
 def UpgradeRank(userid):
 
     with open(filepath, encoding="utf-8", mode="r") as f:
