@@ -180,19 +180,6 @@ def UpgradeRank(userid):
 
     return [True, newRank]
 
-def GetRank(userid):
-
-    with open(filepath, encoding="utf-8", mode="r") as f:
-        db = json.load(f)
-
-        if CheckIfExists(userid) == False:
-            AddSommelier(userid)
-            return False
-
-        userid = str(userid)
-
-        return db[userid]['rank']
-
 
 def GetAll():
     with open(filepath, encoding="utf-8", mode="r") as f:
@@ -213,3 +200,6 @@ def FixDatabase():
                 db[userid]['rank'] = 'som'
             else:
                 db[userid]['rank'] = 'vet'
+
+    with open(filepath, encoding="utf-8", mode="w") as f:
+        json.dump(db, f)
