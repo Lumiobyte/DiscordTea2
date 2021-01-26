@@ -73,40 +73,51 @@ class Orders(commands.Cog):
         self.everyTenMin.start()
 
 
-    @tasks.loop(minutes = 10)
+    @tasks.loop(seconds = 120)
     async def everyTenMin(self):
-        pass
-
+        
+        toDelete = []
 
         for orderid in self.orderIDs:
-            differenceOrdered = self.orderIDs[orderid][5] - datetime.datetime.now()
-            differenceClaimed = self.orderIDs[orderid][6] - datetime.datetime.now()
+            differenceOrdered = datetime.datetime.now() - self.orderIDs[orderid][5]
+            differenceClaimed = None
+
+            if self.orderIDs[orderid][4] != None:
+                differenceClaimed = datetime.datetime.now() - self.orderIDs[orderid][6]
+
+            print(differenceClaimed)
+            print(differenceOrdered)
+
+            if self.orderIDs[orderid][4] != None:
+                if differenceClaimed >= datetime.timedelta(minutes = 30) and self.orderIDs[orderid][3] == 'Brewing':
+
+                    try:
+                        await self.orderIDs[orderid][1].send(":hourglass: **| Your order of ``{}`` with ID ``{}`` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
+                    except:
+                        await self.orderIDs[orderid][0].send(":hourglass: **| Your order of ``{}`` with ID ``{}`` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
+
+                    await self.orderLogObj.send(":hourglass: **| Order ID ``{}`` auto-unclaimed after 30 minutes of inactivity.**".format(orderid))
+
+                    self.orderIDs[orderid][3] = 'Waiting'
+                    self.orderIDs[orderid][4] = None
 
             # checking for autodelete
-            if differenceOrdered >= datetime.timedelta(hours = 36) and self.orderIDs[orderid][3] == 'Waiting':
+            if differenceOrdered >= datetime.timedelta(hours = 24) and self.orderIDs[orderid][3] == 'Waiting':
                 
                 try:
-                    await self.orderIDs[orderid][1].send(":wastebucket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 36 hours.**".format(self.orderIDs[orderid][2], orderid))
+                    await self.orderIDs[orderid][1].send(":wastebasket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
                 except:
-                    await self.orderIDs[orderid][0].send(":wastebucket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 36 hours.**".format(self.orderIDs[orderid][2], orderid))
+                    await self.orderIDs[orderid][0].send(":wastebasket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
 
-                await self.orderLogObj.send(":wastebucket: **| Order ID ``{}`` was deleted from the order list after waiting for 36 hours.**".format(orderid))
+                await self.orderLogObj.send(":wastebasket: **| Order ID ``{}`` was deleted from the order list after waiting for 24 hours.**".format(orderid))
 
-                stats_data.WriteSingle('declined')
-                self.orderIDs.pop(orderid, None)
-                self.orderCount -= 1
-
-            if differenceClaimed >= datetime.timedelta(minutes = 30) and self.orderIDs[orderid][3] == 'Brewing':
-
-                try:
-                    await self.orderIDs[orderid][1].send(":hourglass: **| Your order of ``{}`` with ID ``{}`` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
-                except:
-                    await self.orderIDs[orderid][0].send(":hourglass: **| Your order of ``{}`` with ID ``{}`` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
-
-                await self.orderLogObj.send(":hourglass: **| Order ID ``{}`` auto-unclaimed after 30 minutes of inactivity.**".format(orderid))
-
-                self.orderIDs[orderid][3] = 'Waiting'
-                self.orderIDs[orderid][4] = None
+                toDelete.append(orderid)
+                
+              
+        for orderid in toDelete: 
+            stats_data.WriteSingle('declined')
+            self.orderIDs.pop(orderid, None)
+            self.orderCount -= 1
 
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):

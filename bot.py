@@ -23,7 +23,7 @@ for cog in cogs:
 async def on_ready():
     print("Bot is online.")
 
-    activity = discord.Game(name = 'with tea | tea!help | v2.3.1')
+    activity = discord.Game(name = 'with tea | tea!help | v2.4.0')
     await client.change_presence(activity = activity, status = discord.Status.online)
 
     stats_data.WriteSingle('login')
