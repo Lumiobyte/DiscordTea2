@@ -30,6 +30,7 @@ class Utility(commands.Cog):
         • Orders cannot contain usernames
         • Orders cannot contain text formatting or non-Latin characters, except numbers and !#$%&<>?".
         • Orders cannot contain links.
+        • Please don't use curse words in your order
         • Must Include Tea
         Please respect these rules. Breaking any of them repeatedly will result in being blacklisted from the bot and/or banned from this server.**
         """)
@@ -66,6 +67,7 @@ class Utility(commands.Cog):
         - **Ratings Given:** ``{}``
         - **Average Rating:** ``{}``:star:
         - **Feedback Comments Given:** ``{}``
+        - **Suggestions Given:** ``{}``
         - **Messages Sent:** ``{}``
         - **Facts Told:** ``{}``
         - **Times it's been tea time:** ``{}``
@@ -78,7 +80,7 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** ``{}``
         - **Blacklisted Users:** ``{}``
 
-        - **Bot Version:** ``2.4.0``
+        - **Bot Version:** ``2.4.1``
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -87,6 +89,7 @@ class Utility(commands.Cog):
             statsDB['ratings'],
             round(rating_data.GetAverage(), 2),
             statsDB['feedback'],
+            statsDB['suggestions'],
             statsDB['messages'],
             statsDB['facts'],
             statsDB['teatime'],

@@ -82,7 +82,7 @@ class Orders(commands.Cog):
             differenceOrdered = datetime.datetime.now() - self.orderIDs[orderid][5]
             differenceClaimed = None
 
-            if self.orderIDs[orderid][4] != None:
+            if self.orderIDs[orderid][4] != None and self.orderIDs[orderid][6] != None:
                 differenceClaimed = datetime.datetime.now() - self.orderIDs[orderid][6]
 
             print(differenceClaimed)
@@ -520,16 +520,20 @@ class Orders(commands.Cog):
                 brewer = self.client.get_user(self.orderIDs[orderid][4])
 
                 # log
-                await self.client.get_channel(self.messagesLogChannel).send(':speech_balloon: **| Message to {} ``({})`` from ``{}``: ```{}```**'.format(ctx.author, ctx.author.id, brewer, message))
+                await self.client.get_channel(self.messagesLogChannel).send(':speech_balloon: **| Message to {} ``({})`` from ``{}``: ```{}```**'.format(ctx.author, ctx.author.id, self.orderIDs[orderid][1], message))
 
                 # msg customer
-                await self.orderIDs[orderid][1].send(':speech_balloon: **| The brewer of your order {} sent you a message!**\n\n```{}```'.format(self.orderIDs[orderid][2], message))
+                try:
+                    await self.orderIDs[orderid][1].send(':speech_balloon: **| The brewer of your order of `{}` sent you a message!**\n\n```{}```'.format(self.orderIDs[orderid][2], message))
+                except:
+                    await ctx.send(':mailbox_closed: **| That user has their DMs closed.**')
+                else:
 
-                # confirmation
-                await ctx.send(':white_check_mark: **| Your message has been sent.**')
+                    # confirmation
+                    await ctx.send(':white_check_mark: **| Your message has been sent.**')
 
-                # stats
-                stats_data.WriteSingle('messages')
+                    # stats
+                    stats_data.WriteSingle('messages')
 
                 return
 
@@ -813,10 +817,6 @@ class Orders(commands.Cog):
             await ctx.send(":no_entry_sign: **| No order with that ID!**")
             return
 
-        if stats_data.GetRank() == 'new':
-            await ctx.send('New Sommeliers cannot decline orders.')
-            return
-
         if self.orderLogObj is None:
             self.orderLogObj = self.client.get_channel(self.orderLog)
 
@@ -901,8 +901,9 @@ class Orders(commands.Cog):
 
             result = sommelier_stats_data.AddOrderDelivered(ctx.author.id)
 
-            if result[0] == True:
-                await ctx.author.add_roles(ctx.guild.get_role(self.sommelierRolesDict[result[1]]))
+            if type(result) == list:
+                if result[0] == True:
+                    await ctx.author.add_roles(ctx.guild.get_role(self.sommelierRolesDict[result[1]]))
 
             self.orderIDs.pop(orderid, None)
             self.orderCount -= 1

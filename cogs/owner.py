@@ -269,7 +269,9 @@ class Owner(commands.Cog):
         if self.newSommeliersRoleObj is None:
             self.newSommeliersRoleObj = ctx.guild.get_role(self.newSommeliersRole)
 
-        if ctx.author.id not in self.allowedUsers:
+        testApproverRole = ctx.guild.get_role(803407197081567262)
+
+        if not testApproverRole in ctx.author.roles:
             return
 
         if mode.lower() == 'add':
@@ -295,7 +297,7 @@ class Owner(commands.Cog):
                 await ctx.send(":white_check_mark: **| Unregistered ID {} as a Tea Sommelier.**".format(user))
             else:
                 sommelier_data.Remove(user.id)
-                sommelier_stats_data.AddSommelier(user.id)
+                sommelier_stats_data.RemoveSommelier(user.id)
                 await ctx.send(":white_check_mark: **| Unregistered {} as a Tea Sommelier.**".format(user.name))
 
             try:
