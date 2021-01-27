@@ -41,7 +41,7 @@ class Feedback(commands.Cog):
             await ctx.send(':x: **| That\'s a bit too long. Keep it under 500 characters. Note that spamming or abusing suggestions will result in a blacklist.**')
             return
 
-        await ctx.send(':white_check_mark: **| Suggestion sent! Thank you for your feedback :grin:! Remember you can always support us by ``tea!vote`` to help us grow!')
+        await ctx.send(':white_check_mark: **| Suggestion sent! Thank you for your feedback :grin:! Remember you can always support us by ``tea!vote`` to help us grow!**')
         
         embed = discord.Embed(colour = discord.Colour.gold())
         embed.add_field(name = 'New Suggestion', value = suggestion)

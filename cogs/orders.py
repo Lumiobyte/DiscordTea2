@@ -520,7 +520,7 @@ class Orders(commands.Cog):
                 brewer = self.client.get_user(self.orderIDs[orderid][4])
 
                 # log
-                await self.client.get_channel(self.messagesLogChannel).send(':speech_balloon: **| Message to {} ``({})`` from ``{}``: ```{}```**'.format(ctx.author, ctx.author.id, self.orderIDs[orderid][1], message))
+                await self.client.get_channel(self.messagesLogChannel).send(':speech_balloon: **| Message from {} ``({})`` to ``{}``: ```{}```**'.format(ctx.author, ctx.author.id, self.orderIDs[orderid][1], message))
 
                 # msg customer
                 try:
@@ -956,7 +956,7 @@ class Orders(commands.Cog):
         try:
             orderid = int(orderid)
         except:
-            await ctx.send(":no_entry_sign: **| An OrderID is a number!**\n\nRatings have changed recently. For more information, join the support server with ``tea!invite``")
+            await ctx.send(":no_entry_sign: **| An OrderID is a number!**\n\nPlease provide the Order ID for the tea you want to rate.**")
             return
 
         try:
@@ -985,7 +985,7 @@ class Orders(commands.Cog):
         rating_data.Add(rating)
         sommelier_stats_data.AddRating(self.waitingForRating[orderid][4], rating)
 
-        await ctx.send(":star: **| You rated your ``{}`` {}! Thanks for your feedback! Remember you can always support us by ``tea!vote`` for us to help us grow!**".format(self.waitingForRating[orderid][2], ':star:' * rating))
+        await ctx.send(":star: **| You rated your ``{}`` {}! Thanks for your feedback! Remember you can always support us by ``tea!vote`` to help us grow!**".format(self.waitingForRating[orderid][2], ':star:' * rating))
 
         sommelier = self.client.get_user(self.waitingForRating[orderid][4])
 

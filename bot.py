@@ -46,6 +46,7 @@ async def help(ctx):
     embedToSend.add_field(name="Feedback Commands", value="""
 ``tea!rate <orderid> <rating>`` - Rate your tea! Provide an Order ID (find it in `tea!myorders`) and rate it from 1 to 5:star:.
 ``tea!feedback <comment>`` - Send feedback to the Sommeliers.
+``tea!suggest <idea>`` - Send a suggestion. Abusing or spamming suggestions is blacklisted.
 ``tea!approval`` - View the overall average rating for the service.
     """, inline = False)
     embedToSend.add_field(name="Other Commands", value="""
