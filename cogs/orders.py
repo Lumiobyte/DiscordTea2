@@ -102,16 +102,17 @@ class Orders(commands.Cog):
                     self.orderIDs[orderid][4] = None
 
             # checking for autodelete
-            if differenceOrdered >= datetime.timedelta(hours = 24) and self.orderIDs[orderid][3] == 'Waiting':
-                
-                try:
-                    await self.orderIDs[orderid][1].send(":wastebasket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
-                except:
-                    await self.orderIDs[orderid][0].send(":wastebasket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
+            if differenceOrdered:
+                if differenceOrdered >= datetime.timedelta(hours = 24) and self.orderIDs[orderid][3] == 'Waiting':
+                    
+                    try:
+                        await self.orderIDs[orderid][1].send(":wastebasket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
+                    except:
+                        await self.orderIDs[orderid][0].send(":wastebasket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
 
-                await self.orderLogObj.send(":wastebasket: **| Order ID ``{}`` was deleted from the order list after waiting for 24 hours.**".format(orderid))
+                    await self.orderLogObj.send(":wastebasket: **| Order ID ``{}`` was deleted from the order list after waiting for 24 hours.**".format(orderid))
 
-                toDelete.append(orderid)
+                    toDelete.append(orderid)
                 
               
         for orderid in toDelete: 

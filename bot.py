@@ -3,11 +3,11 @@ from discord.ext import commands
 
 from utils import blacklist_data, stats_data, sommelier_data, config_loader
 
-client = commands.AutoShardedBot(command_prefix = ['tea!', 'Tea!', 'TEA!', 't!', 'T!'])
-client.remove_command('help')
-
 intents = discord.Intents.all()
 intents.presences = False
+
+client = commands.AutoShardedBot(command_prefix = ['tea!', 'Tea!', 'TEA!', 't!', 'T!'], intents = intents)
+client.remove_command('help')
 
 TOKEN = config_loader.GrabToken('token')
 
@@ -23,7 +23,7 @@ for cog in cogs:
 async def on_ready():
     print("Bot is online.")
 
-    activity = discord.Game(name = 'with tea | tea!help | v2.4.1')
+    activity = discord.Game(name = 'with tea | tea!help | v2.4.2')
     await client.change_presence(activity = activity, status = discord.Status.online)
 
     stats_data.WriteSingle('login')
@@ -74,7 +74,7 @@ async def help(ctx):
 
     embedToSend.add_field(name = 'Links', value = 'Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\nSupport server: [Join](https://discord.gg/mP8U9ey)\n[Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)', inline = False)
 
-    embedToSend.set_footer(text = 'Tea Time v2.4.1 by Lumiobyte#0867')
+    embedToSend.set_footer(text = 'Tea Time v2.4.2 by Lumiobyte#0867')
 
     await ctx.send(embed = embedToSend)
 
