@@ -20,6 +20,16 @@ for cog in cogs:
         print('Could not add cog {} because {}'.format(cog, str(e)))
 
 @client.event
+async def on_connect():
+    print('Ayeeh')
+
+    activity = discord.Game(name = 'with tea | tea!help | v2.4.2')
+    await client.change_presence(activity = activity, status = discord.Status.online)
+
+    stats_data.WriteSingle('login')
+
+"""
+@client.event
 async def on_ready():
     print("Bot is online.")
 
@@ -27,6 +37,7 @@ async def on_ready():
     await client.change_presence(activity = activity, status = discord.Status.online)
 
     stats_data.WriteSingle('login')
+"""
 
 @client.command()
 async def help(ctx):
