@@ -88,7 +88,7 @@ class Orders(commands.Cog):
             print(differenceClaimed)
             print(differenceOrdered)
 
-            if self.orderIDs[orderid][4] != None:
+            if self.orderIDs[orderid][4] != None and differenceClaimed != None:
                 if differenceClaimed >= datetime.timedelta(minutes = 30) and self.orderIDs[orderid][3] == 'Brewing':
 
                     try:
@@ -294,11 +294,7 @@ class Orders(commands.Cog):
             image = random.choice(self.chaiTeas)
             order = "Chai Tea"
         elif option == 10:
-            self.zooteas = ["Ant Tea", "Badger Tea", "Bat Tea", "Beaver Tea", "Bee Tea", "Beetle Tea", "Bird Tea", "Bison Tea", "Blowfish Tea", "Bug Tea", "Butterfly Tea", "Camel Tea", "Cat Tea", "Cat Variant Tea", "chick Tea", "Chick Variant Tea", "Chipmunk Tea", "\
-            Cockroach Tea", "Cow Tea", "Crab Tea", "Cricket Tea", "Crocodile Tea", "Dodo Tea", "Dog Tea", "Dolphin Tea", "Dove Tea", "Dragon Tea", "Dromedary Camel Tea", "Duck Tea", "Elephant Tea", "Fish Tea", "Fish Variant Tea", "Flamingo Tea", "Fly Tea", "\
-            Giraffe Tea", "Goat Tea", "Hedgehog Tea", "Hippopotamus Tea", "Horse Tea", "Kangaroo Tea", "Lady Beetle Tea", "Leopard Tea", "Lizard Tea", "Llama Tea", "Lobster Tea", "Mammoth Tea", "Monkey Tea", "Mosquito Tea", "Mouse Tea", "\
-            Octopus Tea", "Orangutan Tea", "Otter Tea", "Owl Tea", "Ox Tea", "Parrot Tea", "Peacock Tea", "Penguin Tea", "Pig Tea", "Poodle Tea", "Rabbit Tea", "Ram Tea", "Rat Tea", "Rooster Tea", "Sauropod Tea", "Scorpion Tea", "Seal Tea", "Shark Tea", "\
-            Sheep Tea", "Shrimp Tea", "Skunk Tea", "Snail Tea", "Snake Tea", "Spider Tea", "Squid Tea", "Swan Tea", "Tiger Tea", "T-Rex Tea", "Turkey Tea", "Turtle Tea", "Water Buffalo Tea", "Whale Tea", "Whale Variant Tea", "Worm Tea"]
+            self.zooteas = ["Ant Tea", "Badger Tea", "Bat Tea", "Beaver Tea", "Bee Tea", "Beetle Tea", "Bird Tea", "Bison Tea", "Blowfish Tea", "Bug Tea", "Butterfly Tea", "Camel Tea", "Cat Tea", "Cat Variant Tea", "chick Tea", "Chick Variant Tea", "Chipmunk Tea", "Cockroach Tea", "Cow Tea", "Crab Tea", "Cricket Tea", "Crocodile Tea", "Dodo Tea", "Dog Tea", "Dolphin Tea", "Dove Tea", "Dragon Tea", "Dromedary Camel Tea", "Duck Tea", "Elephant Tea", "Fish Tea", "Fish Variant Tea", "Flamingo Tea", "Fly Tea", "Giraffe Tea", "Goat Tea", "Hedgehog Tea", "Hippopotamus Tea", "Horse Tea", "Kangaroo Tea", "Lady Beetle Tea", "Leopard Tea", "Lizard Tea", "Llama Tea", "Lobster Tea", "Mammoth Tea", "Monkey Tea", "Mosquito Tea", "Mouse Tea", "Octopus Tea", "Orangutan Tea", "Otter Tea", "Owl Tea", "Ox Tea", "Parrot Tea", "Peacock Tea", "Penguin Tea", "Pig Tea", "Poodle Tea", "Rabbit Tea", "Ram Tea", "Rat Tea", "Rooster Tea", "Sauropod Tea", "Scorpion Tea", "Seal Tea", "Shark Tea", "Sheep Tea", "Shrimp Tea", "Skunk Tea", "Snail Tea", "Snake Tea", "Spider Tea", "Squid Tea", "Swan Tea", "Tiger Tea", "T-Rex Tea", "Turkey Tea", "Turtle Tea", "Water Buffalo Tea", "Whale Tea", "Whale Variant Tea", "Worm Tea"]
 
             # This decides our animal
 
@@ -947,11 +943,11 @@ class Orders(commands.Cog):
     async def rate(self, ctx, orderid = None, rating = None):
 
         if orderid is None:
-            await ctx.send(':x: **| Please give an OrderID to provide a rating for!**\n\nRatings have changed recently. For more information, join the support server with ``tea!invite``')
+            await ctx.send(':x: **| Please give an OrderID to provide a rating for!**\n\nTo get the Order ID, use `tea!myorders`')
             return
 
         if rating is None:
-            await ctx.send(':x: **| Please give a rating between 1 and 5 stars, no decimals.**\n\nRatings have changed recently. For more information, join the support server with ``tea!invite``')
+            await ctx.send(':x: **| Please give a rating between 1 and 5 stars, no decimals.**\n\nTo get the Order ID, use `tea!myorders``')
             return
 
         try:
