@@ -60,27 +60,27 @@ class Utility(commands.Cog):
         statsDB = stats_data.GetData()
 
         embedToSend.add_field(name = 'Tea Time Stats', value = """
-        - **Orders Placed:** ``{}``
-        - **Teas Delivered:** ``{}``
-        - **Orders Declined/Cancelled:** ``{}``
-        - **Quickorders Brewed:** ``{}``
-        - **Ratings Given:** ``{}``
-        - **Average Rating:** ``{}``:star:
-        - **Feedback Comments Given:** ``{}``
-        - **Suggestions Given:** ``{}``
-        - **Messages Sent:** ``{}``
-        - **Facts Told:** ``{}``
-        - **Times it's been tea time:** ``{}``
-        - **Times help command has been used:** ``{}``
-        - **Times bot has logged on:** ``{}``
+        - **Orders Placed:** `{}`
+        - **Teas Delivered:** `{}`
+        - **Orders Declined/Cancelled:** `{}`
+        - **Quickorders Brewed:** `{}``
+        - **Ratings Given:** `{}`
+        - **Average Rating:** `{}`:star:
+        - **Feedback Comments Given:** `{}`
+        - **Suggestions Given:** `{}`
+        - **Messages Sent:** `{}`
+        - **Facts Told:** `{}`
+        - **Times it's been tea time:** `{}`
+        - **Times help command has been used:** `{}`
+        - **Times bot has logged on:** `{}`
 
-        - **Servers:** ``{}``
-        - **Shards:** ``{}``
-        - **Users in support server:** ``{}``
-        - **Tea Sommeliers:** ``{}``
-        - **Blacklisted Users:** ``{}``
+        - **Servers:** `{}`
+        - **Shards:** `{}`
+        - **Users in support server:** `{}`
+        - **Tea Sommeliers:** `{}`
+        - **Blacklisted Users:** `{}`
 
-        - **Bot Version:** ``2.4.2``
+        - **Bot Version:** `2.4.2`
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -144,13 +144,13 @@ class Utility(commands.Cog):
         embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
 __{}__
 
-- **Orders Delivered:** ``{}``
-- **Orders Delivered This Week:** ``{}/5``
-- **Teas Declined:** ``{}``
-- **Teas Declined This Week:** ``{}``
-- **Total Ratings This Week:** ``{}``
+- **Orders Delivered:** `{}`
+- **Orders Delivered This Week:** `{}/5`
+- **Teas Declined:** `{}`
+- **Teas Declined This Week:** `{}`
+- **Total Ratings This Week:** `{}`
 - **Rating:** {}\n
-- **Recent Deliveries:**\n- ``{}``\n- ``{}``\n- ``{}``\n
+- **Recent Deliveries:**\n- `{}`\n- `{}`\n- `{}`\n
 - **Recent Ratings:**\n{}\n{}\n{}
         """.format(
             rank,
@@ -177,7 +177,7 @@ __{}__
 
         embed.add_field(name = 'Tea Time Privacy Policy', value = """__**What data we store**__
 Tea Time stores minimal data to ensure smooth operation of the bot and all its features. The data we store **permanently** is the following:
-- Statistics data: Counters of things like ratings given, orders placed, etc, all of which is displayed on the ``tea!stats`` command, all of which is completely anonymous and not associated with you at all
+- Statistics data: Counters of things like ratings given, orders placed, etc, all of which is displayed on the `tea!stats` command, all of which is completely anonymous and not associated with you at all
 - Ratings data (amount of 1-5 star ratings given and their type, anonymous and not associated with users)
 - Your Discord User ID: **ONLY** if you are blacklisted, or a Tea Sommelier
 
@@ -203,7 +203,7 @@ __**Data Security**__
 Data that is associated with you can only be accessed by **Bot Admins**.
 
 __**How to request deletion of your data**__
-- Please send a friend request to ``Lumiobyte#0867``.
+- Please send a friend request to `Lumiobyte#0867`.
 When your data is deleted you will immediately lose any Sommelier status you may have and any active orders you have will be cleared.
 **Be aware this will not remove blacklist data.**
 
@@ -239,30 +239,30 @@ Last updated August 20th, 2020
             self.blacklistLogObj = ctx.guild.get_channel(self.blacklistLog)
 
         if mode is None:
-            await ctx.send(':x: **| Incorrect usage.\nExamples:\n``tea!blacklist add @Lumiobyte``\n``tea!blacklist remove 368860954227900416``**')
+            await ctx.send(':x: **| Incorrect usage.\nExamples:\n`tea!blacklist add @Lumiobyte`\n`tea!blacklist remove 368860954227900416``**')
             return
 
         if user is None:
-            await ctx.send(':x: **| Please provide a user to blacklist.\nExamples:\n``tea!blacklist add @Lumiobyte``\n``tea!blacklist remove 368860954227900416``**')
+            await ctx.send(':x: **| Please provide a user to blacklist.\nExamples:\n`tea!blacklist add @Lumiobyte`\n`tea!blacklist remove 368860954227900416`**')
             return
 
         if not sommelier_data.Check(ctx.author.id):
             await ctx.send(':lock: **| Only Tea Sommeliers can use this command!**')
+            return
+                
+        if user.id in self.blacklistImmune:
+            await ctx.send(':no_entry_sign: **| That user is immune to being blacklisted.**')
             return
         
         if sommelier_data.Check(user.id):
             await ctx.send(':no_entry_sign: **| You can\'t blacklist a Tea Sommelier!**')
             return
 
-        if user.id in self.blacklistImmune:
-            await ctx.send(':no_entry_sign: **| That user is immune to being blacklisted.**')
-            return
-
         if mode.lower() == 'add':
             blacklist_data.Add(user.id)
 
-            await ctx.send(':white_check_mark: **| Blacklisted ``{}``.**'.format(user))
-            await self.blacklistLogObj.send(':triangular_flag_on_post: **| ``{}`` has been blacklisted by ``{}``.**'.format(user, ctx.author))
+            await ctx.send(':white_check_mark: **| Blacklisted `{}`.**'.format(user))
+            await self.blacklistLogObj.send(':triangular_flag_on_post: **| `{}` has been blacklisted by `{}`.**'.format(user, ctx.author))
 
         elif mode.lower() == 'remove':
             result = blacklist_data.Remove(user.id)
@@ -271,11 +271,11 @@ Last updated August 20th, 2020
                 await ctx.send(':x: **| That user is not currently blacklisted.**')
                 return
 
-            await ctx.send(':white_check_mark: **| Removed ``{}`` from the blacklist.**'.format(user))
-            await self.blacklistLogObj.send(':radio_button: **| ``{}`` was removed from the blacklist by ``{}``.**'.format(user, ctx.author))
+            await ctx.send(':white_check_mark: **| Removed `{}` from the blacklist.**'.format(user))
+            await self.blacklistLogObj.send(':radio_button: **| `{}` was removed from the blacklist by `{}`.**'.format(user, ctx.author))
 
         else:
-            await ctx.send(':x: **| Incorrect usage.\nExamples:\n``tea!blacklist add @Lumiobyte``\n``tea!blacklist remove 368860954227900416``**')
+            await ctx.send(':x: **| Incorrect usage.\nExamples:\n`tea!blacklist add @Lumiobyte`\n`tea!blacklist remove 368860954227900416`**')
 
 
 def setup(client):
