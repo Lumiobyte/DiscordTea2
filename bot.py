@@ -46,28 +46,28 @@ async def help(ctx):
     embedToSend.set_author(name="Tea Time Help - Prefix: tea!")
 
     embedToSend.add_field(name="Ordering Commands", value="""
-``tea!rules`` - See ordering rules.
-``tea!order <order>`` - Order some tea. 
-``tea!cancel <orderID>`` - Cancel a tea you've ordered.
-``tea!quickorder <option>`` - Select a tea you'd like from a menu.
-``tea!myorders`` - See your current active orders, and orders waiting to be rated.
-``tea!oinfo <orderID>`` - Get the info on an order.
-``tea!message <orderID> <message>`` - Send a message to the Tea Sommelier currently brewing your order.
+`tea!rules` - See ordering rules.
+`tea!order <order>` - Order some tea. 
+`tea!cancel <orderID>` - Cancel a tea you've ordered.
+`tea!quickorder <option>` - Select a tea you'd like from a menu.
+`tea!myorders` - See your current active orders, and orders waiting to be rated.
+`tea!oinfo <orderID>` - Get the info on an order.
+`tea!message <orderID> <message>` - Send a message to the Tea Sommelier currently brewing your order.
     """, inline = False)
     embedToSend.add_field(name="Feedback Commands", value="""
-``tea!rate <orderid> <rating>`` - Rate your tea! Provide an Order ID (find it in `tea!myorders`) and rate it from 1 to 5:star:.
-``tea!feedback <comment>`` - Send feedback to the Sommeliers.
-``tea!suggest <idea>`` - Send a suggestion. Abusing or spamming suggestions is blacklisted.
-``tea!approval`` - View the overall average rating for the service.
+`tea!rate <orderid> <rating>` - Rate your tea! Provide an Order ID (find it in `tea!myorders`) and rate it from 1 to 5:star:.
+`tea!feedback <comment>` - Send feedback to the Sommeliers.
+`tea!suggest <idea>` - Send a suggestion. Abusing or spamming suggestions is blacklisted.
+`tea!approval` - View the overall average rating for the service.
     """, inline = False)
     embedToSend.add_field(name="Other Commands", value="""
-``tea!somstats [user]`` - See the statistics of a Tea Sommelier!
-``tea!privacy`` - See Tea Time\'s privacy policy
-``tea!stats`` - See Tea Time\'s statistics.
-``tea!invite`` - Get a link to invite Tea Time to your server, as well as an invite to the support server.
-``tea!vote`` - Vote for Tea Time to get an extra order slot!
-``tea!ping`` - See bot latency.
-``tea!tea`` :tea:
+`tea!somstats [user]` - See the statistics of a Tea Sommelier!
+`tea!privacy` - See Tea Time\'s privacy policy
+`tea!stats` - See Tea Time\'s statistics.
+`tea!invite` - Get a link to invite Tea Time to your server, as well as an invite to the support server.
+`tea!vote` - Vote for Tea Time to get an extra order slot!
+`tea!ping` - See bot latency.
+`tea!tea` :tea:
     """, inline = False)
 
     if sommelier_data.Check(ctx.author.id): # if sommelier
