@@ -25,9 +25,9 @@ class Owner(commands.Cog):
             self.client.unload_extension(module)
             self.client.load_extension(module)
         except Exception as e:
-            await ctx.send(":warning: | **ERROR:** Could not load cog ``{}``: ``{}``".format(module, str(e)))
+            await ctx.send(":warning: | **ERROR:** Could not load cog `{}`: `{}`".format(module, str(e)))
         else:
-            await ctx.send(":white_check_mark: **| Successfully reloaded module ``{}``.**".format(module))
+            await ctx.send(":white_check_mark: **| Successfully reloaded module `{}`.**".format(module))
 
     @commands.command()
     @commands.is_owner()
@@ -36,9 +36,9 @@ class Owner(commands.Cog):
         try:
             self.client.load_extension(module)
         except Exception as e:
-            await ctx.send(":warning: | **ERROR:** Could not load cog ``{}``: ``{}``".format(module, str(e)))
+            await ctx.send(":warning: | **ERROR:** Could not load cog `{}`: `{}`".format(module, str(e)))
         else:
-            await ctx.send(":white_check_mark: **| Successfully loaded module ``{}``.**".format(module))
+            await ctx.send(":white_check_mark: **| Successfully loaded module `{}`.**".format(module))
 
     @commands.command()
     @commands.is_owner()
@@ -306,7 +306,7 @@ class Owner(commands.Cog):
                 pass
         else:
 
-            await ctx.send(':x: **| ``{}`` is not a valid mode.**'.format(mode or 'None'))
+            await ctx.send(':x: **| `{}` is not a valid mode.**'.format(mode or 'None'))
 
 
 def setup(client):
