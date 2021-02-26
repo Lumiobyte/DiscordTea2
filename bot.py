@@ -72,15 +72,15 @@ async def help(ctx):
 
     if sommelier_data.Check(ctx.author.id): # if sommelier
         embedToSend.add_field(name="Sommelier Commands", value="""
-``tea!claimedorders [orderID]`` - See your claimed orders, or another user\'s.
-``tea!claim <orderID>`` - Accept an order to brew it.
-``tea!random`` - Get assigned a random waiting order.
-``tea!unclaim <orderID`` - Unclaim an order you claimed.
-``tea!decline <orderID> <reason>`` - Decline an order.
-``tea!deliver <orderID>`` - Deliver an order to the server it was ordered in.
-``tea!list`` - See all unclaimed orders.
-``tea!message <orderID> <message>`` - Send a message to the customer of an order you are brewing.
-``tea!blacklist <add/remove> <user>`` - Blacklist or unblacklist a user.
+`tea!claimedorders [orderID]` - See your claimed orders, or another user\'s.
+`tea!claim <orderID>` - Accept an order to brew it.
+`tea!random`` - Get assigned a random waiting order.
+`tea!unclaim <orderID` - Unclaim an order you claimed.
+`tea!decline <orderID> <reason>` - Decline an order.
+`tea!deliver <orderID>` - Deliver an order to the server it was ordered in.
+`tea!list`` - See all unclaimed orders.
+`tea!message <orderID> <message>` - Send a message to the customer of an order you are brewing.
+`tea!blacklist <add/remove> <user>` - Blacklist or unblacklist a user.
         """, inline = False)
 
     embedToSend.add_field(name = 'Links', value = 'Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\nSupport server: [Join](https://discord.gg/mP8U9ey)\n[Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)', inline = False)
