@@ -150,7 +150,7 @@ class Orders(commands.Cog):
         if message != None:
             self.orderLockMessage = message
 
-        await ctx.send('Set order lock to ``{}`` and message to ``{}``'.format(self.orderLock, self.orderLockMessage))
+        await ctx.send('Set order lock to `{}` and message to `{}`'.format(self.orderLock, self.orderLockMessage))
 
 
 
@@ -167,19 +167,19 @@ class Orders(commands.Cog):
             self.votes[str(ctx.author.id)] = 0
 
         if order is None:
-            await ctx.send(':grey_question: **| What type of tea would you like, {}? To order, use ``tea!order <tea>`` and replace ``<tea>`` with your order.**'.format(ctx.author.mention))
+            await ctx.send(':grey_question: **| What type of tea would you like, {}? To order, use `tea!order <tea>` and replace `<tea>` with your order.**'.format(ctx.author.mention))
             return
 
         if 'tea' not in order.lower():
             await ctx.send(':no_entry_sign: **| Your order must contain tea!**')
             return
 
-        for item in ["coffee", "c0ffee", "coff33", "c0ff3e", "c0ffe3", "coff3e", "coffe3"]:
+        for item in ["coffee", "c0ffee", "coff33", "c0ff3e", "c0ffe3", "coff3e", "coffe3", "соffее", "соffee", "соffеe", "соffеe", "соffeе", "сoffee", "сoffee", "cоffee", "cоffее", "cоffеe", "cоffeе", "cоffeе", "coffeе", "coffее", "coffеe", "cofe", "coffe", "cofee", "coftea", "cofftea", "caftea", "cafftea", "latte", "late"]:
             if item in order.lower():
                 await ctx.send(":rage: **| Your order contained COFFEE! You TRAITOR!!**")
                 return
 
-        for item in ['hitler', 'nazi', 'heroin', 'sex', 'piss', 'penis', 'dick', 'cock', 'cum', 'semen', 'cocaine', 'faggot', 'nigger']:
+        for item in ['hitler', 'nazi', 'heroin', 'sex', 'piss', 'penis', 'dick', 'cock', 'semen', 'cocaine', 'faggot', 'fag', 'fags', 'nigger']:
             if item in order.lower():
                 await ctx.send(":warning: **| This order is against the rules (see them with `tea!rules`). If you try to bypass this filter you will be blacklisted immediately.**")
                 return
