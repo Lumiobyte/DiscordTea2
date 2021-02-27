@@ -92,11 +92,11 @@ class Orders(commands.Cog):
                 if differenceClaimed >= datetime.timedelta(minutes = 30) and self.orderIDs[orderid][3] == 'Brewing':
 
                     try:
-                        await self.orderIDs[orderid][1].send(":hourglass: **| Your order of ``{}`` with ID ``{}`` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
+                        await self.orderIDs[orderid][1].send(":hourglass: **| Your order of `{}` with ID `{}` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
                     except:
-                        await self.orderIDs[orderid][0].send(":hourglass: **| Your order of ``{}`` with ID ``{}`` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
+                        await self.orderIDs[orderid][0].send(":hourglass: **| Your order of `{}` with ID `{}` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
 
-                    await self.orderLogObj.send(":hourglass: **| Order ID ``{}`` auto-unclaimed after 30 minutes of inactivity.**".format(orderid))
+                    await self.orderLogObj.send(":hourglass: **| Order ID `{}` auto-unclaimed after 30 minutes of inactivity.**".format(orderid))
 
                     self.orderIDs[orderid][3] = 'Waiting'
                     self.orderIDs[orderid][4] = None
@@ -106,11 +106,11 @@ class Orders(commands.Cog):
                 if differenceOrdered >= datetime.timedelta(hours = 24) and self.orderIDs[orderid][3] == 'Waiting':
                     
                     try:
-                        await self.orderIDs[orderid][1].send(":wastebasket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
+                        await self.orderIDs[orderid][1].send(":wastebasket: **| Your order of `{}` with ID `{}` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
                     except:
-                        await self.orderIDs[orderid][0].send(":wastebasket: **| Your order of ``{}`` with ID ``{}`` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
+                        await self.orderIDs[orderid][0].send(":wastebasket: **| Your order of `{}` with ID `{}` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
 
-                    await self.orderLogObj.send(":wastebasket: **| Order ID ``{}`` was deleted from the order list after waiting for 24 hours.**".format(orderid))
+                    await self.orderLogObj.send(":wastebasket: **| Order ID `{}` was deleted from the order list after waiting for 24 hours.**".format(orderid))
 
                     toDelete.append(orderid)
                 
@@ -179,9 +179,9 @@ class Orders(commands.Cog):
                 await ctx.send(":rage: **| Your order contained COFFEE! You TRAITOR!!**")
                 return
 
-        for item in ['hitler', 'nazi', 'heroin', 'sex', 'piss', 'ass', 'penis', 'dick', 'cock', 'cum', 'semen', 'cocaine']:
+        for item in ['hitler', 'nazi', 'heroin', 'sex', 'piss', 'penis', 'dick', 'cock', 'cum', 'semen', 'cocaine', 'faggot', 'nigger']:
             if item in order.lower():
-                await ctx.send(":warning: **| This order is against the rules (see them with ``tea!rules``). If you try to bypass this filter you will be blacklisted immediately.**")
+                await ctx.send(":warning: **| This order is against the rules (see them with `tea!rules`). If you try to bypass this filter you will be blacklisted immediately.**")
                 return
 
         orderCountUser = 0
@@ -196,7 +196,7 @@ class Orders(commands.Cog):
                 ratingWaitingUser += 1
 
         if ratingWaitingUser >= 5 and ctx.author.id != 368860954227900416:
-            await ctx.send(':no_entry_sign: **| You haven\'t rated 5 of your orders! Please rate them before you order more. Check ``tea!myorders`` to see which orders to rate.**')
+            await ctx.send(':no_entry_sign: **| You haven\'t rated 5 of your orders! Please rate them before you order more. Check `tea!myorders` to see which orders to rate.**')
             return
 
         if self.orderCount >= 40 and ctx.author.id != 368860954227900416:
@@ -209,7 +209,7 @@ class Orders(commands.Cog):
 
         if orderCountUser >= 2:
             if self.votes[str(ctx.author.id)] <= 0:
-                await ctx.send(':no_entry_sign: **| You can\'t have more than 2 orders pending at once! Vote for Tea Time using ``tea!vote`` to get another order slot.**')
+                await ctx.send(':no_entry_sign: **| You can\'t have more than 2 orders pending at once! Vote for Tea Time using `tea!vote` to get another order slot.**')
                 return
             else:
                 self.votes[str(ctx.author.id)] -= 1
@@ -221,7 +221,7 @@ class Orders(commands.Cog):
 
         stats_data.WriteSingle('placed')
 
-        message = ':white_check_mark: **| Your order of ``{}`` has been placed! One of our Tea Sommeliers will claim it and deliver it right here to your server!**'.format(order)
+        message = ':white_check_mark: **| Your order of `{}` has been placed! One of our Tea Sommeliers will claim it and deliver it right here to your server!**'.format(order)
 
         if self.orderCount >= 18:
             message = message + '\n :warning: Tea Time is dealing with a large number of orders right now. Service may be delayed.'
@@ -235,7 +235,7 @@ class Orders(commands.Cog):
         if self.orderLogObj is None:
             self.orderLogObj = self.client.get_channel(self.orderLog)
 
-        await self.orderLogObj.send(":inbox_tray: **| Received order of ``{}`` with ID ``{}``. Ordered by {} ({}) in server {} ({}).**".format(order, self.totalOrderCount - 1, ctx.author, ctx.author.id, ctx.guild.name, ctx.guild.id))
+        await self.orderLogObj.send(":inbox_tray: **| Received order of `{}` with ID `{}`. Ordered by {} ({}) in server {} ({}).**".format(order, self.totalOrderCount - 1, ctx.author, ctx.author.id, ctx.guild.name, ctx.guild.id))
 
     @commands.command()
     async def quickorder(self, ctx, option=None):
@@ -250,7 +250,7 @@ class Orders(commands.Cog):
         if not option:
             embed = discord.Embed(color=discord.Colour.green())
             embed.add_field(name="Quick Order Menu", value="1 - Tea\n2 - Green Tea\n3 - Black Tea\n4 - Earl Grey Tea\n5 - Iced Tea\n6 - Milk Tea\n7 - Boba Tea\n8 - Water Glass\n**NEW** 9 - Chai Tea\n**NEW** 10 - Zoo Tea", inline = False)
-            embed.add_field(name = 'How to order:', value = 'To order, use ``tea!quickorder <number>`` with the number of the tea you want to order.', inline = False)
+            embed.add_field(name = 'How to order:', value = 'To order, use `tea!quickorder <number>` with the number of the tea you want to order.', inline = False)
 
             await ctx.send(embed=embed)
 
@@ -344,7 +344,7 @@ class Orders(commands.Cog):
                 usersIDs.append(orderID)
 
         if len(usersIDs) <= 0:
-            embedToSend.add_field(name = "Your Active Orders (0)", value = "You have no active orders! Use tea!order to order something. Use tea!vote to vote for Tea Time and get an extra order slot!", inline = False)
+            embedToSend.add_field(name = "Your Active Orders (0)", value = "You have no active orders! Use `tea!order` to order something. Use `tea!vote` to vote for Tea Time and get an extra order slot!", inline = False)
         else:
             for orderID in usersIDs:
                 orderCount += 1
@@ -371,7 +371,7 @@ class Orders(commands.Cog):
                     'Unrated'
                 )
 
-            embedToSend.add_field(name = "Your unrated orders ({}/5)".format(orderCountWaiting), value = embedValueWaiting + '\nTo rate an order, use ``tea!rate <order ID> <rating from 1 to 5>``.')
+            embedToSend.add_field(name = "Your unrated orders ({}/5)".format(orderCountWaiting), value = embedValueWaiting + '\nTo rate an order, use `tea!rate <order ID> <rating from 1 to 5>`.')
         
         embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order. Use tea!vote to vote for Tea Time and get an extra order slot!')
 
@@ -457,8 +457,8 @@ class Orders(commands.Cog):
         if self.orderLogObj is None:
             self.orderLogObj = self.client.get_channel(self.orderLog)
 
-        await ctx.send(":white_check_mark: **| You canceled your order of ``{}`` with ID ``{}``.**".format(self.orderIDs[orderid][2], orderid))
-        await self.orderLogObj.send(":x: **| {} canceled their order of ``{}`` with ID ``{}``.**".format(ctx.author, self.orderIDs[orderid][2], orderid))
+        await ctx.send(":white_check_mark: **| You canceled your order of `{}` with ID `{}`.**".format(self.orderIDs[orderid][2], orderid))
+        await self.orderLogObj.send(":x: **| {} canceled their order of `{}` with ID `{}`.**".format(ctx.author, self.orderIDs[orderid][2], orderid))
 
         stats_data.WriteSingle('declined')
         self.orderIDs.pop(orderid, None)
@@ -624,7 +624,7 @@ class Orders(commands.Cog):
             await ctx.send(":no_entry_sign: **| There are no unclaimed orders waiting right now!**")
             return
 
-        await ctx.send(":white_check_mark: **| You've been assigned the order with ID ``{}``! Start brewing a ``{}``!**".format(assigned_order, self.orderIDs[assigned_order][2]))
+        await ctx.send(":white_check_mark: **| You've been assigned the order with ID `{}`! Start brewing a `{}`!**".format(assigned_order, self.orderIDs[assigned_order][2]))
 
         self.orderIDs[assigned_order][3] = "Brewing"
         self.orderIDs[assigned_order][4] = ctx.author.id
@@ -723,7 +723,7 @@ class Orders(commands.Cog):
         self.orderIDs[orderid][4] = ctx.author.id
         self.orderIDs[orderid][6] = datetime.datetime.now()
 
-        await ctx.send(":white_check_mark: **| You claimed the order of ``{}``! Start brewing!**".format(self.orderIDs[orderid][2]))
+        await ctx.send(":white_check_mark: **| You claimed the order of `{}`! Start brewing!**".format(self.orderIDs[orderid][2]))
         await self.orderLogObj.send(":man: **| Tea sommelier {} claimed the order with ID `{}` and is now brewing it!**".format(ctx.author.name, orderid))
 
         try:
@@ -920,9 +920,9 @@ class Orders(commands.Cog):
         await self.orderLogObj.send(":truck: **| Tea Sommelier {} is delivering the order with ID `{}`!**".format(ctx.author.name, orderid))
 
         try:
-            await self.orderIDs[orderid][1].send(":truck: **| Tea Sommelier {} is delivering your order with ID ``{}``! Thanks for using our service!**".format(ctx.author, orderid))
+            await self.orderIDs[orderid][1].send(":truck: **| Tea Sommelier {} is delivering your order with ID `{}`! Thanks for using our service!**".format(ctx.author, orderid))
         except:
-            await self.orderIDs[orderid][0].send(":truck: **| {}, Tea Sommelier {} is delivering your order with ID ``{}``! Thanks for using our service!**".format(self.orderIDs[orderid][1].mention, ctx.author, orderid))
+            await self.orderIDs[orderid][0].send(":truck: **| {}, Tea Sommelier {} is delivering your order with ID `{}`! Thanks for using our service!**".format(self.orderIDs[orderid][1].mention, ctx.author, orderid))
 
         sommelier_stats_data.AddRecentDeliver(ctx.author.id, self.orderIDs[orderid][2])
 
@@ -982,7 +982,7 @@ class Orders(commands.Cog):
         rating_data.Add(rating)
         sommelier_stats_data.AddRating(self.waitingForRating[orderid][4], rating)
 
-        await ctx.send(":star: **| You rated your ``{}`` {}! Thanks for your feedback! Remember you can always support us by ``tea!vote`` to help us grow!**".format(self.waitingForRating[orderid][2], ':star:' * rating))
+        await ctx.send(":star: **| You rated your `{}` {}! Thanks for your feedback! Remember you can always support us by `tea!vote` to help us grow!**".format(self.waitingForRating[orderid][2], ':star:' * rating))
 
         sommelier = self.client.get_user(self.waitingForRating[orderid][4])
 
