@@ -40,32 +40,32 @@ class Events(commands.Cog):
 
             self.error_count += 1
 
-            await ctx.send(":x: **| ``ID {}`` There was an error invoking the command: ```{}```**".format(self.error_count, str(error)))
-            await self.errorLogObj.send("``ID {}`` COMMAND INVOKE ERROR: ``{}`` threw ```{}```".format(self.error_count, ctx.message.content, str(error)))
+            await ctx.send(":x: **| `ID {}` There was an error invoking the command: ```{}```**".format(self.error_count, str(error)))
+            await self.errorLogObj.send("`ID {}` COMMAND INVOKE ERROR: `{}` threw ```{}```".format(self.error_count, ctx.message.content, str(error)))
 
         elif isinstance(error, commands.errors.BadArgument):
 
             self.error_count += 1
 
-            await ctx.send(":x: **| ``ID {}`` You entered a bad argument into the command: ```{}```**".format(self.error_count, str(error)))
+            await ctx.send(":x: **| `ID {}` You entered a bad argument into the command: ```{}```**".format(self.error_count, str(error)))
 
         elif isinstance(error, commands.errors.CommandOnCooldown):
 
             self.error_count += 1
 
-            await ctx.send(":x: **| ``ID {}`` This command has a cooldown; please wait **{}s** before using it again. Spamming commands is bannable!**".format(self.error_count, round(error.retry_after, 2)))
+            await ctx.send(":x: **| `ID {}` This command has a cooldown; please wait **{}s** before using it again. Spamming commands is bannable!**".format(self.error_count, round(error.retry_after, 2)))
 
         elif isinstance(error, commands.MissingRequiredArgument):
 
             self.error_count += 1
 
-            await ctx.send(":x: **| ``ID {}`` A required command argument is missing.**".format(self.error_count))
+            await ctx.send(":x: **| `ID {}` A required command argument is missing.**".format(self.error_count))
 
         elif isinstance(error, discord.Forbidden):
 
             self.error_count += 1
 
-            await ctx.send(":x: **| ``ID {}`` The bot is missing the required permission.**".format(self.error_count))
+            await ctx.send(":x: **| `ID {}` The bot is missing the required permission.**".format(self.error_count))
 
         elif isinstance(error, discord.ext.commands.CheckFailure):
 
@@ -73,8 +73,8 @@ class Events(commands.Cog):
 
         else:
 
-            await ctx.send(":x: **| ``ID {}`` An unknown error occurred. ```{}```**".format(self.error_count, str(error)))
-            await self.errorLogObj.send("``ID {}`` UNKNOWN ERROR: ``{}`` threw ```{}```".format(self.error_count, ctx.message.content, str(error)))
+            await ctx.send(":x: **| `ID {}` An unknown error occurred. ```{}```**".format(self.error_count, str(error)))
+            await self.errorLogObj.send("`ID {}` UNKNOWN ERROR: ``{}`` threw ```{}```".format(self.error_count, ctx.message.content, str(error)))
 
 
     @commands.Cog.listener()
@@ -141,7 +141,7 @@ class Events(commands.Cog):
             self.guildJoinsLeavesChannelObj = self.client.get_channel(self.guildJoinsLeavesChannel)
 
         embedToSend = discord.Embed(colour = discord.Colour.green())
-        embedToSend.add_field(name = 'Joined Guild', value = ':arrow_up_small: **Tea Time joined ``{}``\nWe now have {} servers.**'.format(guild.name, len(self.client.guilds)))
+        embedToSend.add_field(name = 'Joined Guild', value = ':arrow_up_small: **Tea Time joined `{}`\nWe now have {} servers.**'.format(guild.name, len(self.client.guilds)))
 
         await self.guildJoinsLeavesChannelObj.send(embed = embedToSend)
 
@@ -152,7 +152,7 @@ class Events(commands.Cog):
             self.guildJoinsLeavesChannelObj = self.client.get_channel(self.guildJoinsLeavesChannel)
 
         embedToSend = discord.Embed(colour = discord.Colour.red())
-        embedToSend.add_field(name = 'Left Guild', value = ':arrow_down_small: **Tea Time left ``{}``\nWe now have {} servers.**'.format(guild.name, len(self.client.guilds)))
+        embedToSend.add_field(name = 'Left Guild', value = ':arrow_down_small: **Tea Time left `{}`\nWe now have {} servers.**'.format(guild.name, len(self.client.guilds)))
 
         await self.guildJoinsLeavesChannelObj.send(embed = embedToSend)
 
