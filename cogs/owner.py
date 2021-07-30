@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+import asyncio
+
 from utils import sommelier_data, rating_data, blacklist_data, stats_data, sommelier_stats_data
 
 class Owner(commands.Cog):
@@ -10,6 +12,9 @@ class Owner(commands.Cog):
         self.client = client
 
         self.allowedUsers = [416987805739122699, 368860954227900416]
+
+        self.vetSommeliersRole = 761596659288375327
+        self.vetSommeliersRoleObj = None
 
         self.sommeliersRole = 740408576778043412
         self.sommeliersRoleObj = None
@@ -167,6 +172,102 @@ class Owner(commands.Cog):
 
         for embed in embedList:
             await ctx.send(embed = embed)
+
+    @commands.command()
+    async def quotaremove(self, ctx):
+
+        if ctx.author.id not in self.allowedUsers:
+            return
+
+        if self.newSommeliersRoleObj is None:
+            self.newSommeliersRoleObj = ctx.guild.get_role(self.newSommeliersRole)
+
+        if self.sommeliersRoleObj is None:
+            self.sommeliersRoleObj = ctx.guild.get_role(self.sommeliersRole)
+
+        if self.vetSommeliersRoleObj is None:
+            self.vetSommeliersRoleObj = ctx.guild.get_role(self.vetSommeliersRole)
+
+        userCount = 0
+        failedDBDelete = 0
+        failedRoleRemove = 0
+
+        statsDB = sommelier_stats_data.GetAll()
+
+        embed = discord.Embed(colour = discord.Colour.gold())
+        embed.add_field(name = "Loading", value = "Please wait")
+
+        message = await ctx.send(embed = embed)
+
+        for user in statsDB:
+            if statsDB[user]['totalDeliveredWeek'] < 5:
+                userCount += 1
+
+                try:
+                    sommelier_data.Remove(str(user))
+                    sommelier_stats_data.RemoveSommelier(str(user))
+                except:
+                    failedDBDelete += 1
+
+                try:
+                    member = ctx.guild.get_member(int(user))
+                    await member.remove_roles(self.newSommeliersRoleObj, self.sommeliersRoleObj, self.vetSommeliersRoleObj)
+                    await asyncio.sleep(1)
+                    print(f"Full remove success! {userCount}")
+                except:
+                    failedRoleRemove += 1
+
+    @commands.command()
+    async def fixquotaremove(self, ctx):
+
+        if ctx.author.id not in self.allowedUsers:
+            return
+
+        if self.newSommeliersRoleObj is None:
+            self.newSommeliersRoleObj = ctx.guild.get_role(self.newSommeliersRole)
+
+        if self.sommeliersRoleObj is None:
+            self.sommeliersRoleObj = ctx.guild.get_role(self.sommeliersRole)
+
+        if self.vetSommeliersRoleObj is None:
+            self.vetSommeliersRoleObj = ctx.guild.get_role(self.vetSommeliersRole)
+
+        await ctx.send("Working")
+
+        statsDB = sommelier_stats_data.GetAll()
+
+        for user in sommelier_data.GetAll():
+
+            if sommelier_stats_data.CheckIfExists(str(user)) == False:
+                sommelier_data.Remove(user)
+
+                try:
+                    member = ctx.guild.fetch_member(user)
+                    await member.remove_roles(self.vetSommeliersRoleObj, self.sommeliersRoleObj, self.newSommeliersRoleObj)
+                    await asyncio.sleep(1)
+                except Exception as e:
+                    await ctx.send(f"Fail: {str(e)}")
+
+        await ctx.send("Done")
+
+    @commands.command()
+    async def test(self, ctx, userid):
+
+        if ctx.author.id not in self.allowedUsers:
+            return
+
+        if self.newSommeliersRoleObj is None:
+            self.newSommeliersRoleObj = ctx.guild.get_role(self.newSommeliersRole)
+
+        if self.sommeliersRoleObj is None:
+            self.sommeliersRoleObj = ctx.guild.get_role(self.sommeliersRole)
+
+        if self.vetSommeliersRoleObj is None:
+            self.vetSommeliersRoleObj = ctx.guild.get_role(self.vetSommeliersRole)
+
+        member = ctx.guild.get_member(int(userid))
+        await member.remove_roles(self.vetSommeliersRoleObj, self.sommeliersRoleObj, self.newSommeliersRoleObj)
+
 
     @commands.command()
     @commands.is_owner()

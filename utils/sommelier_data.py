@@ -40,3 +40,9 @@ def Amount():
         db = json.load(f)
 
         return len(db['sommeliers'])
+
+def GetAll():
+    with open(filepath, encoding="utf-8", mode="r") as f:
+        db = json.load(f)
+
+        return db['sommeliers']

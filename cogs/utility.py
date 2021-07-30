@@ -80,7 +80,7 @@ class Utility(commands.Cog):
         - **Tea Sommeliers:** `{}`
         - **Blacklisted Users:** `{}`
 
-        - **Bot Version:** `2.4.2`
+        - **Bot Version:** `2.4.3`
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -144,14 +144,15 @@ class Utility(commands.Cog):
         embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
 __{}__
 
-- **Orders Delivered:** `{}`
-- **Orders Delivered This Week:** `{}/5`
-- **Teas Declined:** `{}`
-- **Teas Declined This Week:** `{}`
-- **Total Ratings This Week:** `{}`
-- **Rating:** {}\n
-- **Recent Deliveries:**\n- `{}`\n- `{}`\n- `{}`\n
-- **Recent Ratings:**\n{}\n{}\n{}
+:bar_chart: **Statistics**
+> Orders Delivered: `{}`
+> Orders Delivered This Week: `{}/5`
+> Teas Declined:** `{}`
+> Teas Declined This Week: `{}`
+> Total Ratings This Week: `{}`
+> Rating: {}\n
+:truck: **Recent Deliveries:**\n- `{}`\n- `{}`\n- `{}`\n
+:star: **Recent Ratings:**\n{}\n{}\n{}
         """.format(
             rank,
             statsDB['totalDelivered'],
@@ -159,7 +160,7 @@ __{}__
             statsDB['totalDeclined'],
             statsDB['totalDeclinedWeek'],
             statsDB['totalRatings'],
-            ratingAverage,
+            round(ratingAverage, 2),
             statsDB['recentDelivered'][2],
             statsDB['recentDelivered'][1],
             statsDB['recentDelivered'][0],
@@ -225,7 +226,7 @@ Last updated August 20th, 2020
 
     @commands.command()
     async def ping(self, ctx):
-        await ctx.send(":ping_pong: | {}ms".format(round(self.client.latency * 1000)))
+        await ctx.send(":ping_pong: **| {}ms**".format(round(self.client.latency * 1000)))
 
     @commands.command()
     async def approval(self, ctx):
