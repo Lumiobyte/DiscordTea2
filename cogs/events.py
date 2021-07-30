@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+import datetime
 from utils import blacklist_data
 
 class Events(commands.Cog):
@@ -11,13 +12,16 @@ class Events(commands.Cog):
 
         self.appealsRole = 740451813865816095
         self.appealsRoleObj = None
+        
         self.memberRole = 740423917205848114
         self.memberRoleObj = None
 
         self.joinsLeavesChannel = 740451274855546963
         self.joinsLeavesChannelObj = None
+
         self.guildJoinsLeavesChannel = 740451402580754483
         self.guildJoinsLeavesChannelObj = None
+
         self.appealsChannel = 740451781389189204
         self.appealsChannelObj = None
 
@@ -45,33 +49,31 @@ class Events(commands.Cog):
 
         elif isinstance(error, commands.errors.BadArgument):
 
-            self.error_count += 1
-
-            await ctx.send(":x: **| `ID {}` You entered a bad argument into the command: ```{}```**".format(self.error_count, str(error)))
+            await ctx.send(":x: **| Bad argument: {}**".format(error.args[0]))
 
         elif isinstance(error, commands.errors.CommandOnCooldown):
 
-            self.error_count += 1
-
-            await ctx.send(":x: **| `ID {}` This command has a cooldown; please wait **{}s** before using it again. Spamming commands is bannable!**".format(self.error_count, round(error.retry_after, 2)))
+            await ctx.send(":x: **| This command has a cooldown; please wait **{}s** before using it again. Spamming commands is bannable!**".format(datetime.timedelta(round(error.retry_after))))
 
         elif isinstance(error, commands.MissingRequiredArgument):
 
-            self.error_count += 1
-
-            await ctx.send(":x: **| `ID {}` A required command argument is missing.**".format(self.error_count))
+            await ctx.send(":x: **| Missing argument: {}**".format(error.args[0]))
 
         elif isinstance(error, discord.Forbidden):
 
-            self.error_count += 1
+            await ctx.send(":x: **| The bot is missing the required permissions.**")
 
-            await ctx.send(":x: **| `ID {}` The bot is missing the required permission.**".format(self.error_count))
+        elif isinstance(error, commands.MissingRole):
+            
+            await ctx.send(":x: **| You don't have the required roles to run this command.**")
 
         elif isinstance(error, discord.ext.commands.CheckFailure):
 
             pass
 
         else:
+
+            self.error_count += 1
 
             await ctx.send(":x: **| `ID {}` An unknown error occurred. ```{}```**".format(self.error_count, str(error)))
             await self.errorLogObj.send("`ID {}` UNKNOWN ERROR: ``{}`` threw ```{}```".format(self.error_count, ctx.message.content, str(error)))

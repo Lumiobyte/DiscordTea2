@@ -16,6 +16,8 @@ class Utility(commands.Cog):
 
         self.blacklistImmune = [368860954227900416, 416987805739122699]
 
+        self.sotwRoleID = 750505426637815831
+
     @commands.command()
     async def rules(self, ctx):
 
@@ -59,11 +61,11 @@ class Utility(commands.Cog):
 
         statsDB = stats_data.GetData()
 
-        embedToSend.add_field(name = 'Tea Time Stats', value = """
+        embedToSend.add_field(name = ':bar_chart: Tea Time Stats', value = """
         - **Orders Placed:** `{}`
         - **Teas Delivered:** `{}`
         - **Orders Declined/Cancelled:** `{}`
-        - **Quickorders Brewed:** `{}``
+        - **Quickorders Brewed:** `{}`
         - **Ratings Given:** `{}`
         - **Average Rating:** `{}`:star:
         - **Feedback Comments Given:** `{}`
@@ -127,27 +129,31 @@ class Utility(commands.Cog):
         rank = ''
 
         if statsDB['rank'] == 'new':
-            rank = 'New Sommelier'
+            rank = '<@&749058359759601665>'
         elif statsDB['rank'] == 'som':
-            rank = 'Tea Sommelier'
+            rank = '<@&740408576778043412>'
         elif statsDB['rank'] == 'vet':
-            rank = '**Veteran Sommelier**'
+            rank = '**<@&761596659288375327>**'
+
+        for role in ctx.author.roles:
+            if role.id == 750505426637815831:
+                rank = "**<@&750505426637815831>**"
 
         for i in range(0, 5):
             total += (i + 1) * statsDB['ratings'][i]
             counter += 1 * statsDB['ratings'][i]
 
-        ratingAverage = total / counter
+        ratingAverage = round((total / counter), 2)
 
-        ratingAverage = '``' + str(ratingAverage) + '``:star:'
+        ratingAverage = '`' + str(ratingAverage) + '`:star:'
 
-        embedToSend.add_field(name = f'Sommelier Stats for {user}', value = """
-__{}__
+        embedToSend.add_field(name = f':mag: Sommelier Stats for {user}', value = """
+{}
 
 :bar_chart: **Statistics**
 > Orders Delivered: `{}`
 > Orders Delivered This Week: `{}/5`
-> Teas Declined:** `{}`
+> Teas Declined: `{}`
 > Teas Declined This Week: `{}`
 > Total Ratings This Week: `{}`
 > Rating: {}\n
@@ -160,7 +166,7 @@ __{}__
             statsDB['totalDeclined'],
             statsDB['totalDeclinedWeek'],
             statsDB['totalRatings'],
-            round(ratingAverage, 2),
+            ratingAverage,
             statsDB['recentDelivered'][2],
             statsDB['recentDelivered'][1],
             statsDB['recentDelivered'][0],

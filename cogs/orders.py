@@ -152,8 +152,6 @@ class Orders(commands.Cog):
 
         await ctx.send('Set order lock to `{}` and message to `{}`'.format(self.orderLock, self.orderLockMessage))
 
-
-
     @commands.command()
     async def order(self, ctx, *, order = None):
 

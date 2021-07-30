@@ -251,7 +251,7 @@ class Owner(commands.Cog):
         await ctx.send("Done")
 
     @commands.command()
-    async def test(self, ctx, userid):
+    async def testing(self, ctx, userid):
 
         if ctx.author.id not in self.allowedUsers:
             return
@@ -408,6 +408,10 @@ class Owner(commands.Cog):
         else:
 
             await ctx.send(':x: **| `{}` is not a valid mode.**'.format(mode or 'None'))
+
+    @commands.command()
+    async def proof(self, ctx):
+        await ctx.send("Lumiobyte#0867")
 
 
 def setup(client):
