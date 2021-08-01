@@ -6,7 +6,7 @@ from utils import blacklist_data, stats_data, sommelier_data, config_loader
 intents = discord.Intents.all()
 intents.presences = False
 
-client = commands.AutoShardedBot(command_prefix = ['tea!', 'Tea!', 'TEA!', 't!', 'T!'], intents = intents)
+client = commands.AutoShardedBot(command_prefix = ['tea!', 'Tea!', 'TEA!', 't!', 'T!', "tt!"], intents = intents)
 client.remove_command('help')
 
 TOKEN = config_loader.GrabToken('token')
@@ -52,22 +52,17 @@ async def help(ctx):
 > **tea!quickorder [option]** - Select a tea you'd like from a menu.
 > **tea!myorders** - See your current active orders, and orders waiting to be rated.
 > **tea!oinfo <orderID>** - Get the info on an order.
-> **tea!message <orderID> <message>** - Send a message to the Tea Sommelier currently brewing your order.
     """, inline = False)
     embedToSend.add_field(name=":speech_left: Feedback Commands", value="""
+> **tea!message <orderID> <message>** - Send a message to the Tea Sommelier currently brewing your order.
 > **tea!rate <orderid> <rating 1-5>** - Rate your tea! Provide an Order ID (find it in **tea!myorders**) and rate it from 1 to 5:star:.
 > **tea!feedback <comment>** - Send feedback to the Sommeliers.
 > **tea!suggest <idea>** - Send a suggestion. Abusing or spamming suggestions is blacklisted.
-> **tea!approval** - View the overall average rating for the service.
     """, inline = False)
     embedToSend.add_field(name=":card_box: Other Commands", value="""
-> **tea!somstats [@user]** - See the statistics of a Tea Sommelier!
-> **tea!privacy** - See Tea Time\'s privacy policy
 > **tea!stats** - See Tea Time\'s statistics.
 > **tea!invite** - Get a link to invite Tea Time to your server, as well as an invite to the support server.
 > **tea!vote** - Vote for Tea Time to get an extra order slot!
-> **tea!ping** - See bot latency.
-> **tea!tea** :tea:
     """, inline = False)
 
     if sommelier_data.Check(ctx.author.id): # if sommelier
@@ -80,12 +75,13 @@ async def help(ctx):
 > **tea!deliver <orderID>** - Deliver an order to the server it was ordered in.
 > **tea!list** - See all unclaimed orders.
 > **tea!message <orderID> <message>** - Send a message to the customer of an order you are brewing.
+> **tea!somstats [@user]** - See the statistics of a Tea Sommelier!
 > **tea!blacklist <add/remove> <@user>** - Blacklist or unblacklist a user.
         """, inline = False)
 
     embedToSend.add_field(name = ':link: Links', value = '> Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\n> Support server: [Join](https://discord.gg/mP8U9ey)\n> [Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)', inline = False)
 
-    embedToSend.set_footer(text = 'Tea Time v2.4.3 by Lumiobyte#0867')
+    embedToSend.set_footer(text = 'Tea Time v2.5.0 by Lumiobyte#0867')
 
     await ctx.send(embed = embedToSend)
 

@@ -27,6 +27,8 @@ class Applications(commands.Cog):
     @commands.command()
     async def apply(self, ctx):
 
+        await ctx.message.delete()
+
         if ctx.guild.id != 524024216463605770:
             await ctx.send(":lock: **| That command cannot be used in this server.**")
             return
@@ -48,6 +50,8 @@ class Applications(commands.Cog):
     @commands.has_role(744817921355808788)
     async def test(self, ctx):
 
+        await ctx.message.delete()
+
         if ctx.channel.id != 744842642302435368:
             await ctx.send(":lock: **| That command cannot be used in this channel.**")
             return
@@ -56,11 +60,13 @@ class Applications(commands.Cog):
             await ctx.send(":no_entry_sign: **| You're already a Tea Sommelier!**")
             return
 
-        await ctx.send(f":tea: Your test order is: **{random.choice(self.testOptions)}**\n\n*Edit an image to match the prompt to demonstrate your editing skills as they are required as a Tea Sommelier. Once you're finished, ping @Test Approver*")
+        await ctx.send(f":tea: Your test order is: **{ctx.author.mention}\n{random.choice(self.testOptions)}**\n\n*Edit an image to match the prompt to demonstrate your editing skills as they are required as a Tea Sommelier. Once you're finished, ping @Test Approver*")
         
     @commands.command()
     @commands.has_role(744817921355808788)
     async def stoptest(self, ctx):
+
+        await ctx.message.delete()
 
         if ctx.channel.id != 744842642302435368:
             await ctx.send(":lock: **| That command cannot be used in this channel.**")
@@ -93,6 +99,8 @@ class Applications(commands.Cog):
             return 
 
         await ctx.author.remove_roles(ctx.guild.get_role(744817921355808788))
+
+        await ctx.send(":white_check_mark:")
 
 def setup(client):
     client.add_cog(Applications(client))

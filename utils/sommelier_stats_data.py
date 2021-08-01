@@ -78,7 +78,7 @@ def AddOrderDelivered(userid):
     with open(filepath, encoding="utf-8", mode="w") as f:
         json.dump(db, f)
 
-    if (totalDeliveredPrev == 9 and db[userid]['totalDelivered'] == 10) or (totalDeliveredPrev == 99 and db[userid]['totalDelivered'] == 100):
+    if (totalDeliveredPrev == 9 and db[userid]['totalDelivered'] == 10) or (totalDeliveredPrev == 99 and db[userid]['totalDelivered'] == 100) or  (totalDeliveredPrev == 249 and db[userid]['totalDelivered'] == 250):
         result = UpgradeRank(userid)
         return result
 
@@ -168,17 +168,21 @@ def UpgradeRank(userid):
 
         userid = str(userid)
 
+        oldRank = db[userid]['rank']
+
         if db[userid]['rank'] == 'new':
             db[userid]['rank'] = 'som'
         elif db[userid]['rank'] == 'som':
             db[userid]['rank'] = 'vet'
+        elif db[userid]['rank'] == 'vet':
+            db[userid]['rank'] = 'mas'
 
         newRank = db[userid]['rank']
 
     with open(filepath, encoding="utf-8", mode="w") as f:
         json.dump(db, f)
 
-    return [True, newRank]
+    return [True, newRank, oldRank]
 
 
 def GetAll():
@@ -198,8 +202,10 @@ def FixDatabase():
                 db[userid]['rank'] = 'new'
             elif db[userid]['totalDelivered'] >= 10 and db[userid]['totalDelivered'] <= 99:
                 db[userid]['rank'] = 'som'
-            else:
+            elif db[userid]['totalDelivered'] >= 100 and db[userid]['totalDelivered'] <= 249:
                 db[userid]['rank'] = 'vet'
+            else:
+                db[userid]['rank'] = 'mas'
 
     with open(filepath, encoding="utf-8", mode="w") as f:
         json.dump(db, f)

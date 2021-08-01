@@ -1,7 +1,9 @@
 import discord
 from discord.ext import commands
 
-from utils import blacklist_data, rating_data, sommelier_data, stats_data, sommelier_stats_data
+import random
+
+from utils import blacklist_data, rating_data, sommelier_data, stats_data, sommelier_stats_data, booster_data
 
 class Utility(commands.Cog):
 
@@ -17,6 +19,30 @@ class Utility(commands.Cog):
         self.blacklistImmune = [368860954227900416, 416987805739122699]
 
         self.sotwRoleID = 750505426637815831
+
+        self.subie = [
+            'https://cdn.discordapp.com/attachments/717992389633114194/871300029955047434/Screenshot_20210801_105504.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871300525239463986/B266415-2017-WRX-STI--1--1.png',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871300525935710320/2Q15.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871301485076574268/1627804832993.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871301486158708766/1627804817943.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871301486498435092/1627804812161.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871301487177904169/1627804803520.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871301487593127987/1627804798818.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871301488830459924/1627804778803.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871301624184856586/1627804739043.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871301624625266778/1627804716674.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871301626168754226/1627804681899.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871302094013988884/Screenshot_20210520_125144.jpg',
+            'https://cdn.discordapp.com/attachments/717992389633114194/871302093640708136/1624046601201.jpg'
+        ]
+
+    @commands.command()
+    async def subaru(self, ctx):
+
+        await ctx.message.delete()
+
+        await ctx.send(random.choice(self.subie))
 
     @commands.command()
     async def rules(self, ctx):
@@ -56,33 +82,57 @@ class Utility(commands.Cog):
         await ctx.send(embed = embedToSend)
 
     @commands.command()
+    async def boosters(self, ctx):
+
+        boostersDB = booster_data.GetAll()
+
+        message = ''
+        counter = 0
+
+        for user in boostersDB:
+            counter += 1
+            message += f"- <@{user}>\n"
+
+        await ctx.send(f"**Boosters: {counter}**\n\n" + message)
+
+    @commands.command()
+    async def amiboosting(self, ctx):
+
+        if booster_data.Check(ctx.author.id):
+            await ctx.send("You're boosting :heart:")
+        else:
+            await ctx.send("You're not boosting")
+
+    @commands.command()
     async def stats(self, ctx):
         embedToSend = discord.Embed(colour = discord.Colour.blurple())
 
         statsDB = stats_data.GetData()
 
-        embedToSend.add_field(name = ':bar_chart: Tea Time Stats', value = """
-        - **Orders Placed:** `{}`
-        - **Teas Delivered:** `{}`
-        - **Orders Declined/Cancelled:** `{}`
-        - **Quickorders Brewed:** `{}`
-        - **Ratings Given:** `{}`
-        - **Average Rating:** `{}`:star:
-        - **Feedback Comments Given:** `{}`
-        - **Suggestions Given:** `{}`
-        - **Messages Sent:** `{}`
-        - **Facts Told:** `{}`
-        - **Times it's been tea time:** `{}`
-        - **Times help command has been used:** `{}`
-        - **Times bot has logged on:** `{}`
+        embedToSend.add_field(name = ':bar_chart: Tea Time Stats :bar_chart:', value = """:tea: **Orders** :tea:
+> Orders Placed: {}
+> Teas Delivered: {}
+> Orders Declined/Cancelled: {}
+> Quickorders Brewed: {}
+:star: **Feedback** :star:
+> Ratings Given: {}
+> Average Rating: {}:star:
+> Feedback Comments Given: {}
+> Suggestions Given: {}
+> Messages Sent: {}
+:card_box: **Misc** :card_box:
+> Facts Told: {}
+> Times it's been tea time: {}
+> Times help command has been used: {}
+> Times bot has logged on: {}
+:chart_with_upwards_trend: **Statistics** :chart_with_upwards_trend:
+> Servers: {}
+> Shards: {}
+> Users in support server: {}
+> Tea Sommeliers: {}
+> Blacklisted Users: {}
 
-        - **Servers:** `{}`
-        - **Shards:** `{}`
-        - **Users in support server:** `{}`
-        - **Tea Sommeliers:** `{}`
-        - **Blacklisted Users:** `{}`
-
-        - **Bot Version:** `2.4.3`
+        :label: **Bot Version:** 2.5.0
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -134,6 +184,8 @@ class Utility(commands.Cog):
             rank = '<@&740408576778043412>'
         elif statsDB['rank'] == 'vet':
             rank = '**<@&761596659288375327>**'
+        elif statsDB['rank'] == 'mas':
+            rank = "**<@&803978659353329714>"
 
         for role in ctx.author.roles:
             if role.id == 750505426637815831:
@@ -150,7 +202,7 @@ class Utility(commands.Cog):
         embedToSend.add_field(name = f':mag: Sommelier Stats for {user}', value = """
 {}
 
-:bar_chart: **Statistics**
+:bar_chart: **Statistics** :bar_chart:
 > Orders Delivered: `{}`
 > Orders Delivered This Week: `{}/5`
 > Teas Declined: `{}`
@@ -176,6 +228,79 @@ class Utility(commands.Cog):
         ))
 
         await ctx.send(embed = embedToSend)
+
+    @commands.command(aliases = ['lb'])
+    async def leaderboard(self, ctx, *, mode = None):
+
+        topTen = {}
+        counter = 1
+
+        if mode is None or mode.lower() == "lifetime":
+            dbSorted = sorted(sommelier_stats_data.GetAll().items(), key = lambda x: x[1]['totalDelivered'], reverse=True)
+
+            for item in dbSorted:
+                if counter <= 10:
+                    topTen[item[0]] = {"rank": counter, "number": item[1]['totalDelivered'], "userid": item[0], "unit": " teas"}
+
+                counter += 1
+
+        elif mode.lower() == "ratings" or mode.lower() == "rating":
+            
+            dbRaw = sommelier_stats_data.GetAll()
+            ratingsCalculated = {}
+
+            for item in dbRaw:
+
+                total = 0
+                ratingCalcHelper = 0
+                ratingAverage = 0
+
+                for i in range(0, 5):
+                    total += (i + 1) * dbRaw[item]['ratings'][i]
+                    ratingCalcHelper += 1 * dbRaw[item]['ratings'][i]
+
+                ratingAverage = round((total / ratingCalcHelper), 2)
+
+                ratingsCalculated[item] = ratingAverage
+
+            dbSorted = sorted(ratingsCalculated.items(), key = lambda x: x[1], reverse=True)
+
+            for item in dbSorted:
+                if counter <= 10:
+                    topTen[item[0]] = {"rank": counter, "number": item[1], "userid": item[0], "unit": ":star:"}
+
+                counter += 1
+
+        elif mode.lower() == "weekly" or mode.lower() == "week":
+            dbSorted = sorted(sommelier_stats_data.GetAll().items(), key = lambda x: x[1]['totalDeliveredWeek'], reverse=True)
+
+            for item in dbSorted:
+                if counter <= 10:
+                    topTen[item[0]] = {"rank": counter, "number": item[1]['totalDeliveredWeek'], "userid": item[0], "unit": " teas"}
+
+                counter += 1
+
+        else:
+            await ctx.send(":no_entry_sign: **| Not a valid mode. Available modes are `lifetime, ratings, weekly`")
+            return
+
+        embed = discord.Embed(colour = discord.Colour.blurple())
+
+        embedField = ""
+
+        for user in topTen:
+
+            userObj = self.client.get_user(int(user))
+
+            if topTen[user]['rank'] == 1:
+                embedField += f"1. :crown: **{topTen[user]['number']}{topTen[user]['unit']} - {userObj}**\n"
+            else:
+                embedField += f"{topTen[user]['rank']}. {topTen[user]['number']}{topTen[user]['unit']} - {userObj}\n"
+
+        embed.add_field(name = f":scroll: Leaderboard - {mode.capitalize()}", value = embedField)
+        embed.set_footer(text = "tea!lb <lifetime | weekly | ratings> to see other categories")
+
+        await ctx.send(embed = embed)
 
     @commands.command()
     async def privacy(self, ctx):

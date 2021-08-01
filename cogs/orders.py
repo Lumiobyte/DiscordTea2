@@ -6,7 +6,7 @@ import datetime
 import random
 import asyncio
 
-from utils import sommelier_data, stats_data, sommelier_stats_data, rating_data, config_loader
+from utils import sommelier_data, stats_data, sommelier_stats_data, rating_data, config_loader, booster_data
 
 # IMPORTANT INFORMATION!
 # self.orderIDs entries look like this:
@@ -33,10 +33,11 @@ class Orders(commands.Cog):
         self.waitingForRating = {}
         
         self.orderCount = 0
+        self.boosterOrderCount = 0
         self.totalOrderCount = 0
 
         self.ttBotID = 507004433226268699
-        self.bonusOrderCap = 2
+        self.bonusOrderCap = 1
 
         self.orderLog = 740422451380617317
         self.orderLogObj = None
@@ -46,12 +47,14 @@ class Orders(commands.Cog):
 
         self.messagesLogChannel = 795895939256156160
 
-        self.sommelierRolesDict = {'new': 749058359759601665, 'som': 740408576778043412, 'vet': 761596659288375327}
-        self.sommelierRolesList = [749058359759601665, 740408576778043412, 761596659288375327]
+        self.sommelierRolesDict = {'new': 749058359759601665, 'som': 740408576778043412, 'vet': 761596659288375327, 'mas': 803978659353329714}
+        self.sommelierRolesList = [749058359759601665, 740408576778043412, 761596659288375327, 803978659353329714]
 
         self.bypassUsers = [416987805739122699, 368860954227900416]
 
         self.newSommelierRole = 749058359759601665
+
+        self.boosterRole = 779141455557951499
 
         self.orderLock = False
         self.orderLockMessage = 'Tea Time is currently undergoing maintenance. You may order again soon.'
@@ -71,6 +74,7 @@ class Orders(commands.Cog):
         self.votes = {}
 
         self.everyTenMin.start()
+        self.boosterChecker.start()
 
 
     @tasks.loop(seconds = 120)
@@ -120,6 +124,38 @@ class Orders(commands.Cog):
             self.orderIDs.pop(orderid, None)
             self.orderCount -= 1
 
+
+    @tasks.loop(seconds = 480)
+    async def boosterChecker(self):
+
+        boostersDB = booster_data.GetAll()
+
+        roleMembers = self.client.get_guild(524024216463605770).get_role(self.boosterRole).members
+
+        matchedMembers = []
+        usersToRemove = []
+
+        for user in roleMembers:
+            if user.id in boostersDB:
+                matchedMembers.append(user.id)
+            else:
+                booster_data.Add(user.id)
+                matchedMembers.append(user.id)
+
+        for user in boostersDB:
+            if user not in matchedMembers:
+                usersToRemove.append(user)
+
+        for user in usersToRemove:
+            booster_data.Remove(user)
+
+
+    @boosterChecker.before_loop
+    async def before_boosterChecker(self):
+        await self.client.wait_until_ready()
+
+
+
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):
         
@@ -168,16 +204,16 @@ class Orders(commands.Cog):
             await ctx.send(':grey_question: **| What type of tea would you like, {}? To order, use `tea!order <tea>` and replace `<tea>` with your order.**'.format(ctx.author.mention))
             return
 
+        for item in ["cafe", "coffee", "c0ffee", "coff33", "c0ff3e", "c0ffe3", "coff3e", "coffe3", "соffее", "соffee", "соffеe", "соffеe", "соffeе", "сoffee", "сoffee", "cоffee", "cоffее", "cоffеe", "cоffeе", "cоffeе", "coffeе", "coffее", "coffеe", "cofe", "coffe", "cofee", "coftea", "cofftea", "caftea", "cafftea", "latte", "late"]:
+            if item in order.split(' ', '').lower():
+                await ctx.send(":rage: **| Your order contained COFFEE! You TRAITOR!!**")
+                return
+
         if 'tea' not in order.lower():
             await ctx.send(':no_entry_sign: **| Your order must contain tea!**')
             return
 
-        for item in ["coffee", "c0ffee", "coff33", "c0ff3e", "c0ffe3", "coff3e", "coffe3", "соffее", "соffee", "соffеe", "соffеe", "соffeе", "сoffee", "сoffee", "cоffee", "cоffее", "cоffеe", "cоffeе", "cоffeе", "coffeе", "coffее", "coffеe", "cofe", "coffe", "cofee", "coftea", "cofftea", "caftea", "cafftea", "latte", "late"]:
-            if item in order.lower():
-                await ctx.send(":rage: **| Your order contained COFFEE! You TRAITOR!!**")
-                return
-
-        for item in ['hitler', 'nazi', 'heroin', 'sex', 'piss', 'penis', 'dick', 'cock', 'semen', 'cocaine', 'faggot', 'fag', 'fags', 'nigger']:
+        for item in ['hitler', 'nazi', 'heroin', 'sex', 'piss', 'penis', 'dick', 'cock', 'semen', 'cocaine', 'faggot', 'fag', 'fags', 'nigger', "nigga"]:
             if item in order.lower():
                 await ctx.send(":warning: **| This order is against the rules (see them with `tea!rules`). If you try to bypass this filter you will be blacklisted immediately.**")
                 return
@@ -193,27 +229,27 @@ class Orders(commands.Cog):
             if self.waitingForRating[orderid][1] == ctx.author:
                 ratingWaitingUser += 1
 
-        if ratingWaitingUser >= 5 and ctx.author.id != 368860954227900416:
+        if ratingWaitingUser >= 5:
             await ctx.send(':no_entry_sign: **| You haven\'t rated 5 of your orders! Please rate them before you order more. Check `tea!myorders` to see which orders to rate.**')
             return
 
-        if self.orderCount >= 40 and ctx.author.id != 368860954227900416:
-            await ctx.send(':no_entry_sign: **| The order limit of 40 active orders has been hit. Please wait while our staff complete some orders.**')
+        if self.orderCount >= 30 and booster_data.Check(ctx.author.id) == False:
+            await ctx.send(':no_entry_sign: **| The order limit of 30 active orders has been hit. Please wait while our staff complete some orders.**')
             return
 
         if len(order) > 300:
             await ctx.send(':no_entry_sign: **| Your order is over 300 characters long! Please keep it shorter.**')
             return
 
-        if orderCountUser >= 2:
+        if orderCountUser >= 1:
             if self.votes[str(ctx.author.id)] <= 0:
-                await ctx.send(':no_entry_sign: **| You can\'t have more than 2 orders pending at once! Vote for Tea Time using `tea!vote` to get another order slot.**')
+                await ctx.send(':no_entry_sign: **| You can\'t have more than 1 order pending at once! `tea!vote` for us to get an extra order slot, or boost the official server for priority queue!**')
                 return
             else:
                 self.votes[str(ctx.author.id)] -= 1
                 await ctx.send(':white_check_mark: **| Extra order slot used! You have {} extra orders remaining.**'.format(self.votes[str(ctx.author.id)]))
 
-        self.orderIDs[self.totalOrderCount] = [ctx.channel, ctx.author, order, 'Waiting', None, datetime.datetime.now(), None]
+        self.orderIDs[self.totalOrderCount] = [ctx.channel, ctx.author, order, 'Waiting', None, datetime.datetime.now(), None, booster_data.Check(user.id)]
         self.totalOrderCount += 1
         self.orderCount += 1
 
@@ -899,6 +935,7 @@ class Orders(commands.Cog):
             if type(result) == list:
                 if result[0] == True:
                     await ctx.author.add_roles(ctx.guild.get_role(self.sommelierRolesDict[result[1]]))
+                    await ctx.author.remove_roles(ctx.guild.get_role(self.sommelierRolesDict[result[2]]))
 
             self.orderIDs.pop(orderid, None)
             self.orderCount -= 1

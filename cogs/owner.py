@@ -250,24 +250,6 @@ class Owner(commands.Cog):
 
         await ctx.send("Done")
 
-    @commands.command()
-    async def testing(self, ctx, userid):
-
-        if ctx.author.id not in self.allowedUsers:
-            return
-
-        if self.newSommeliersRoleObj is None:
-            self.newSommeliersRoleObj = ctx.guild.get_role(self.newSommeliersRole)
-
-        if self.sommeliersRoleObj is None:
-            self.sommeliersRoleObj = ctx.guild.get_role(self.sommeliersRole)
-
-        if self.vetSommeliersRoleObj is None:
-            self.vetSommeliersRoleObj = ctx.guild.get_role(self.vetSommeliersRole)
-
-        member = ctx.guild.get_member(int(userid))
-        await member.remove_roles(self.vetSommeliersRoleObj, self.sommeliersRoleObj, self.newSommeliersRoleObj)
-
 
     @commands.command()
     @commands.is_owner()
