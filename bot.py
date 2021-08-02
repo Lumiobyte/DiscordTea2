@@ -87,6 +87,7 @@ async def help(ctx):
 > **tea!decline <orderID> <reason>** - Decline an order.
 > **tea!deliver <orderID>** - Deliver an order to the server it was ordered in.
 > **tea!list** - See all unclaimed orders.
+> **tea!plist** - See all unclaimed orders from <:BoostIcon:871575823671492689> boosters (veteran+ only)
 > **tea!message <orderID> <message>** - Send a message to the customer of an order you are brewing.
 > **tea!somstats [@user]** - See the statistics of a Tea Sommelier!
 > **tea!blacklist <add/remove> <@user>** - Blacklist or unblacklist a user.
@@ -94,7 +95,7 @@ async def help(ctx):
 
     embedToSend.add_field(name = ':link: Links', value = '> Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\n> Support server: [Join](https://discord.gg/mP8U9ey)\n> [Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)', inline = False)
 
-    embedToSend.set_footer(text = 'Tea Time v2.5.0 by Lumiobyte#0867')
+    embedToSend.set_footer(text = 'Tea Time v2.5.1 by Lumiobyte#0867')
 
     await ctx.send(embed = embedToSend)
 

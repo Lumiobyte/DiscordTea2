@@ -36,7 +36,7 @@ class Fun(commands.Cog):
 
         await ctx.message.delete()
 
-        if (self.previousTime - datetime.datetime.now()).seconds >= random.randrange(5000, 8000):
+        if (self.previousTime - datetime.datetime.now()).seconds <= 82000:
             await ctx.send(':alarm_clock: **| It\'s tea time!**')
             self.previousTime = datetime.datetime.now()
             stats_data.WriteSingle("teatime")

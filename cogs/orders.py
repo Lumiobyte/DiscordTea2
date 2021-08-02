@@ -185,7 +185,9 @@ class Orders(commands.Cog):
 
         try:
             voter = self.client.get_user(int(data['user']))
-            await voter.send("Thanks for voting!")
+            embed = discord.Embed(colour = discord.Colour.green())
+            embed.add_field(name = ":ballot_box: Thanks for voting!", value = "As a reward, you now get one extra order slot. Simply use the order command to take advantage of it!")
+            await voter.send(embed = embed)
         except:
             pass
 
@@ -196,7 +198,9 @@ class Orders(commands.Cog):
 
         try:
             voter = self.client.get_user(int(data['user']))
-            await voter.send("Thanks for voting!")
+            embed = discord.Embed(colour = discord.Colour.green())
+            embed.add_field(name = ":ballot_box: Thanks for voting!", value = "As a reward, you now get one extra order slot. Simply use the order command to take advantage of it!")
+            await voter.send(embed = embed)
         except:
             pass
 
@@ -317,7 +321,7 @@ class Orders(commands.Cog):
             return
 
         if order is None:
-            await ctx.send(':grey_question: **| What type of tea would you like, {}? To order, use `tea!order <tea>` and replace `<tea>` with your order.**'.format(ctx.author.mention))
+            await ctx.send(':grey_question: **| What type of tea would you like, {}? To order, use `tea!sorder <tea>` and replace `<tea>` with your order.**'.format(ctx.author.mention))
             return
 
         for item in ["cafe", "coffee", "c0ffee", "coff33", "c0ff3e", "c0ffe3", "coff3e", "coffe3", "соffее", "соffee", "соffеe", "соffеe", "соffeе", "сoffee", "сoffee", "cоffee", "cоffее", "cоffеe", "cоffeе", "cоffeе", "coffeе", "coffее", "coffеe", "cofe", "coffe", "cofee", "coftea", "cofftea", "caftea", "cafftea", "latte", "late"]:

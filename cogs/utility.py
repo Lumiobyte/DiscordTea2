@@ -132,7 +132,7 @@ class Utility(commands.Cog):
 > Tea Sommeliers: {}
 > Blacklisted Users: {}
 
-        :label: **Bot Version:** 2.5.0
+:label: **Bot Version:** 2.5.1
         """.format(
             statsDB['placed'],
             statsDB['delivered'],
@@ -296,6 +296,9 @@ class Utility(commands.Cog):
                 embedField += f"1. :crown: **{topTen[user]['number']}{topTen[user]['unit']} - {userObj}**\n"
             else:
                 embedField += f"{topTen[user]['rank']}. {topTen[user]['number']}{topTen[user]['unit']} - {userObj}\n"
+
+        if mode is None:
+            mode = "Lifetime"
 
         embed.add_field(name = f":scroll: Leaderboard - {mode.capitalize()}", value = embedField)
         embed.set_footer(text = "tea!lb <lifetime | weekly | ratings> to see other categories")
