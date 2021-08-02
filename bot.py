@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from utils import blacklist_data, stats_data, sommelier_data, config_loader
+from utils import blacklist_data, stats_data, sommelier_data, config_loader, booster_data
 
 intents = discord.Intents.all()
 intents.presences = False
@@ -45,14 +45,27 @@ async def help(ctx):
     embedToSend = discord.Embed(colour = discord.Colour.blurple())
     embedToSend.set_author(name="Tea Time Help - Prefix: tea!")
 
-    embedToSend.add_field(name=":tea: Ordering Commands", value="""
+    if booster_data.Check(ctx.author.id) == True:
+        embedToSend.add_field(name=":tea: Ordering Commands", value="""
 > **tea!rules** - See ordering rules.
 > **tea!order <order>** - Order some tea. 
 > **tea!cancel <orderID>** - Cancel a tea you've ordered.
 > **tea!quickorder [option]** - Select a tea you'd like from a menu.
 > **tea!myorders** - See your current active orders, and orders waiting to be rated.
 > **tea!oinfo <orderID>** - Get the info on an order.
-    """, inline = False)
+<:BoostIcon:871575823671492689> **Server Booster Perk**
+> **tea!sorder <order>** Server Boosters can use this to get an order sent to the exclusive priority queue!
+        """, inline = False)
+    else:
+        embedToSend.add_field(name=":tea: Ordering Commands", value="""
+> **tea!rules** - See ordering rules.
+> **tea!order <order>** - Order some tea. 
+> **tea!cancel <orderID>** - Cancel a tea you've ordered.
+> **tea!quickorder [option]** - Select a tea you'd like from a menu.
+> **tea!myorders** - See your current active orders, and orders waiting to be rated.
+> **tea!oinfo <orderID>** - Get the info on an order.
+        """, inline = False) 
+      
     embedToSend.add_field(name=":speech_left: Feedback Commands", value="""
 > **tea!message <orderID> <message>** - Send a message to the Tea Sommelier currently brewing your order.
 > **tea!rate <orderid> <rating 1-5>** - Rate your tea! Provide an Order ID (find it in **tea!myorders**) and rate it from 1 to 5:star:.

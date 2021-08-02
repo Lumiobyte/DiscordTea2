@@ -18,7 +18,8 @@ from utils import sommelier_data, stats_data, sommelier_stats_data, rating_data,
 # [4] = brewer userid (none if there is no brewer right now)
 # [5] = ordered timestamp
 # [6] = claimed timestamp (could be none if unclaimed)
-#
+# [7] = is it a booster order? (True/False)
+
 # Same with self.waitingForRating 
 
 # votes: simply check if an ID has a number bigger than 0
@@ -204,8 +205,9 @@ class Orders(commands.Cog):
             await ctx.send(':grey_question: **| What type of tea would you like, {}? To order, use `tea!order <tea>` and replace `<tea>` with your order.**'.format(ctx.author.mention))
             return
 
+
         for item in ["cafe", "coffee", "c0ffee", "coff33", "c0ff3e", "c0ffe3", "coff3e", "coffe3", "соffее", "соffee", "соffеe", "соffеe", "соffeе", "сoffee", "сoffee", "cоffee", "cоffее", "cоffеe", "cоffeе", "cоffeе", "coffeе", "coffее", "coffеe", "cofe", "coffe", "cofee", "coftea", "cofftea", "caftea", "cafftea", "latte", "late"]:
-            if item in order.split(' ', '').lower():
+            if item in order.replace(' ', '').lower():
                 await ctx.send(":rage: **| Your order contained COFFEE! You TRAITOR!!**")
                 return
 
@@ -237,6 +239,10 @@ class Orders(commands.Cog):
             await ctx.send(':no_entry_sign: **| The order limit of 30 active orders has been hit. Please wait while our staff complete some orders.**')
             return
 
+        if self.orderCount >= 30 and booster_data.Check(ctx.author.id) == True:
+            await ctx.send(':no_entry_sign: **| The order limit of 30 active orders has been hit. As a Booster, you can use `tea!sorder` to put your order straight into priority queue!**')
+            return
+
         if len(order) > 300:
             await ctx.send(':no_entry_sign: **| Your order is over 300 characters long! Please keep it shorter.**')
             return
@@ -249,7 +255,7 @@ class Orders(commands.Cog):
                 self.votes[str(ctx.author.id)] -= 1
                 await ctx.send(':white_check_mark: **| Extra order slot used! You have {} extra orders remaining.**'.format(self.votes[str(ctx.author.id)]))
 
-        self.orderIDs[self.totalOrderCount] = [ctx.channel, ctx.author, order, 'Waiting', None, datetime.datetime.now(), None, booster_data.Check(user.id)]
+        self.orderIDs[self.totalOrderCount] = [ctx.channel, ctx.author, order, 'Waiting', None, datetime.datetime.now(), None, False]
         self.totalOrderCount += 1
         self.orderCount += 1
 
@@ -257,19 +263,93 @@ class Orders(commands.Cog):
 
         message = ':white_check_mark: **| Your order of `{}` has been placed! One of our Tea Sommeliers will claim it and deliver it right here to your server!**'.format(order)
 
-        if self.orderCount >= 18:
-            message = message + '\n :warning: Tea Time is dealing with a large number of orders right now. Service may be delayed.'
-
-
         try:
             await ctx.send(message)
         except:
-            await ctx.author.send(message + '\n\n:pray: Please consider letting me send messages in the channel #{} your server, {}. Right now I do not have permissions to send messages there...'.format(ctx.channel.name, ctx.guild.name))
+            await ctx.author.send(message + '\n\n:pray: Please consider letting me send messages in the channel #{} of your server, {}. Right now I do not have permissions to send messages there...'.format(ctx.channel.name, ctx.guild.name))
 
         if self.orderLogObj is None:
             self.orderLogObj = self.client.get_channel(self.orderLog)
 
         await self.orderLogObj.send(":inbox_tray: **| Received order of `{}` with ID `{}`. Ordered by {} ({}) in server {} ({}).**".format(order, self.totalOrderCount - 1, ctx.author, ctx.author.id, ctx.guild.name, ctx.guild.id))
+
+    @commands.command()
+    async def sorder(self, ctx, *, order = None):
+
+        if self.orderLock == True:
+            await ctx.send(':warning: **| {}**'.format(self.orderLockMessage))
+            return
+
+        if booster_data.Check(ctx.author.id) == False:
+            await ctx.send("<:BoostIcon:871575823671492689> **| Only Server Boosters can use this command. Join our support server https://discord.gg/mP8U9ey and help us out to gain access to this and many more perks!**")
+            return
+
+        if order is None:
+            await ctx.send(':grey_question: **| What type of tea would you like, {}? To order, use `tea!order <tea>` and replace `<tea>` with your order.**'.format(ctx.author.mention))
+            return
+
+        for item in ["cafe", "coffee", "c0ffee", "coff33", "c0ff3e", "c0ffe3", "coff3e", "coffe3", "соffее", "соffee", "соffеe", "соffеe", "соffeе", "сoffee", "сoffee", "cоffee", "cоffее", "cоffеe", "cоffeе", "cоffeе", "coffeе", "coffее", "coffеe", "cofe", "coffe", "cofee", "coftea", "cofftea", "caftea", "cafftea", "latte", "late"]:
+            if item in order.replace(' ', '').lower():
+                await ctx.send(":rage: **| Just because you're a server booster doesn't mean you can have coffee!!**")
+                return
+
+        if 'tea' not in order.lower():
+            await ctx.send(':no_entry_sign: **| Your order must contain tea!**')
+            return
+
+        for item in ['hitler', 'nazi', 'heroin', 'sex', 'piss', 'penis', 'dick', 'cock', 'semen', 'cocaine', 'faggot', 'fag', 'fags', 'nigger', "nigga"]:
+            if item in order.lower():
+                await ctx.send(":warning: **| This order is against the rules (see them with `tea!rules`). If you try to bypass this filter you will be blacklisted immediately.**")
+                return
+
+        orderCountUser = 0
+        ratingWaitingUser = 0
+
+        for orderid in self.orderIDs:
+            if self.orderIDs[orderid][1] == ctx.author:
+                if self.orderIDs[orderid][7] == True:
+                    orderCountUser += 1
+
+        for orderid in self.waitingForRating:
+            if self.waitingForRating[orderid][1] == ctx.author:
+                ratingWaitingUser += 1
+
+        if self.boosterOrderCount >= 10:
+            await ctx.send(':no_entry_sign: **| The order limit of 10 priority orders has been hit. Please wait while our staff complete some orders.**')
+            return
+
+        if ratingWaitingUser >= 5:
+            await ctx.send(':no_entry_sign: **| You haven\'t rated 5 of your orders! Please rate them before you order more. Check `tea!myorders` to see which orders to rate.**')
+            return
+
+        if len(order) > 300:
+            await ctx.send(':no_entry_sign: **| Your order is over 300 characters long! Please keep it shorter.**')
+            return
+
+        if orderCountUser >= 1:
+            await ctx.send(':no_entry_sign: **| You can\'t have more than 1 priority order pending at once! Use `tea!cancel` and order again to change your order.**')
+            return
+
+
+        self.orderIDs[self.totalOrderCount] = [ctx.channel, ctx.author, order, 'Waiting', None, datetime.datetime.now(), None, True]
+        self.totalOrderCount += 1
+        self.boosterOrderCount += 1
+
+        stats_data.WriteSingle('placed')
+
+        message = ':white_check_mark: **| Your order of `{}` has been placed! One of our elite Veteran Sommeliers will claim it and deliver it right here to your server!**'.format(order)
+
+
+        try:
+            await ctx.send(message)
+        except:
+            await ctx.author.send(message + '\n\n:pray: Please consider letting me send messages in the channel #{} of your server, {}. Right now I do not have permissions to send messages there...'.format(ctx.channel.name, ctx.guild.name))
+
+        if self.orderLogObj is None:
+            self.orderLogObj = self.client.get_channel(self.orderLog)
+
+        await self.orderLogObj.send("<:BoostIcon:871575823671492689> **| Received order of `{}` with ID `{}`. Ordered by {} ({}) in server {} ({}).**".format(order, self.totalOrderCount - 1, ctx.author, ctx.author.id, ctx.guild.name, ctx.guild.id))
+
 
     @commands.command()
     async def quickorder(self, ctx, option=None):
@@ -283,11 +363,10 @@ class Orders(commands.Cog):
 
         if not option:
             embed = discord.Embed(color=discord.Colour.green())
-            embed.add_field(name="Quick Order Menu", value="1 - Tea\n2 - Green Tea\n3 - Black Tea\n4 - Earl Grey Tea\n5 - Iced Tea\n6 - Milk Tea\n7 - Boba Tea\n8 - Water Glass\n**NEW** 9 - Chai Tea\n**NEW** 10 - Zoo Tea", inline = False)
-            embed.add_field(name = 'How to order:', value = 'To order, use `tea!quickorder <number>` with the number of the tea you want to order.', inline = False)
+            embed.add_field(name=":tea: Quick Order Menu", value="> 1 - Tea\n> 2 - Green Tea\n> 3 - Black Tea\n> 4 - Earl Grey Tea\n> 5 - Iced Tea\n> 6 - Milk Tea\n> 7 - Boba Tea\n> 8 - Chai Tea\n> 9 - Water Glass\n> :frog: 10 - Zoo Tea", inline = False)
+            embed.add_field(name = ':grey_question: How to order:', value = 'To order, use `tea!quickorder <number>` with the number of the tea you want to order.', inline = False)
 
             await ctx.send(embed=embed)
-
             return     
 
         try:
@@ -322,13 +401,13 @@ class Orders(commands.Cog):
             image = random.choice(self.bobateas)
             order = "Boba Tea (Bubble Tea)"
         elif option == 8:
-            image = random.choice(self.waterGlasses)
-            order = "Water Glass"
-        elif option == 9:
             image = random.choice(self.chaiTeas)
             order = "Chai Tea"
+        elif option == 9:
+            image = random.choice(self.waterGlasses)
+            order = "Water Glass"
         elif option == 10:
-            self.zooteas = ["Ant Tea", "Badger Tea", "Bat Tea", "Beaver Tea", "Bee Tea", "Beetle Tea", "Bird Tea", "Bison Tea", "Blowfish Tea", "Bug Tea", "Butterfly Tea", "Camel Tea", "Cat Tea", "Cat Variant Tea", "chick Tea", "Chick Variant Tea", "Chipmunk Tea", "Cockroach Tea", "Cow Tea", "Crab Tea", "Cricket Tea", "Crocodile Tea", "Dodo Tea", "Dog Tea", "Dolphin Tea", "Dove Tea", "Dragon Tea", "Dromedary Camel Tea", "Duck Tea", "Elephant Tea", "Fish Tea", "Fish Variant Tea", "Flamingo Tea", "Fly Tea", "Giraffe Tea", "Goat Tea", "Hedgehog Tea", "Hippopotamus Tea", "Horse Tea", "Kangaroo Tea", "Lady Beetle Tea", "Leopard Tea", "Lizard Tea", "Llama Tea", "Lobster Tea", "Mammoth Tea", "Monkey Tea", "Mosquito Tea", "Mouse Tea", "Octopus Tea", "Orangutan Tea", "Otter Tea", "Owl Tea", "Ox Tea", "Parrot Tea", "Peacock Tea", "Penguin Tea", "Pig Tea", "Poodle Tea", "Rabbit Tea", "Ram Tea", "Rat Tea", "Rooster Tea", "Sauropod Tea", "Scorpion Tea", "Seal Tea", "Shark Tea", "Sheep Tea", "Shrimp Tea", "Skunk Tea", "Snail Tea", "Snake Tea", "Spider Tea", "Squid Tea", "Swan Tea", "Tiger Tea", "T-Rex Tea", "Turkey Tea", "Turtle Tea", "Water Buffalo Tea", "Whale Tea", "Whale Variant Tea", "Worm Tea"]
+            self.zooteas = ["Ant Tea", "Badger Tea", "Bat Tea", "Beaver Tea", "Bee Tea", "Beetle Tea", "Bird Tea", "Bison Tea", "Blowfish Tea", "Bug Tea", "Butterfly Tea", "Camel Tea", "Cat Tea", "Cat Variant Tea", "Chick Tea", "Chick Variant Tea", "Chipmunk Tea", "Cockroach Tea", "Cow Tea", "Crab Tea", "Cricket Tea", "Crocodile Tea", "Dodo Tea", "Dog Tea", "Dolphin Tea", "Dove Tea", "Dragon Tea", "Dromedary Camel Tea", "Duck Tea", "Elephant Tea", "Fish Tea", "Fish Variant Tea", "Flamingo Tea", "Fly Tea", "Giraffe Tea", "Goat Tea", "Hedgehog Tea", "Hippopotamus Tea", "Horse Tea", "Kangaroo Tea", "Lady Beetle Tea", "Leopard Tea", "Lizard Tea", "Llama Tea", "Lobster Tea", "Mammoth Tea", "Monkey Tea", "Mosquito Tea", "Mouse Tea", "Octopus Tea", "Orangutan Tea", "Otter Tea", "Owl Tea", "Ox Tea", "Parrot Tea", "Peacock Tea", "Penguin Tea", "Pig Tea", "Poodle Tea", "Rabbit Tea", "Ram Tea", "Rat Tea", "Rooster Tea", "Sauropod Tea", "Scorpion Tea", "Seal Tea", "Shark Tea", "Sheep Tea", "Shrimp Tea", "Skunk Tea", "Snail Tea", "Snake Tea", "Spider Tea", "Squid Tea", "Swan Tea", "Tiger Tea", "T-Rex Tea", "Turkey Tea", "Turtle Tea", "Water Buffalo Tea", "Whale Tea", "Whale Variant Tea", "Worm Tea"]
 
             # This decides our animal
 
@@ -378,34 +457,41 @@ class Orders(commands.Cog):
                 usersIDs.append(orderID)
 
         if len(usersIDs) <= 0:
-            embedToSend.add_field(name = "Your Active Orders (0)", value = "You have no active orders! Use `tea!order` to order something. Use `tea!vote` to vote for Tea Time and get an extra order slot!", inline = False)
+            embedToSend.add_field(name = ":tea: Your Active Orders (0)", value = "You have no active orders! Use `tea!order` to order something. Use `tea!vote` to vote for Tea Time and get an extra order slot!", inline = False)
         else:
             for orderID in usersIDs:
                 orderCount += 1
-                embedValue += 'Order ID `{}`: order of `{}` - Status: `{}`\n'.format(
+
+                if self.orderIDs[orderID][7] == True:
+                    boosterSymbol = "<:BoostIcon:871575823671492689>"
+                else:
+                    boosterSymbol = ""
+
+                embedValue += '> ID {}**{}:** {} ● Status: {}\n'.format(
+                    boosterSymbol,
                     orderID,
                     self.orderIDs[orderID][2],
                     self.orderIDs[orderID][3]
                 )
 
-            embedToSend.add_field(name = "Your active orders ({})".format(orderCount), value = embedValue, inline = False)
+            embedToSend.add_field(name = ":tea: Your active orders ({})".format(orderCount), value = embedValue, inline = False)
 
         for orderID in self.waitingForRating:
             if self.waitingForRating[orderID][1] == ctx.author:
                 usersWaiting.append(orderID)
 
         if len(usersWaiting) <= 0:
-            embedToSend.add_field(name = "Your unrated orders (0)", value = "You have no unrated orders! Get a tea delivered and it will show up here until rated.")
+            embedToSend.add_field(name = ":star: Your unrated orders (0)", value = "You have no unrated orders! Get a tea delivered and it will show up here until rated.")
         else:
             for orderID in usersWaiting:
                 orderCountWaiting += 1
-                embedValueWaiting += 'Order ID `{}`: order of `{}` - Status: `{}`\n'.format(
+                embedValueWaiting += '> ID **{}:** {}\n'.format(
                     orderID,
                     self.waitingForRating[orderID][2],
                     'Unrated'
                 )
 
-            embedToSend.add_field(name = "Your unrated orders ({}/5)".format(orderCountWaiting), value = embedValueWaiting + '\nTo rate an order, use `tea!rate <order ID> <rating from 1 to 5>`.')
+            embedToSend.add_field(name = ":star: Your unrated orders ({}/5)".format(orderCountWaiting), value = embedValueWaiting + '\nTo rate an order, use `tea!rate <order ID> <rating from 1 to 5>`.')
         
         embedToSend.set_footer(text = 'Use tea!oinfo <id> to see more information on an order. Use tea!vote to vote for Tea Time and get an extra order slot!')
 
@@ -442,21 +528,23 @@ class Orders(commands.Cog):
         
         embedToSend = discord.Embed(color = discord.Color.teal())
 
-        embedToSend.add_field(name = "Order Information ({})".format(orderid), value = """**
-        Customer: {} ({})
-        Order ID: `{}`
-        Order of: {}
-        Ordered in: {}, #{}
-        Order Status: {}
-        Brewer: {}
-        **""".format(
+        embedToSend.add_field(name = ":book: Order Information ({})".format(orderid), value = """
+        > **Customer: {}** ({})
+        > Order ID: `{}`
+        > Order of: {}
+        > Ordered in: {}, #{}
+        > Order Status: {}
+        > Brewer: {}
+        > Priority Order: {}
+        """.format(
             order[1],
             order[1].id,
             orderid,
             order[2],
             order[0].guild, order[0],
             order[3],
-            brewer
+            brewer,
+            order[7]
         ))
 
         await ctx.send(embed = embedToSend)
@@ -610,26 +698,76 @@ class Orders(commands.Cog):
         list_of_embeds = []
 
         for orderid in self.orderIDs:
-            order_count += 1
-            helper_counter += 1
-            helper_value += "**ID `{}`: `{}` ordered by `{}`. Status: `{}`**\n".format(orderid, self.orderIDs[orderid][2], self.orderIDs[orderid][1], self.orderIDs[orderid][3])
-            if helper_counter >= 5:
-                embed_value_list.append(helper_value)
-                helper_counter = 0
-                helper_value = ''
+            if self.orderIDs[orderid][7] == False:
+                order_count += 1
+                helper_counter += 1
+                helper_value += "**ID `{}`: `{}` ordered by `{}`. Status: `{}`**\n".format(orderid, self.orderIDs[orderid][2], self.orderIDs[orderid][1], self.orderIDs[orderid][3])
+                if helper_counter >= 5:
+                    embed_value_list.append(helper_value)
+                    helper_counter = 0
+                    helper_value = ''
 
         if helper_value != '':
             embed_value_list.append(helper_value)
 
         if order_count <= 0:
-            embed = discord.Embed(color = discord.Color.red())
-            embed.add_field(name = "All active orders ({})".format(order_count), value="No active orders!", inline = False)
+            embed = discord.Embed(color = discord.Color.blurple())
+            embed.add_field(name = ":tea: All active orders ({})".format(order_count), value="No active orders!", inline = False)
             await ctx.send(embed = embed)
             return
 
         for embed_value in embed_value_list:
-            embed = discord.Embed(color=discord.Color.magenta())
-            embed.add_field(name = "All Active Orders ({})".format(order_count), value=embed_value)
+            embed = discord.Embed(color=discord.Color.blurple())
+            embed.add_field(name = ":tea: All Active Orders ({})".format(order_count), value=embed_value)
+            list_of_embeds.append(embed)
+
+        for embed in list_of_embeds:
+            embed.set_footer(text = 'Use tea!claim <id> to start brewing an order!')
+            await ctx.send(embed = embed)
+
+    @commands.command(name="active-porders", aliases=["plist", "list-po"])
+    async def list_porders(self, ctx):
+
+        if not ctx.guild.id == 524024216463605770:
+            await ctx.send(":lock: **| This command cannot be used in this server!**")
+            return
+
+        if not sommelier_data.Check(ctx.author.id):
+            await ctx.send(":lock: **| Only Tea Sommeliers can use this command!**")
+            return
+
+        if sommelier_stats_data.GetRank(ctx.author.id) in ['new', 'som']:
+            await ctx.send(':no_entry_sign: **| You must be Veteran Sommelier or higher to see this list.**')
+            return
+
+        order_count = 0
+        helper_counter = 0
+        helper_value = ''
+        embed_value_list = []
+        list_of_embeds = []
+
+        for orderid in self.orderIDs:
+            if self.orderIDs[orderid][7] == True:
+                order_count += 1
+                helper_counter += 1
+                helper_value += "**ID `{}`: `{}` ordered by `{}`. Status: `{}`**\n".format(orderid, self.orderIDs[orderid][2], self.orderIDs[orderid][1], self.orderIDs[orderid][3])
+                if helper_counter >= 5:
+                    embed_value_list.append(helper_value)
+                    helper_counter = 0
+                    helper_value = ''
+
+        if helper_value != '':
+            embed_value_list.append(helper_value)
+
+        if order_count <= 0:
+            embed = discord.Embed(color = discord.Color.from_rgb(255, 80, 80))
+            embed.add_field(name = ":tea: All active orders ({})".format(order_count), value="No active orders!", inline = False)
+            await ctx.send(embed = embed)
+            return
+
+        for embed_value in embed_value_list:
+            embed = discord.Embed(color=discord.Color.from_rgb(255, 80, 80))
+            embed.add_field(name = ":tea: All Active Orders ({})".format(order_count), value=embed_value)
             list_of_embeds.append(embed)
 
         for embed in list_of_embeds:
@@ -649,8 +787,9 @@ class Orders(commands.Cog):
             return
 
         for orderid in self.orderIDs:
-            if self.orderIDs[orderid][3] == "Waiting":
-                unfinished_orders.append(orderid)
+            if self.orderIDs[orderid][7] == False:
+                if self.orderIDs[orderid][3] == "Waiting":
+                    unfinished_orders.append(orderid)
 
         if len(unfinished_orders) > 0:
             assigned_order = random.choice(unfinished_orders)
@@ -735,6 +874,11 @@ class Orders(commands.Cog):
         except KeyError:
             await ctx.send(":no_entry_sign: **| No order with that ID!**")
             return
+        
+        if self.orderIDs[orderid][7] == True:
+            if sommelier_stats_data.GetRank(ctx.author.id) not in ['vet', 'mas']:
+                await ctx.send(":lock: **| Only Veteran Sommeliers or higher can claim this order.**")
+                return
 
         if self.orderIDs[orderid][3] != "Waiting" and ctx.author.id not in self.bypassUsers:
             await ctx.send(":no_entry_sign: **| That order is already being processed by a sommelier!**")
@@ -847,6 +991,11 @@ class Orders(commands.Cog):
         except KeyError:
             await ctx.send(":no_entry_sign: **| No order with that ID!**")
             return
+
+        if self.orderIDs[orderid][7] == True:
+            if sommelier_stats_data.GetRank(ctx.author.id) not in ['vet', 'mas']:
+                await ctx.send(":lock: **| Only Veteran Sommeliers or higher can decline this order.**")
+                return
 
         if self.orderLogObj is None:
             self.orderLogObj = self.client.get_channel(self.orderLog)

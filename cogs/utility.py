@@ -185,7 +185,7 @@ class Utility(commands.Cog):
         elif statsDB['rank'] == 'vet':
             rank = '**<@&761596659288375327>**'
         elif statsDB['rank'] == 'mas':
-            rank = "**<@&803978659353329714>"
+            rank = "**<@&803978659353329714>**"
 
         for role in ctx.author.roles:
             if role.id == 750505426637815831:
@@ -209,8 +209,8 @@ class Utility(commands.Cog):
 > Teas Declined This Week: `{}`
 > Total Ratings This Week: `{}`
 > Rating: {}\n
-:truck: **Recent Deliveries:**\n- `{}`\n- `{}`\n- `{}`\n
-:star: **Recent Ratings:**\n{}\n{}\n{}
+:truck: **Recent Deliveries:** :truck:\n- `{}`\n- `{}`\n- `{}`\n
+:star: **Recent Ratings:** :star:\n{}\n{}\n{}
         """.format(
             rank,
             statsDB['totalDelivered'],
