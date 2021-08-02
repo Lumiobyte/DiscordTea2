@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands, tasks
-import dbl
+import topgg
 
 import datetime
 import random
@@ -66,11 +66,15 @@ class Orders(commands.Cog):
         self.icedteas = ["https://i.imgur.com/RwNO3CB.png", "https://i.imgur.com/mxzO4s2.png", "https://i.imgur.com/wQbBZMX.png", "https://i.imgur.com/5VlHPB1.png", "https://i.imgur.com/FI38WNu.png", "https://i.imgur.com/s6GGEMR.png"]
         self.bobateas = ["https://i.imgur.com/ywCyPDt.png", "https://i.imgur.com/9nhz0E5.png", "http://www.businessnewsasia.com/wp-content/uploads/2015/04/milk-tea.jpg"]
         self.milkteas = ["https://s23991.pcdn.co/wp-content/uploads/2015/12/spiced-sweet-milk-tea-recipe.jpg", "https://i2.wp.com/subbucooks.com/wp-content/uploads/2017/12/IMG_1212.jpg?fit=2585%2C1700&ssl=1", "https://cdn.cpnscdn.com/static.coupons.com/ext/kitchme/images/recipes/600x400/honey-milk-tea-hong-kong-style_55311.jpg"]
-        self.waterGlasses = ['https://images.all-free-download.com/images/graphiclarge/glass_cup_and_water_vector_587233.jpg', 'https://gooloc.com/wp-content/uploads/vector/59/dvryfl0d0hw.jpg', 'https://ak.picdn.net/shutterstock/videos/1497607/thumb/1.jpg']
+        self.waterGlasses = ['https://images.all-free-download.com/images/graphiclarge/glass_cup_and_water_vector_587233.jpg', 'https://gooloc.com/wp-content/uploads/vector/59/dvryfl0d0hw.jpg', 'https://ak.picdn.net/shutterstock/videos/1497607/thumb/1.jpg', "https://media.wired.com/photos/59548baa5578bd7594c464f5/master/pass/GettyImages-200218465-002_web.jpg", "https://static.toiimg.com/thumb/msid-68952448,imgsize-642708,width-800,height-600,resizemode-75/68952448.jpg", "https://cdn.pixabay.com/photo/2019/03/28/17/34/glass-of-water-4087606_1280.jpg"]
         self.halloweenTea = 'https://cdn.discordapp.com/attachments/764001485759315999/766922383985999872/image1.png'
-        self.chaiTeas = ['https://www.thespruceeats.com/thmb/6B5wl61a5we2WetKu_8QmrgHkrs=/3000x1687/smart/filters:no_upscale()/how-to-make-masala-chai-tea-4134710-37c05169f2e3431f877ba5ecec6fd404.jpg', 'https://www.savoryspiceshop.com/content/mercury_modules/recipes/2/7/7/277/chai-tea-1330.jpg', 'https://i.pinimg.com/originals/39/04/58/390458633560d0fe70b0cf033fd2b6fc.jpg']
+        self.chaiTeas = ['https://www.thespruceeats.com/thmb/6B5wl61a5we2WetKu_8QmrgHkrs=/3000x1687/smart/filters:no_upscale()/how-to-make-masala-chai-tea-4134710-37c05169f2e3431f877ba5ecec6fd404.jpg', 'https://www.savoryspiceshop.com/content/mercury_modules/recipes/2/7/7/277/chai-tea-1330.jpg', 'https://i.pinimg.com/originals/39/04/58/390458633560d0fe70b0cf033fd2b6fc.jpg', "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Pretty-chai-tea-cropped.jpg/1280px-Pretty-chai-tea-cropped.jpg", "https://www.gettystewart.com/wp-content/uploads/2018/11/chai-tea-in-cup-sq-1.jpg"]
 
-        self.dblClient = dbl.DBLClient(bot = self.client, token = config_loader.GrabToken('dbltoken'), autopost = False, webhook_port = 5001, webhook_auth = config_loader.GrabToken('dblvoteauth'), webhook_path = '/dblwebhook')
+        # This example uses topggpy's webhook system.
+        self.client.topgg_webhook = topgg.WebhookManager(self.client).dbl_webhook("/dblwebhook", config_loader.GrabToken("dblvoteauth"))
+
+        # The port must be a number between 1024 and 49151.
+        self.client.topgg_webhook.run(8076)  # this method can be awaited as well
 
         self.votes = {}
 
@@ -143,6 +147,14 @@ class Orders(commands.Cog):
                 booster_data.Add(user.id)
                 matchedMembers.append(user.id)
 
+                try:
+                    embed = discord.Embed(colour = discord.Colour.from_rgb(255, 73, 200))
+                    embed.add_field(name = "<:BoostIcon:871575823671492689> **Thanks so much for boosting Tea Time!**", value = "● You can now use `t!sorder` to make a priority queue order that bypasses the normal queue and is only made by the best Sommeliers\n● You're now able to talk in <#781671363546972180> and <#801340776856551434>\n● You've got an exclusive **Server Booster** role!\n● If you're a Tea Sommelier, you now have no quota requirement")
+                    embed.set_footer(text = "If you have an idea for a perk, use t!suggest <idea>")
+                    await user.send(embed = embed)
+                except:
+                    await user.guild.get_channel(740408362159570956).send(user.mention, embed = embed)
+
         for user in boostersDB:
             if user not in matchedMembers:
                 usersToRemove.append(user)
@@ -150,12 +162,10 @@ class Orders(commands.Cog):
         for user in usersToRemove:
             booster_data.Remove(user)
 
-
     @boosterChecker.before_loop
     async def before_boosterChecker(self):
         await self.client.wait_until_ready()
-
-
+        print("BoosterChecker Starting")
 
     @commands.Cog.listener()
     async def on_dbl_vote(self, data):
@@ -170,8 +180,25 @@ class Orders(commands.Cog):
         
         self.votes[data['user']] += 1
 
-        if self.votes[data['user']] > 2:
-            self.votes[data['user']] == 2
+        if self.votes[data['user']] > 1:
+            self.votes[data['user']] == 1
+
+        try:
+            voter = self.client.get_user(int(data['user']))
+            await voter.send("Thanks for voting!")
+        except:
+            pass
+
+    @commands.Cog.listener()
+    async def on_dbl_test(self, data):
+        """An event that is called whenever someone tests the webhook system for your bot on Top.gg."""
+        print(f"Received a test vote:\n{data}")
+
+        try:
+            voter = self.client.get_user(int(data['user']))
+            await voter.send("Thanks for voting!")
+        except:
+            pass
 
     @commands.command()
     async def lockorders(self, ctx, *, message = None):
@@ -218,6 +245,11 @@ class Orders(commands.Cog):
         for item in ['hitler', 'nazi', 'heroin', 'sex', 'piss', 'penis', 'dick', 'cock', 'semen', 'cocaine', 'faggot', 'fag', 'fags', 'nigger', "nigga"]:
             if item in order.lower():
                 await ctx.send(":warning: **| This order is against the rules (see them with `tea!rules`). If you try to bypass this filter you will be blacklisted immediately.**")
+                return
+
+        for item in ['tea', 'milktea', 'bobatea', 'greentea', 'chaitea', 'icedtea', 'icetea', 'blacktea']:
+            if item == order.replace(' ', '').lower():
+                await ctx.send(":tea: **| Please use `tea!quickorder` for simple orders. It means that the Sommeliers have more time to make complex orders amazing!**")
                 return
 
         orderCountUser = 0
@@ -363,8 +395,9 @@ class Orders(commands.Cog):
 
         if not option:
             embed = discord.Embed(color=discord.Colour.green())
-            embed.add_field(name=":tea: Quick Order Menu", value="> 1 - Tea\n> 2 - Green Tea\n> 3 - Black Tea\n> 4 - Earl Grey Tea\n> 5 - Iced Tea\n> 6 - Milk Tea\n> 7 - Boba Tea\n> 8 - Chai Tea\n> 9 - Water Glass\n> :frog: 10 - Zoo Tea", inline = False)
-            embed.add_field(name = ':grey_question: How to order:', value = 'To order, use `tea!quickorder <number>` with the number of the tea you want to order.', inline = False)
+            embed.add_field(name=":tea: Quick Order Menu", value="> 1 - Tea\n> 2 - Green Tea\n> 3 - Black Tea\n> 4 - Earl Grey Tea\n> 5 - Iced Tea\n> 6 - Milk Tea\n> 7 - Boba Tea\n> 8 - Chai Tea\n> 9 - Water Glass\n> 10 - Zoo Tea :frog:", inline = False)
+            embed.add_field(name = ':grey_question: How to order:', value = 'Use `tea!quickorder <number>` and put the number of the item you want', inline = False)
+            embed.set_thumbnail(url = "https://cdn.discordapp.com/emojis/870582125198471209.gif")
 
             await ctx.send(embed=embed)
             return     
@@ -425,10 +458,10 @@ class Orders(commands.Cog):
 
         await ctx.send(":tea: **| Ordered a {} for you! It will be delivered soon!**".format(order))
         
-        await asyncio.sleep(80)
+        await asyncio.sleep(random.randrange(60, 90))
 
         embedToSend = discord.Embed(colour = discord.Colour.green())
-        embedToSend.add_field(name = 'Your tea has arrived!', value = 'Your {} has been brewed!'.format(order))
+        embedToSend.add_field(name = ':tea: Tea has arrived', value = 'Your {} has been brewed!'.format(order))
         embedToSend.set_image(url = image)        
 
         await ctx.send(ctx.author.mention, embed = embedToSend)
@@ -487,8 +520,7 @@ class Orders(commands.Cog):
                 orderCountWaiting += 1
                 embedValueWaiting += '> ID **{}:** {}\n'.format(
                     orderID,
-                    self.waitingForRating[orderID][2],
-                    'Unrated'
+                    self.waitingForRating[orderID][2]
                 )
 
             embedToSend.add_field(name = ":star: Your unrated orders ({}/5)".format(orderCountWaiting), value = embedValueWaiting + '\nTo rate an order, use `tea!rate <order ID> <rating from 1 to 5>`.')
