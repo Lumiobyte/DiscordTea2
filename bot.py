@@ -11,7 +11,7 @@ client.remove_command('help')
 
 TOKEN = config_loader.GrabToken('token')
 
-cogs = ['cogs.utility', 'cogs.feedback', 'cogs.fun', 'cogs.events', 'cogs.orders', 'cogs.owner', 'cogs.dbl', 'cogs.statcord', 'cogs.applications']
+cogs = ['cogs.utility', 'cogs.feedback', 'cogs.fun', 'cogs.events', 'cogs.orders', 'cogs.owner', 'cogs.dbl', 'cogs.statcord', 'cogs.applications', 'cogs.site']
 
 for cog in cogs:
     try:
@@ -95,7 +95,7 @@ async def help(ctx):
 
     embedToSend.add_field(name = ':link: Links', value = '> Invite: [Invite me!](https://discord.com/oauth2/authorize?client_id=507004433226268699&permissions=388161&scope=bot)\n> Support server: [Join](https://discord.gg/mP8U9ey)\n> [Vote for me on Top.gg!](https://top.gg/bot/507004433226268699/vote)', inline = False)
 
-    embedToSend.set_footer(text = 'Tea Time v2.5.1 by Lumiobyte#0867')
+    embedToSend.set_footer(text = 'Tea Time v2.5.2 by Lumiobyte#0867')
 
     await ctx.send(embed = embedToSend)
 

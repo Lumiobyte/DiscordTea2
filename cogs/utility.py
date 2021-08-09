@@ -132,7 +132,7 @@ class Utility(commands.Cog):
 > Tea Sommeliers: {}
 > Blacklisted Users: {}
 
-:label: **Bot Version:** 2.5.1
+:label: **Bot Version:** 2.5.2
         """.format(
             statsDB['placed'],
             statsDB['delivered'],

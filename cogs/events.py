@@ -53,7 +53,7 @@ class Events(commands.Cog):
 
         elif isinstance(error, commands.errors.CommandOnCooldown):
 
-            await ctx.send(":x: **| This command has a cooldown; please wait **{}s** before using it again. Spamming commands is bannable!**".format(datetime.timedelta(round(error.retry_after))))
+            await ctx.send(":x: **| This command has a cooldown; please wait {}s before using it again. Spamming commands is bannable!**".format(datetime.timedelta(seconds = round(error.retry_after))))
 
         elif isinstance(error, commands.MissingRequiredArgument):
 
