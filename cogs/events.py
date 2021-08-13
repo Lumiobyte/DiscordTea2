@@ -1,4 +1,5 @@
 import discord
+from discord.channel import DMChannel
 from discord.ext import commands
 
 import datetime
@@ -158,8 +159,12 @@ class Events(commands.Cog):
 
         await self.guildJoinsLeavesChannelObj.send(embed = embedToSend)
 
-
-
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        
+        if not message.author.bot:
+            if isinstance(message.channel, DMChannel):
+                await self.client.get_user().send(f":inbox_tray: **Received:** {message.content}")
 
 
 
