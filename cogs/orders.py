@@ -88,40 +88,47 @@ class Orders(commands.Cog):
         toDelete = []
 
         for orderid in self.orderIDs:
-            differenceOrdered = datetime.datetime.now() - self.orderIDs[orderid][5]
-            differenceClaimed = None
+            if self.orderIDs[orderid][7] == False:
+                differenceOrdered = datetime.datetime.now() - self.orderIDs[orderid][5]
+                differenceClaimed = None
 
-            if self.orderIDs[orderid][4] != None and self.orderIDs[orderid][6] != None:
-                differenceClaimed = datetime.datetime.now() - self.orderIDs[orderid][6]
+                if self.orderIDs[orderid][4] != None and self.orderIDs[orderid][6] != None:
+                    differenceClaimed = datetime.datetime.now() - self.orderIDs[orderid][6]
 
-            print(differenceClaimed)
-            print(differenceOrdered)
+                print(differenceClaimed)
+                print(differenceOrdered)
 
-            if self.orderIDs[orderid][4] != None and differenceClaimed != None:
-                if differenceClaimed >= datetime.timedelta(minutes = 30) and self.orderIDs[orderid][3] == 'Brewing':
+                if self.orderIDs[orderid][4] != None and differenceClaimed != None:
+                    if differenceClaimed >= datetime.timedelta(minutes = 30) and self.orderIDs[orderid][3] == 'Brewing':
 
-                    try:
-                        await self.orderIDs[orderid][1].send(":hourglass: **| Your order of `{}` with ID `{}` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
-                    except:
-                        await self.orderIDs[orderid][0].send(":hourglass: **| Your order of `{}` with ID `{}` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
+                        try:
+                            await self.orderIDs[orderid][1].send(":hourglass: **| Your order of `{}` with ID `{}` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
+                        except:
+                            try:
+                                await self.orderIDs[orderid][0].send(":hourglass: **| Your order of `{}` with ID `{}` has been automatically unclaimed because the Sommelier brewing it did not deliver for 30 minutes.**".format(self.orderIDs[orderid][2], orderid))
+                            except:
+                                pass
 
-                    await self.orderLogObj.send(":hourglass: **| Order ID `{}` auto-unclaimed after 30 minutes of inactivity.**".format(orderid))
+                        await self.orderLogObj.send(":hourglass: **| Order ID `{}` auto-unclaimed after 30 minutes of inactivity.**".format(orderid))
 
-                    self.orderIDs[orderid][3] = 'Waiting'
-                    self.orderIDs[orderid][4] = None
+                        self.orderIDs[orderid][3] = 'Waiting'
+                        self.orderIDs[orderid][4] = None
 
-            # checking for autodelete
-            if differenceOrdered:
-                if differenceOrdered >= datetime.timedelta(hours = 24) and self.orderIDs[orderid][3] == 'Waiting':
-                    
-                    try:
-                        await self.orderIDs[orderid][1].send(":wastebasket: **| Your order of `{}` with ID `{}` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
-                    except:
-                        await self.orderIDs[orderid][0].send(":wastebasket: **| Your order of `{}` with ID `{}` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
+                # checking for autodelete
+                if differenceOrdered:
+                    if differenceOrdered >= datetime.timedelta(hours = 24) and self.orderIDs[orderid][3] == 'Waiting':
+                        
+                        try:
+                            await self.orderIDs[orderid][1].send(":wastebasket: **| Your order of `{}` with ID `{}` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
+                        except:
+                            try:
+                                await self.orderIDs[orderid][0].send(":wastebasket: **| Your order of `{}` with ID `{}` has been automatically cancelled because it was waiting for 24 hours.**".format(self.orderIDs[orderid][2], orderid))
+                            except:
+                                pass
 
-                    await self.orderLogObj.send(":wastebasket: **| Order ID `{}` was deleted from the order list after waiting for 24 hours.**".format(orderid))
+                        await self.orderLogObj.send(":wastebasket: **| Order ID `{}` was deleted from the order list after waiting for 24 hours.**".format(orderid))
 
-                    toDelete.append(orderid)
+                        toDelete.append(orderid)
                 
               
         for orderid in toDelete: 
@@ -619,8 +626,13 @@ class Orders(commands.Cog):
         await self.orderLogObj.send(":x: **| {} canceled their order of `{}` with ID `{}`.**".format(ctx.author, self.orderIDs[orderid][2], orderid))
 
         stats_data.WriteSingle('declined')
+        isBooster = self.orderIDs[orderid][7]
         self.orderIDs.pop(orderid, None)
-        self.orderCount -= 1
+
+        if isBooster:
+            self.boosterOrderCount -= 1
+        else:
+            self.orderCount -= 1
 
     @commands.command()
     @commands.is_owner()
@@ -1053,8 +1065,13 @@ class Orders(commands.Cog):
 
         sommelier_stats_data.AddOrderDeclined(ctx.author.id)
 
+        isBooster = self.orderIDs[orderid][7]
         self.orderIDs.pop(orderid, None)
-        self.orderCount -= 1
+
+        if isBooster:
+            self.boosterOrderCount -= 1
+        else:
+            self.orderCount -= 1
 
         stats_data.WriteSingle('declined')
 
@@ -1122,8 +1139,13 @@ class Orders(commands.Cog):
                     await ctx.author.add_roles(ctx.guild.get_role(self.sommelierRolesDict[result[1]]))
                     await ctx.author.remove_roles(ctx.guild.get_role(self.sommelierRolesDict[result[2]]))
 
+            isBooster = self.orderIDs[orderid][7]
             self.orderIDs.pop(orderid, None)
-            self.orderCount -= 1
+
+            if isBooster:
+                self.boosterOrderCount -= 1
+            else:
+                self.orderCount -= 1
 
             stats_data.WriteSingle('delivered')
 
@@ -1151,11 +1173,17 @@ class Orders(commands.Cog):
         if type(result) == list:
             if result[0] == True:
                 await ctx.author.add_roles(ctx.guild.get_role(self.sommelierRolesDict[result[1]]))
+                await ctx.author.remove_roles(ctx.guild.get_role(self.sommelierRolesDict[result[2]]))
 
         self.waitingForRating[orderid] = self.orderIDs[orderid]
 
+        isBooster = self.orderIDs[orderid][7]
         self.orderIDs.pop(orderid, None)
-        self.orderCount -= 1
+
+        if isBooster:
+            self.boosterOrderCount -= 1
+        else:
+            self.orderCount -= 1
 
         stats_data.WriteSingle('delivered')
 

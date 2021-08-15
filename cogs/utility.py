@@ -370,6 +370,10 @@ Last updated August 20th, 2020
     @commands.command()
     async def blacklist(self, ctx, mode = None, user: discord.User = None):
 
+        if not ctx.guild.id == 524024216463605770:
+            await ctx.send(":lock: **| This command cannot be used in this server!**")
+            return
+
         if self.blacklistLogObj is None:
             self.blacklistLogObj = ctx.guild.get_channel(self.blacklistLog)
 
