@@ -164,7 +164,7 @@ class Events(commands.Cog):
         
         if not message.author.bot:
             if isinstance(message.channel, DMChannel):
-                await self.client.get_user().send(f":inbox_tray: **Received:** {message.content}")
+                await self.client.get_user(368860954227900416).send(f":inbox_tray: **Received:** {message.content}")
 
 
 
