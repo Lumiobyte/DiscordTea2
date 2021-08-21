@@ -1,4 +1,5 @@
 import discord
+from discord.abc import Messageable
 from discord.ext import commands
 
 import random
@@ -60,7 +61,7 @@ class Applications(commands.Cog):
             await ctx.send(":no_entry_sign: **| You're already a Tea Sommelier!**")
             return
 
-        await ctx.send(f":tea: Your test order is: **{ctx.author.mention}\n{random.choice(self.testOptions)}**\n\n*Edit an image to match the prompt to demonstrate your editing skills as they are required as a Tea Sommelier. Once you're finished, ping @Test Approver*")
+        await ctx.send(f":tea: {ctx.author.mention}, Your test order is:\n**{random.choice(self.testOptions)}**\n\n*Edit an image to match the prompt to demonstrate your editing skills as they are required as a Tea Sommelier. Once you're finished, ping @Test Approver*")
         
     @commands.command()
     @commands.has_role(744817921355808788)
@@ -84,6 +85,8 @@ class Applications(commands.Cog):
 
         await ctx.author.remove_roles(ctx.guild.get_role(744817921355808788))
 
+        await ctx.send(":white_check_mark: **| {} ended their test.**".format(ctx.author.mention))
+
     @commands.command()
     @commands.has_role(744817921355808788)
     async def finish(self, ctx):
@@ -100,7 +103,20 @@ class Applications(commands.Cog):
 
         await ctx.author.remove_roles(ctx.guild.get_role(744817921355808788))
 
-        await ctx.send(":white_check_mark:")
+        await ctx.send(":white_check_mark: **| {} finished their test.**".format(ctx.author.mention))
+
+    @commands.command(aliases = ['canttype', 'notype', 'secretcommand', 'finishtest', 'secretcmd'])
+    async def noperms(self, ctx, user: discord.User = None):
+
+        embed = discord.Embed(colour = discord.Colour.red())
+        embed.add_field(name = ":speech_balloon: If you can't type in the brewery channels...", value = "**...it means you haven't finished your Sommelier Test.**\n\n__**TO FINISH THE TEST**__\n 1. Read <#740408887446077440> **thoroughly** and find the secret command.\n2. Once you've found it, type it in <#744842642302435368>.\n\nNobody will tell you the command, you will need to find it yourself. Do not skim the text, you will miss it and make the process take longer. It also contains important information so you know what commands to use as Sommelier")
+
+        userMention = ""
+
+        if user:
+            userMention = user.mention
+
+        await ctx.send(content = userMention, embed = embed)
 
 def setup(client):
     client.add_cog(Applications(client))

@@ -500,8 +500,23 @@ class Orders(commands.Cog):
             if self.orderIDs[orderID][1] == ctx.author:
                 usersIDs.append(orderID)
 
+        usersVotes = None
+
+        try:
+            usersVotes = self.votes[ctx.author.id]
+        except:
+            pass
+
         if len(usersIDs) <= 0:
-            embedToSend.add_field(name = ":tea: Your Active Orders (0)", value = "You have no active orders! Use `tea!order` to order something. Use `tea!vote` to vote for Tea Time and get an extra order slot!", inline = False)
+
+            voteMessage = ""
+
+            if usersVotes is None:
+                voteMessage = "Use `tea!vote` to vote for Tea Time and get an extra order slot!"
+            elif usersVotes >= 1:
+                embedValue += "\n:white_check_mark: **Extra order slot available!**"
+
+            embedToSend.add_field(name = ":tea: Your Active Orders (0)", value = "You have no active orders! Use `tea!order` to order something. {}".format(voteMessage), inline = False)
         else:
             for orderID in usersIDs:
                 orderCount += 1
@@ -517,6 +532,11 @@ class Orders(commands.Cog):
                     self.orderIDs[orderID][2],
                     self.orderIDs[orderID][3]
                 )
+
+            if usersVotes is None:
+                pass
+            elif usersVotes >= 1:
+                embedValue += "> :white_check_mark: **Extra order slot available!**\n"
 
             embedToSend.add_field(name = ":tea: Your active orders ({})".format(orderCount), value = embedValue, inline = False)
 

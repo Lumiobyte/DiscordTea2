@@ -14,7 +14,7 @@ def main():
     return f"Hello! Client is {discordClient}"
 
 def run():
-    app.run(host = "0.0.0.0", port = 8080)
+    app.run(host = "0.0.0.0", port = 8062)
 
 def StartServing(client):
     discordClient = client
