@@ -395,6 +395,37 @@ class Owner(commands.Cog):
     async def proof(self, ctx):
         await ctx.send("Lumiobyte#0867")
 
+    @commands.command()
+    async def sinfo(self, ctx, gid: int):
+
+        if ctx.author.id not in self.allowedUsers:
+            return
+
+        theGuild = None
+
+        message = await ctx.send("<a:loader:803401760210944071> Searching...")
+
+        for guild in self.client.guilds:
+            if guild.id == gid:
+                theGuild = await self.client.fetch_guild(guild.id)
+
+        if theGuild is None:
+            await message.edit("No guild found")
+        else:
+            await message.edit(content = f"""Name: {theGuild.name}
+Owner: {theGuild.owner}
+Channels: {len(theGuild.channels)}
+ID: {theGuild.id}
+Created: {theGuild.created_at}
+Desc: {theGuild.description}
+Boosters: {theGuild.premium_subscribers}
+Icon: {theGuild.icon_url}""")
+
+            await ctx.send(f"Me: {theGuild.me}")
+
+            await ctx.send(f"Members: {theGuild.member_count}")
+
+
 
 def setup(client):
     client.add_cog(Owner(client))
