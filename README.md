@@ -1,5 +1,9 @@
 # Discord Tea
 
+## This bot is now deprecated
+This version of the bot was used between 2020 and 2022. Since Discord's slash commands update and API restrictions on message content, this version of the code won't be usable on a verified bot account, and it likely won't run on the latest version of discord.py. The information below is kept for preservation purpose
+
+
 ![](https://i.ibb.co/p34bnyS/discord-tea-logo.png)
 > Fun and open source Discord bot for crowdsourced tea image creation
 
